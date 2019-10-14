@@ -20,6 +20,7 @@ namespace Story2
         private List<Template> templates;
         private List<MessageBlock> messageBlocks;
         private List<MessageBlock> tagBlocks;
+        private bool isInitDataGridViewTextBoxEditingControl = false;
 
         public Story2()
         {
@@ -33,9 +34,12 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
+            // initialize Items of templateListComboBox
             templateListComboBox.Items.Clear();
             templateListComboBox.Items.Add("None");
             templateListComboBox.SelectedIndex = 0;
+
+            // load template list
             templates = new List<Template>();
             if (TemplateDB.Load(ref templates))
             {
@@ -57,14 +61,16 @@ namespace Story2
         {
             if (templateListComboBox.SelectedIndex == 0)
             {
+                // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
-                InitializeMessageBlocks("");
+                InitializeMessageBlocks(string.Empty);
                 InitializeTags();
                 messageRichTextBox.Text = string.Empty;
                 previewRichTextBox.Text = string.Empty;
             }
             else
             {
+                // using a templat - disable messageRichTextBox and rely on tags
                 messageRichTextBox.Enabled = false;
                 InitializeMessageBlocks(templates[templateListComboBox.SelectedIndex - 1].Message);
                 InitializeTags();
@@ -80,6 +86,7 @@ namespace Story2
         /// <param name="e"></param>
         private void SendButton_Click(object sender, EventArgs e)
         {
+            // todo: send notification by emails
             MessageBox.Show("Notification sent successfully!");
         }
 
@@ -90,30 +97,38 @@ namespace Story2
         /// <param name="e"></param>
         private void clearButton_Click(object sender, EventArgs e)
         {
+            // reset tagBlocks
             foreach (MessageBlock tagBlock in tagBlocks)
             {
                 tagBlock.Input = string.Empty;
             }
+
+            // reset tagsDataGridView
             for (int i = 0; i < tagsDataGridView.Rows.Count; i++)
             {
                 tagsDataGridView.Rows[i].Cells[1].Value = "";
             }
+
+            // reset previewRichTextBox
             ColorifyText(previewRichTextBox, true);
         }
 
         /// <summary>
         /// Initialize messageBlocks that represent blocks of template content.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">message of template</param>
         private void InitializeMessageBlocks(string message)
         {
             messageBlocks = new List<MessageBlock>();
             tagBlocks = new List<MessageBlock>();
-            // tested by https://regexr.com/4mokk
+
+            // Regex tested by https://regexr.com/4mokk
+            // it splits {$foo} into blocks
             string[] blocks = Regex.Split(message, @"(\{\$.*?\})");
             foreach (string block in blocks)
             {
-                // tested by https://regexr.com/4mokh
+                // Regex tested by https://regexr.com/4mokh
+                // it matchs {$foo}
                 bool isTag = Regex.IsMatch(block, @"^\{\$.*?\}$");
                 if (isTag)
                 {
@@ -144,12 +159,17 @@ namespace Story2
         private void InitializeTags()
         {
             DataTable table = new DataTable();
+
+            // set columns names
             table.Columns.Add("Tag Name");
             table.Columns.Add("Input");
+
+            // set row data
             foreach (MessageBlock tagBlock in tagBlocks)
             {
                 table.Rows.Add(tagBlock.Message, "");
             }
+
             tagsDataGridView.DataSource = table;
 
             // prevent users to sort data
@@ -166,11 +186,15 @@ namespace Story2
         /// <param name="isPreview">whether the RichTextBox is preview box</param>
         private void ColorifyText(RichTextBox richTextBox, bool isPreview)
         {
+            // reset text value
             richTextBox.Clear();
+
+            // append all blocks to be text value of RichTextBox
             foreach (MessageBlock messageBlock in messageBlocks)
             {
                 if (!messageBlock.IsTag)
                 {
+                    // set normal text color to be black
                     richTextBox.SelectionColor = Color.Black;
                     richTextBox.AppendText(messageBlock.Message);
                 }
@@ -178,12 +202,15 @@ namespace Story2
                 {
                     if (isPreview)
                     {
+                        // set tag text of preview box to be red
+                        // if there has user input, set text to be green
                         bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input);
                         richTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
                         richTextBox.AppendText(hasInput ? messageBlock.Input : messageBlock.Message);
                     }
                     else
                     {
+                        // set tag text of message box to be red
                         richTextBox.SelectionColor = Color.Red;
                         richTextBox.AppendText(messageBlock.Message);
                     }
@@ -201,11 +228,13 @@ namespace Story2
             bool isEditable = e.ColumnIndex == 1 && e.RowIndex >= 0 && e.RowIndex < tagsDataGridView.Rows.Count;
             if (isEditable)
             {
+                // auto switch to edit mode if it is editable
                 tagsDataGridView.ReadOnly = false;
                 tagsDataGridView.BeginEdit(true);
             }
             else
             {
+                // a label is ReadOnly
                 tagsDataGridView.ReadOnly = true;
             }
         }
@@ -217,8 +246,13 @@ namespace Story2
         /// <param name="e"></param>
         private void TagsDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = (DataGridViewTextBoxEditingControl)e.Control;
-            dataGridViewTextBoxEditingControl.KeyUp += DataGridViewTextBoxEditingControl_KeyUp;
+            // use a flag to prevent registering KeyUp event multiple times
+            if (!isInitDataGridViewTextBoxEditingControl)
+            {
+                DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = e.Control as DataGridViewTextBoxEditingControl;
+                dataGridViewTextBoxEditingControl.KeyUp += DataGridViewTextBoxEditingControl_KeyUp;
+                isInitDataGridViewTextBoxEditingControl = true;
+            }
         }
 
         /// <summary>
@@ -228,7 +262,7 @@ namespace Story2
         /// <param name="e"></param>
         private void DataGridViewTextBoxEditingControl_KeyUp(object sender, KeyEventArgs e)
         {
-            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = (DataGridViewTextBoxEditingControl)sender;
+            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = sender as DataGridViewTextBoxEditingControl;
             string input = dataGridViewTextBoxEditingControl.Text;
             int index = tagsDataGridView.CurrentCell.RowIndex;
             tagBlocks[index].Input = input;

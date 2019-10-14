@@ -14,10 +14,11 @@ namespace TemplateLibrary
         /// <summary>
         /// Load all templates.
         /// </summary>
-        /// <param name="templates"></param>
+        /// <param name="templates">result list of templates</param>
         /// <returns></returns>
         public static Boolean Load(ref List<Template> templates)
         {
+            // todo: load real templates from DB
             LoadFakeTemplates(ref templates);
             return true;
         }
@@ -25,7 +26,7 @@ namespace TemplateLibrary
         /// <summary>
         /// Load fake templates. Only use for testing.
         /// </summary>
-        /// <param name="templates"></param>
+        /// <param name="templates">result list of templates</param>
         private static void LoadFakeTemplates(ref List<Template> templates)
         {
             templates.Add(new Template
