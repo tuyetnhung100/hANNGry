@@ -79,5 +79,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NotificationLibrary\NotificationLibrary.csproj">
+      <Project>{8c1ab096-7f59-4d72-8328-0716e7a2fc20}</Project>
+      <Name>NotificationLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

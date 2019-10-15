@@ -35,26 +35,28 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.clearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.notificationDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // notificationDataGridView
             // 
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.notificationDataGridView.Location = new System.Drawing.Point(116, 188);
+            this.notificationDataGridView.Location = new System.Drawing.Point(63, 188);
             this.notificationDataGridView.Name = "notificationDataGridView";
-            this.notificationDataGridView.Size = new System.Drawing.Size(622, 253);
+            this.notificationDataGridView.Size = new System.Drawing.Size(744, 297);
             this.notificationDataGridView.TabIndex = 0;
             // 
             // findButton
             // 
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findButton.Location = new System.Drawing.Point(357, 122);
+            this.findButton.Location = new System.Drawing.Point(624, 112);
             this.findButton.Name = "findButton";
             this.findButton.Size = new System.Drawing.Size(160, 60);
             this.findButton.TabIndex = 1;
             this.findButton.Text = "Find";
             this.findButton.UseVisualStyleBackColor = true;
+            this.findButton.Click += new System.EventHandler(this.findButton_Click);
             // 
             // firstDateTimePicker
             // 
@@ -101,11 +103,23 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Notification Review";
             // 
+            // clearButton
+            // 
+            this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clearButton.Location = new System.Drawing.Point(88, 112);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(160, 60);
+            this.clearButton.TabIndex = 7;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(862, 497);
+            this.ClientSize = new System.Drawing.Size(877, 522);
+            this.Controls.Add(this.clearButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -131,6 +145,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 
