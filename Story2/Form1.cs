@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -17,9 +16,9 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
-        private List<Template> templates;
-        private List<MessageBlock> messageBlocks;
-        private List<MessageBlock> tagBlocks;
+        private List<Template> templates = new List<Template>();
+        private List<MessageBlock> messageBlocks = new List<MessageBlock>();
+        private List<MessageBlock> tagBlocks = new List<MessageBlock>();
         private bool isInitDataGridViewTextBoxEditingControl = false;
 
         public Story2()
@@ -34,13 +33,21 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            // initialize Items of templateListComboBox
+            InitializeTemplateListComboBox();
+            InitializeTagsDataGridView();
+        }
+
+        /// <summary>
+        /// Initialize and load items of templateListComboBox.
+        /// </summary>
+        private void InitializeTemplateListComboBox()
+        {
+            // set the default option to be "None"
             templateListComboBox.Items.Clear();
             templateListComboBox.Items.Add("None");
             templateListComboBox.SelectedIndex = 0;
 
             // load template list
-            templates = new List<Template>();
             if (TemplateDB.Load(ref templates))
             {
                 templateListComboBox.Items.AddRange(templates.ToArray());
@@ -49,6 +56,25 @@ namespace Story2
             {
                 MessageBox.Show("Loading template list failed!");
             }
+        }
+
+        /// <summary>
+        /// Initialize settings of columns of tagsDataGridView.
+        /// </summary>
+        private void InitializeTagsDataGridView()
+        {
+            DataGridViewTextBoxColumn tagNameColumn = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Tag Name",
+                SortMode = DataGridViewColumnSortMode.NotSortable
+            };
+            tagsDataGridView.Columns.Add(tagNameColumn);
+            DataGridViewTextBoxColumn inputColumn = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "Input",
+                SortMode = DataGridViewColumnSortMode.NotSortable
+            };
+            tagsDataGridView.Columns.Add(inputColumn);
         }
 
         /// <summary>
@@ -63,8 +89,8 @@ namespace Story2
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
-                InitializeMessageBlocks(string.Empty);
-                InitializeTags();
+                ReloadBlocks(string.Empty);
+                ReloadTags();
                 messageRichTextBox.Text = string.Empty;
                 previewRichTextBox.Text = string.Empty;
             }
@@ -72,8 +98,8 @@ namespace Story2
             {
                 // using a templat - disable messageRichTextBox and rely on tags
                 messageRichTextBox.Enabled = false;
-                InitializeMessageBlocks(templates[templateListComboBox.SelectedIndex - 1].Message);
-                InitializeTags();
+                ReloadBlocks(templates[templateListComboBox.SelectedIndex - 1].Message);
+                ReloadTags();
                 ColorifyText(messageRichTextBox, false);
                 ColorifyText(previewRichTextBox, true);
             }
@@ -97,16 +123,12 @@ namespace Story2
         /// <param name="e"></param>
         private void clearButton_Click(object sender, EventArgs e)
         {
-            // reset tagBlocks
-            foreach (MessageBlock tagBlock in tagBlocks)
-            {
-                tagBlock.Input = string.Empty;
-            }
-
-            // reset tagsDataGridView
             for (int i = 0; i < tagsDataGridView.Rows.Count; i++)
             {
-                tagsDataGridView.Rows[i].Cells[1].Value = "";
+                // reset tagBlocks
+                tagBlocks[i].Input = string.Empty;
+                // reset tagsDataGridView
+                tagsDataGridView.Rows[i].Cells[1].Value = string.Empty;
             }
 
             // reset previewRichTextBox
@@ -114,13 +136,13 @@ namespace Story2
         }
 
         /// <summary>
-        /// Initialize messageBlocks that represent blocks of template content.
+        /// Analyze and set messageBlocks that represent blocks of template content.
         /// </summary>
         /// <param name="message">message of template</param>
-        private void InitializeMessageBlocks(string message)
+        private void ReloadBlocks(string message)
         {
-            messageBlocks = new List<MessageBlock>();
-            tagBlocks = new List<MessageBlock>();
+            messageBlocks.Clear();
+            tagBlocks.Clear();
 
             // Regex tested by https://regexr.com/4mokk
             // it splits {$foo} into blocks
@@ -143,39 +165,40 @@ namespace Story2
                 }
                 else
                 {
-                    messageBlocks.Add(new MessageBlock
+                    MessageBlock messageBlock = new MessageBlock
                     {
                         IsTag = false,
                         Message = block,
                         Input = null
-                    });
+                    };
+                    messageBlocks.Add(messageBlock);
                 }
             }
         }
 
         /// <summary>
-        /// Initialize tags from messageBlocks and bind into tagsDataGridView.
+        /// Load tagBlocks into tagsDataGridView.
         /// </summary>
-        private void InitializeTags()
+        private void ReloadTags()
         {
-            DataTable table = new DataTable();
+            // reset rows
+            tagsDataGridView.Rows.Clear();
 
-            // set columns names
-            table.Columns.Add("Tag Name");
-            table.Columns.Add("Input");
-
-            // set row data
+            // add tagBlock into rows of tagsDataGridView
             foreach (MessageBlock tagBlock in tagBlocks)
             {
-                table.Rows.Add(tagBlock.Message, "");
-            }
-
-            tagsDataGridView.DataSource = table;
-
-            // prevent users to sort data
-            foreach (DataGridViewColumn dataGridViewColumn in tagsDataGridView.Columns)
-            {
-                dataGridViewColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+                DataGridViewRow row = new DataGridViewRow();
+                DataGridViewCell tagCell = new DataGridViewTextBoxCell
+                {
+                    Value = tagBlock.Message
+                };
+                row.Cells.Add(tagCell);
+                DataGridViewCell inputCell = new DataGridViewTextBoxCell
+                {
+                    Value = string.Empty
+                };
+                row.Cells.Add(inputCell);
+                tagsDataGridView.Rows.Add(row);
             }
         }
 
