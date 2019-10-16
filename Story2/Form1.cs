@@ -19,7 +19,6 @@ namespace Story2
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
-        private bool isInitDataGridViewTextBoxEditingControl = false;
 
         public Story2()
         {
@@ -269,13 +268,10 @@ namespace Story2
         /// <param name="e"></param>
         private void TagsDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            // use a flag to prevent registering KeyUp event multiple times
-            if (!isInitDataGridViewTextBoxEditingControl)
-            {
-                DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = e.Control as DataGridViewTextBoxEditingControl;
-                dataGridViewTextBoxEditingControl.KeyUp += DataGridViewTextBoxEditingControl_KeyUp;
-                isInitDataGridViewTextBoxEditingControl = true;
-            }
+            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = e.Control as DataGridViewTextBoxEditingControl;
+            dataGridViewTextBoxEditingControl.KeyUp += DataGridViewTextBoxEditingControl_KeyUp;
+            // unsubscribe event to prevent triggering KeyUp event multiple times
+            tagsDataGridView.EditingControlShowing -= TagsDataGridView_EditingControlShowing;
         }
 
         /// <summary>
