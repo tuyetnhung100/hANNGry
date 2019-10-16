@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using DBConnect1;
+using System.Data.SqlClient;
 
 namespace NotificationLibrary
 {
@@ -7,7 +9,29 @@ namespace NotificationLibrary
     {
         public static Boolean Load(ref List<Notification> notifications)
         {
-            LoadFakeNotifications(ref notifications);
+            SqlConnection connect = ConnectDB.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Select Subject, Message, SentAccountId, SentDate from Notifications", connect);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.Subject = reader.GetString(0);
+                myNotification.Message = reader.GetString(1);
+                myNotification.SentAccountId = reader.GetInt32(2);
+                myNotification.SentDate = reader.GetDateTime(3);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+
+            connect.Close();
+
+            //LoadFakeNotifications(ref notifications);
             return true;
         }
         private static void LoadFakeNotifications(ref List<Notification> notifications)
