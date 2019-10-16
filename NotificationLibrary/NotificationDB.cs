@@ -14,7 +14,7 @@ namespace NotificationLibrary
         {
             Notification note1 = new Notification();
             note1.Subject = "Food";
-            note1.Message = "BLAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH";
+            note1.Message = "BLAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" + Environment.NewLine + "BLAAAHHHHHHHHHHHHHHHHAAH";
             note1.SentDate = DateTime.Now;
 
             Notification note2 = new Notification();

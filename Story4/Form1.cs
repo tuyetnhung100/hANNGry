@@ -59,6 +59,8 @@ namespace Story4
             }
 
             notificationDataGridView.DataSource = datatable;
+
+            
         }
     }
 }
