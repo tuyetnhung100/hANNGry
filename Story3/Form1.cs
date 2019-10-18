@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Microsoft.VisualBasic;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
@@ -45,6 +45,20 @@ namespace Story3
             {
                 templateRichTextBox.Text = null;
             }
+        }
+
+        // Promts the user for a tag name, then inserts the tag into the RTB.
+        private void customTagButton_Click(object sender, EventArgs e)
+        {
+            string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
+            customTagComboBox.Items.Add("{$" + input + "}");
+            templateRichTextBox.SelectedText = "{$" + input + "}";
+        }
+
+        // Inserts selected tag into RTB.
+        private void customTagComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            templateRichTextBox.SelectedText = customTagComboBox.SelectedItem.ToString();
         }
     }
 }
