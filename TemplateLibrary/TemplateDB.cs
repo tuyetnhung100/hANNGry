@@ -31,13 +31,15 @@ namespace TemplateLibrary
                 SqlConnection connection = TemplateDB.GetConnection();
                 connection.Open();
                 string sql = @"
-SELECT [Templates].[TemplateId], 
-       [Templates].[Name], 
-       [Templates].[Message], 
-       [Accounts].[Name] AS 'CreatedAccountName', 
-       [Templates].[CreatedDate]
-FROM[Templates]
-       LEFT JOIN[Accounts] ON[Accounts].[AccountId] = [Templates].[CreatedAccountId]; ; ";
+SELECT
+  Templates.TemplateId,
+  Templates.Name,
+  Templates.Message,
+  Accounts.Name AS CreatedAccountName,
+  Templates.CreatedDate
+FROM Templates
+INNER JOIN Accounts
+  ON Accounts.AccountId = Templates.CreatedAccountId;";
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
