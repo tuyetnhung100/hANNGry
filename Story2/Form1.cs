@@ -26,30 +26,30 @@ namespace Story2
         }
 
         /// <summary>
-        /// Load template list from the DB.
+        /// Initialize controls and set default settings.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            InitializeTemplateListComboBox();
+            InitializeTemplateComboBox();
             InitializeTagsDataGridView();
         }
 
         /// <summary>
-        /// Initialize and load items of templateListComboBox.
+        /// Initialize and load items of templateComboBox.
         /// </summary>
-        private void InitializeTemplateListComboBox()
+        private void InitializeTemplateComboBox()
         {
             // set the default option to be "None"
-            templateListComboBox.Items.Clear();
-            templateListComboBox.Items.Add("None");
-            templateListComboBox.SelectedIndex = 0;
+            templateComboBox.Items.Clear();
+            templateComboBox.Items.Add("None");
+            templateComboBox.SelectedIndex = 0;
 
             // load template list
             if (TemplateDB.Load(ref templates))
             {
-                templateListComboBox.Items.AddRange(templates.ToArray());
+                templateComboBox.Items.AddRange(templates.ToArray());
             }
             else
             {
@@ -82,9 +82,9 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TemplateListComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void TemplateComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (templateListComboBox.SelectedIndex == 0)
+            if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
@@ -97,7 +97,7 @@ namespace Story2
             {
                 // using a templat - disable messageRichTextBox and rely on tags
                 messageRichTextBox.Enabled = false;
-                ReloadBlocks(templates[templateListComboBox.SelectedIndex - 1].Message);
+                ReloadBlocks(templates[templateComboBox.SelectedIndex - 1].Message);
                 ReloadTags();
                 ColorifyText(messageRichTextBox, false);
                 ColorifyText(previewRichTextBox, true);

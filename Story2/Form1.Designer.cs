@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.sendButton = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.previewRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.templateListComboBox = new System.Windows.Forms.ComboBox();
+            this.templateComboBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,7 +49,7 @@
             // 
             this.sendButton.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sendButton.Location = new System.Drawing.Point(1333, 206);
-            this.sendButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.sendButton.Margin = new System.Windows.Forms.Padding(2);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(204, 79);
             this.sendButton.TabIndex = 35;
@@ -87,22 +87,22 @@
             this.previewRichTextBox.Enabled = false;
             this.previewRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 13.85F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.previewRichTextBox.Location = new System.Drawing.Point(451, 206);
-            this.previewRichTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.previewRichTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.previewRichTextBox.Name = "previewRichTextBox";
             this.previewRichTextBox.Size = new System.Drawing.Size(417, 439);
             this.previewRichTextBox.TabIndex = 32;
             this.previewRichTextBox.Text = "";
             // 
-            // templateListComboBox
+            // templateComboBox
             // 
-            this.templateListComboBox.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.templateListComboBox.FormattingEnabled = true;
-            this.templateListComboBox.Location = new System.Drawing.Point(451, 118);
-            this.templateListComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.templateListComboBox.Name = "templateListComboBox";
-            this.templateListComboBox.Size = new System.Drawing.Size(417, 41);
-            this.templateListComboBox.TabIndex = 31;
-            this.templateListComboBox.SelectedIndexChanged += new System.EventHandler(this.TemplateListComboBox_SelectedIndexChanged);
+            this.templateComboBox.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.templateComboBox.FormattingEnabled = true;
+            this.templateComboBox.Location = new System.Drawing.Point(451, 118);
+            this.templateComboBox.Margin = new System.Windows.Forms.Padding(2);
+            this.templateComboBox.Name = "templateComboBox";
+            this.templateComboBox.Size = new System.Drawing.Size(417, 41);
+            this.templateComboBox.TabIndex = 31;
+            this.templateComboBox.SelectedIndexChanged += new System.EventHandler(this.TemplateComboBox_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -111,9 +111,9 @@
             this.label3.Location = new System.Drawing.Point(451, 78);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(150, 33);
+            this.label3.Size = new System.Drawing.Size(110, 33);
             this.label3.TabIndex = 30;
-            this.label3.Text = "Template List";
+            this.label3.Text = "Template";
             // 
             // label2
             // 
@@ -141,7 +141,7 @@
             // 
             this.subjectTextBox.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.subjectTextBox.Location = new System.Drawing.Point(8, 118);
-            this.subjectTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.subjectTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.subjectTextBox.Name = "subjectTextBox";
             this.subjectTextBox.Size = new System.Drawing.Size(417, 39);
             this.subjectTextBox.TabIndex = 27;
@@ -154,7 +154,7 @@
             this.messageRichTextBox.Enabled = false;
             this.messageRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 13.85F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.messageRichTextBox.Location = new System.Drawing.Point(8, 205);
-            this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.messageRichTextBox.Name = "messageRichTextBox";
             this.messageRichTextBox.Size = new System.Drawing.Size(417, 440);
             this.messageRichTextBox.TabIndex = 26;
@@ -177,16 +177,16 @@
             this.tagsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tagsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.tagsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.tagsDataGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.tagsDataGridView.Location = new System.Drawing.Point(893, 206);
-            this.tagsDataGridView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tagsDataGridView.Margin = new System.Windows.Forms.Padding(2);
             this.tagsDataGridView.Name = "tagsDataGridView";
             this.tagsDataGridView.RowTemplate.Height = 38;
             this.tagsDataGridView.Size = new System.Drawing.Size(415, 439);
@@ -198,7 +198,7 @@
             // 
             this.clearButton.Font = new System.Drawing.Font("Arial Narrow", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.clearButton.Location = new System.Drawing.Point(1333, 317);
-            this.clearButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.clearButton.Margin = new System.Windows.Forms.Padding(2);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(204, 79);
             this.clearButton.TabIndex = 37;
@@ -217,7 +217,7 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.previewRichTextBox);
-            this.Controls.Add(this.templateListComboBox);
+            this.Controls.Add(this.templateComboBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -241,7 +241,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.RichTextBox previewRichTextBox;
-        private System.Windows.Forms.ComboBox templateListComboBox;
+        private System.Windows.Forms.ComboBox templateComboBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
