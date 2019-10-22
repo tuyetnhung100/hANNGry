@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/13/2019
+ * Date:               10/21/2019
  * What the code does: Data access layer of Template.
  */
 
@@ -13,7 +13,8 @@ namespace TemplateLibrary
 {
     public class TemplateDB
     {
-        public static SqlConnection GetConnection()
+        // It will be removed when DBConnect project is merged.
+        private static SqlConnection GetConnection()
         {
             SqlConnection connect = new SqlConnection("Server=cisdbss.pcc.edu;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
             return connect;
@@ -23,12 +24,14 @@ namespace TemplateLibrary
         /// Load all templates.
         /// </summary>
         /// <param name="templates">result list of templates</param>
-        /// <returns></returns>
-        public static Boolean Load(ref List<Template> templates)
+        /// <returns>whether the command is succeeded</returns>
+        public static bool Load(ref List<Template> templates)
         {
+            templates.Clear();
+
             try
             {
-                SqlConnection connection = TemplateDB.GetConnection();
+                SqlConnection connection = GetConnection();
                 connection.Open();
                 string sql = @"
 SELECT
