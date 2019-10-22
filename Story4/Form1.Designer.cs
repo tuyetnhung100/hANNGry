@@ -36,16 +36,18 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.clearButton = new System.Windows.Forms.Button();
-            this.messageRichTextBox = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.notificationDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // notificationDataGridView
             // 
+            this.notificationDataGridView.AllowUserToAddRows = false;
+            this.notificationDataGridView.AllowUserToDeleteRows = false;
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.notificationDataGridView.Location = new System.Drawing.Point(63, 188);
             this.notificationDataGridView.Name = "notificationDataGridView";
-            this.notificationDataGridView.Size = new System.Drawing.Size(519, 297);
+            this.notificationDataGridView.ReadOnly = true;
+            this.notificationDataGridView.Size = new System.Drawing.Size(771, 297);
             this.notificationDataGridView.TabIndex = 0;
             // 
             // findButton
@@ -115,20 +117,11 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
-            // messageRichTextBox
-            // 
-            this.messageRichTextBox.Location = new System.Drawing.Point(653, 188);
-            this.messageRichTextBox.Name = "messageRichTextBox";
-            this.messageRichTextBox.Size = new System.Drawing.Size(203, 297);
-            this.messageRichTextBox.TabIndex = 8;
-            this.messageRichTextBox.Text = "";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(936, 601);
-            this.Controls.Add(this.messageRichTextBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -156,7 +149,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button clearButton;
-        private System.Windows.Forms.RichTextBox messageRichTextBox;
     }
 }
 
