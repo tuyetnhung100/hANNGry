@@ -135,6 +135,9 @@ namespace Story2
                 }
 
                 MessageBox.Show("Notification sent successfully!");
+
+                // clear data to prevent submitting again
+                clearButton.PerformClick();
             }
             catch (Exception)
             {
