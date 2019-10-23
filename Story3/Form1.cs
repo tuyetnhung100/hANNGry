@@ -46,11 +46,19 @@ namespace Story3
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
-            Tag myTag = new Tag();
-            myTag.Name = "{$" + input + "}";
-            TagDB.Add(myTag);
-            customTagComboBox.Items.Add("{$" + input + "}");
-            templateRichTextBox.SelectedText = "{$" + input + "}";
+            if (!customTagComboBox.Items.Contains("{$" + input + "}"))
+            {
+                Tag myTag = new Tag();
+                myTag.Name = "{$" + input + "}";
+                TagDB.Add(myTag);
+                customTagComboBox.Items.Add("{$" + input + "}");
+                templateRichTextBox.SelectedText = "{$" + input + "}";
+            }
+            else
+            {
+                MessageBox.Show("Custom Tag already exists! Please select the tag from the dropdown box.", "Warning!");
+            }
+            
         }
 
         // Inserts selected tag into RTB.
