@@ -44,16 +44,16 @@
             this.notificationDataGridView.AllowUserToAddRows = false;
             this.notificationDataGridView.AllowUserToDeleteRows = false;
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.notificationDataGridView.Location = new System.Drawing.Point(63, 188);
+            this.notificationDataGridView.Location = new System.Drawing.Point(25, 188);
             this.notificationDataGridView.Name = "notificationDataGridView";
             this.notificationDataGridView.ReadOnly = true;
-            this.notificationDataGridView.Size = new System.Drawing.Size(771, 297);
+            this.notificationDataGridView.Size = new System.Drawing.Size(885, 336);
             this.notificationDataGridView.TabIndex = 0;
             // 
             // findButton
             // 
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findButton.Location = new System.Drawing.Point(624, 112);
+            this.findButton.Location = new System.Drawing.Point(117, 112);
             this.findButton.Name = "findButton";
             this.findButton.Size = new System.Drawing.Size(160, 60);
             this.findButton.TabIndex = 1;
@@ -109,7 +109,7 @@
             // clearButton
             // 
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(88, 112);
+            this.clearButton.Location = new System.Drawing.Point(624, 112);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(160, 60);
             this.clearButton.TabIndex = 7;

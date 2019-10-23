@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s) Alex Matthias
- * Date: 10/15/2019
+ * Date: 10/22/2019
  * What the code does: Retrieve notifications sent
  */
 
@@ -43,10 +43,12 @@ namespace Story4
 
         private void findButton_Click(object sender, EventArgs e)
         {
-            // This is supply fake data for the DataGridView for testing
+
+            DateTime startTime = firstDateTimePicker.Value;
+            DateTime endTime = secondDateTimePicker.Value;
 
             List<Notification> notifications = new List<Notification>();
-            NotificationDB.Load(ref notifications);
+            NotificationDB.Load(startTime, endTime, ref notifications);
             DataTable datatable = new DataTable();
             datatable.Columns.Add("Sender");
             datatable.Columns.Add("Subject");
@@ -60,7 +62,22 @@ namespace Story4
 
             notificationDataGridView.DataSource = datatable;
 
-            
+            notificationDataGridView.Columns[0].Width = 100;
+            notificationDataGridView.Columns[1].Width = 100;
+            notificationDataGridView.Columns[2].Width = 510;
+            notificationDataGridView.Columns[3].Width = 125;
+
+
+
+
+
+            //foreach (DataGridViewRow r in notificationDataGridView.Rows)
+            //{
+            //    r.Height = 100;
+            //}
+            // notificationDataGridView.Rows[0].Height = 50;
+
+
         }
     }
 }

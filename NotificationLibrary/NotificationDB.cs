@@ -7,12 +7,15 @@ namespace NotificationLibrary
 {
     public class NotificationDB
     {
-        public static Boolean Load(ref List<Notification> notifications)
+        public static Boolean Load(DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = ConnectDB.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Subject, Message, SentAccountId, SentDate from Notifications", connect);
+            SqlCommand command = new SqlCommand("Select Subject, Message, SentAccountId, SentDate from Notifications where SentDate > @start and SentDate < @end ", connect);
+
+            command.Parameters.AddWithValue("@start", start);
+            command.Parameters.AddWithValue("@end", end);
 
             SqlDataReader reader = command.ExecuteReader();
 
