@@ -1,4 +1,10 @@
-﻿using AccountLibrary;
+﻿/*
+ * Programmer(s):      Gong-Hao
+ * Date:               10/23/2019
+ * What the code does: Data access layer of Notification.
+ */
+
+using AccountLibrary;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -21,10 +27,10 @@ namespace NotificationLibrary
         }
 
         /// <summary>
-        /// Insert Notification
+        /// Insert a Notification.
         /// </summary>
-        /// <param name="command">SqlCommand</param>
-        /// <param name="notification">Notification data</param>
+        /// <param name="command">The SqlCommand</param>
+        /// <param name="notification">The Notification data</param>
         /// <returns></returns>
         private static int InsertNotification(SqlCommand command, Notification notification)
         {
@@ -60,53 +66,12 @@ SELECT
             return notificationId;
         }
 
-
         /// <summary>
-        /// Get Subscriber Id list
+        /// Insert SubscriberNotification map table and reference subscribers.
         /// </summary>
-        /// <param name="command">SqlCommand</param>
-        /// <param name="subscribers"></param>
-        private static void GetSubscribers(SqlCommand command, ref List<Account> subscribers)
-        {
-            subscribers.Clear();
-
-            // set select sql
-            string sql = @"
-SELECT
-  AccountId,
-  Name
-FROM Accounts
-WHERE Role = @Role;";
-            command.CommandText = sql;
-
-            // set Parameters
-            command.Parameters.Clear();
-            command.Parameters.AddWithValue("@Role", Role.Subscriber);
-
-            // read data into a int list
-            SqlDataReader reader = command.ExecuteReader();
-            int accountId = reader.GetOrdinal("AccountId");
-            int name = reader.GetOrdinal("Name");
-
-            while (reader.Read())
-            {
-                Account account = new Account
-                {
-                    AccountId = reader.GetInt32(accountId),
-                    Name = reader.GetString(name)
-                };
-                subscribers.Add(account);
-            }
-
-            reader.Close();
-        }
-
-        /// <summary>
-        /// Insert SubscriberNotification map table and reference subscriberIds
-        /// </summary>
-        /// <param name="command">SqlCommand</param>
-        /// <param name="notificationId">Notification Id</param>
-        /// <param name="subscribers">Subscriber list</param>
+        /// <param name="command">The SqlCommand</param>
+        /// <param name="notificationId">The NotificationId</param>
+        /// <param name="subscribers">The Subscribers</param>
         private static void InsertSubscriberNotification(SqlCommand command, int notificationId, ref List<Account> subscribers)
         {
             List<string> values = new List<string>();
@@ -144,11 +109,11 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
         }
 
         /// <summary>
-        /// Send Notification and reference subscriberIds
+        /// Send Notification and reference subscribers.
         /// </summary>
-        /// <param name="notification">Notification data</param>
-        /// <param name="subscribers">Subscriber list</param>
-        /// <returns>whether the command is succeeded</returns>
+        /// <param name="notification">The Notification data</param>
+        /// <param name="subscribers">The Subscribers</param>
+        /// <returns>Whether the command is succeeded</returns>
         public static bool SendNotification(Notification notification, ref List<Account> subscribers)
         {
             try
@@ -162,7 +127,7 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
                 // insert Notification and get the new notificationId
                 int notificationId = InsertNotification(command, notification);
                 // select all subscribers that role is Role.Subscriber
-                GetSubscribers(command, ref subscribers);
+                AccountDB.GetSubscribers(command, ref subscribers);
                 // insert SubscriberNotification map table
                 InsertSubscriberNotification(command, notificationId, ref subscribers);
 
