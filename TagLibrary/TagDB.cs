@@ -20,7 +20,7 @@ namespace TagLibrary
             while (reader.Read())
             {
                 myTag = new Tag();
-                myTag.TagId = reader.GetInt32(0);
+                myTag.Type = (TagType)reader.GetInt32(0);
                 myTag.Name = reader.GetString(1);
                 tags.Add(myTag);
             }
@@ -38,10 +38,10 @@ namespace TagLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Tags(TagId, Name)" +
-                " Values('', @Name)", connect);
+            SqlCommand command = new SqlCommand("Insert into Tags(Type, Name)" +
+                " Values(1, @Name)", connect);
 
-            command.Parameters.AddWithValue("@TagId", myTag.TagId);
+            command.Parameters.AddWithValue("@Type", myTag.Type);
             command.Parameters.AddWithValue("@Name", myTag.Name);
 
             command.ExecuteNonQuery();
