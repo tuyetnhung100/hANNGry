@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using TagLibrary;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
@@ -22,19 +23,13 @@ namespace Story3
 
         private void templateCreator_Load(object sender, EventArgs e)
         {
+            List<Tag> myTagList = new List<Tag>();
+            TagDB.Load(ref myTagList);
 
-        }
-
-        // Inserts the tag for the student name.
-        private void studentNameTagButton_Click(object sender, EventArgs e)
-        {
-            templateRichTextBox.SelectedText = "{$student.name}";
-        }
-
-        // Inserts the tag for the staff name.
-        private void staffNameTagButton_Click(object sender, EventArgs e)
-        {
-            templateRichTextBox.SelectedText = "{$staff.name}";
+            foreach(Tag myTag in myTagList)
+            {
+                customTagComboBox.Items.Add(myTag.Name);
+            }
         }
 
         // Clears the rich text box.
@@ -51,6 +46,9 @@ namespace Story3
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
+            Tag myTag = new Tag();
+            myTag.Name = "{$" + input + "}";
+            TagDB.Add(myTag);
             customTagComboBox.Items.Add("{$" + input + "}");
             templateRichTextBox.SelectedText = "{$" + input + "}";
         }

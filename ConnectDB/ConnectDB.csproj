@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B6105FB-109B-4530-91F0-5988F570D64B}</ProjectGuid>
+    <ProjectGuid>{B69D10CA-D8DD-4168-901B-EF1B37B6E800}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TagLibrary</RootNamespace>
-    <AssemblyName>TagLibrary</AssemblyName>
+    <RootNamespace>ConnectDB</RootNamespace>
+    <AssemblyName>ConnectDB</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,16 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TagDB.cs" />
-    <Compile Include="Tag.cs" />
+    <Compile Include="DBConnect.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TagType.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
-      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
-      <Name>ConnectDB</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
