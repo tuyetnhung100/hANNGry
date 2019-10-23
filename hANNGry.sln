@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Story4", "Story4\Story4.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Story1", "Story1\Story1.csproj", "{584BFA06-41DB-4037-85EE-CE6F9B268C0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBconnect", "DBconnect\DBconnect.csproj", "{24375107-D054-4A9B-A6DA-0F46A6F26B29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{584BFA06-41DB-4037-85EE-CE6F9B268C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{584BFA06-41DB-4037-85EE-CE6F9B268C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{584BFA06-41DB-4037-85EE-CE6F9B268C0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24375107-D054-4A9B-A6DA-0F46A6F26B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24375107-D054-4A9B-A6DA-0F46A6F26B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24375107-D054-4A9B-A6DA-0F46A6F26B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24375107-D054-4A9B-A6DA-0F46A6F26B29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
