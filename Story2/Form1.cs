@@ -9,7 +9,10 @@ using AccountLibrary;
 using NotificationLibrary;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TagLibrary;
@@ -125,14 +128,19 @@ namespace Story2
             }
             try
             {
+                SmtpClient smtpClient = GetSmtpClient();
+
                 // loop subscriberIds and send emails
                 foreach (Account subscriber in subscribers)
                 {
                     string email = subscriber.Email;
                     string subject = notification.Subject;
-                    string message = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-                    // todo: send notification by emails
+                    string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
+                    SendEmail(smtpClient, email, subject, body);
+                    break;
                 }
+
+                smtpClient.Dispose();
 
                 MessageBox.Show("Notification sent successfully!");
 
@@ -447,6 +455,48 @@ namespace Story2
                             break;
                     }
                 }
+            }
+        }
+
+        private SmtpClient GetSmtpClient()
+        {
+            SmtpClient smtpClient = new SmtpClient();
+            return smtpClient;
+        }
+
+        private void SendEmail(SmtpClient client, string email, string subject, string body)
+        {
+            MailAddress from = new MailAddress(
+                "gonghao.wei@pcc.edu",
+                "Gong-Hao " + (char)0xD8 + " Wei",
+                Encoding.UTF8
+            );
+            MailAddress to = new MailAddress("gonghao.wei@pcc.edu");
+            MailMessage message = new MailMessage(from, to);
+            message.Body = body;
+            message.BodyEncoding = Encoding.UTF8;
+            message.Subject = subject;
+            message.SubjectEncoding = Encoding.UTF8;
+            // client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
+            client.SendAsync(message, email);
+            message.Dispose();
+        }
+
+        private void SendCompletedCallback(object sender, AsyncCompletedEventArgs e)
+        {
+            string email = (string)e.UserState;
+
+            if (e.Cancelled)
+            {
+                Console.WriteLine("[{0}] Send canceled.", email);
+            }
+            else if (e.Error != null)
+            {
+                Console.WriteLine("[{0}] {1}", email, e.Error.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Message sent.");
             }
         }
     }
