@@ -80,6 +80,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
+      <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
+      <Name>AccountLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NotificationLibrary\NotificationLibrary.csproj">
+      <Project>{8C1AB096-7F59-4D72-8328-0716E7A2FC20}</Project>
+      <Name>NotificationLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TagLibrary\TagLibrary.csproj">
+      <Project>{1B6105FB-109B-4530-91F0-5988F570D64B}</Project>
+      <Name>TagLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TemplateLibrary\TemplateLibrary.csproj">
       <Project>{D91A0F58-168A-4E4B-8D3F-3A25B8AE124B}</Project>
       <Name>TemplateLibrary</Name>

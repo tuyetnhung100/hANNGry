@@ -1,21 +1,26 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/13/2019
+ * Date:               10/21/2019
  * What the code does: 1. Using a template to from a notification message
  *                     2. Sending the notification to subscribers
  */
 
+using AccountLibrary;
+using NotificationLibrary;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using TagLibrary;
 using TemplateLibrary;
 
 namespace Story2
 {
     public partial class Story2 : Form
     {
+        private Account staff = new Account();
+        private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
@@ -26,81 +31,74 @@ namespace Story2
         }
 
         /// <summary>
-        /// Load template list from the DB.
+        /// Initialize controls and set default settings.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            InitializeTemplateListComboBox();
-            InitializeTagsDataGridView();
+            LoadLoginedStaff();
+            InitializeTemplateComboBox();
         }
 
         /// <summary>
-        /// Initialize and load items of templateListComboBox.
+        /// Load Logined Staff
         /// </summary>
-        private void InitializeTemplateListComboBox()
+        private void LoadLoginedStaff()
+        {
+            if (!AccountDB.GetLoginedStaff(ref staff))
+            {
+                MessageBox.Show("Loading Logined Staff failed!");
+            }
+        }
+
+        /// <summary>
+        /// Initialize and load items of templateComboBox.
+        /// </summary>
+        private void InitializeTemplateComboBox()
         {
             // set the default option to be "None"
-            templateListComboBox.Items.Clear();
-            templateListComboBox.Items.Add("None");
-            templateListComboBox.SelectedIndex = 0;
+            templateComboBox.Items.Clear();
+            templateComboBox.Items.Add("None");
+            templateComboBox.SelectedIndex = 0;
 
-            // load template list
+            // load templates
             if (TemplateDB.Load(ref templates))
             {
-                templateListComboBox.Items.AddRange(templates.ToArray());
+                templateComboBox.Items.AddRange(templates.ToArray());
             }
             else
             {
-                MessageBox.Show("Loading template list failed!");
+                MessageBox.Show("Loading templates failed!");
             }
         }
 
         /// <summary>
-        /// Initialize settings of columns of tagsDataGridView.
-        /// </summary>
-        private void InitializeTagsDataGridView()
-        {
-            DataGridViewTextBoxColumn tagNameColumn = new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Tag Name",
-                SortMode = DataGridViewColumnSortMode.NotSortable
-            };
-            tagsDataGridView.Columns.Add(tagNameColumn);
-            DataGridViewTextBoxColumn inputColumn = new DataGridViewTextBoxColumn
-            {
-                HeaderText = "Input",
-                SortMode = DataGridViewColumnSortMode.NotSortable
-            };
-            tagsDataGridView.Columns.Add(inputColumn);
-        }
-
-        /// <summary>
-        /// When changed, applies selected template into both messageRichTextBox and previewRichTextBox.
-        /// If selected "None", then clears texts of messageRichTextBox and previewRichTextBox.
+        /// When changed, applies selected template into messageRichTextBox.
+        /// If selected "None", then clears text of messageRichTextBox.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TemplateListComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void TemplateComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (templateListComboBox.SelectedIndex == 0)
+            if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
+                ReloadTags(null);
                 ReloadBlocks(string.Empty);
-                ReloadTags();
+                ReloadTagInputs();
                 messageRichTextBox.Text = string.Empty;
-                previewRichTextBox.Text = string.Empty;
             }
             else
             {
                 // using a templat - disable messageRichTextBox and rely on tags
+                Template template = templates[templateComboBox.SelectedIndex - 1];
                 messageRichTextBox.Enabled = false;
-                ReloadBlocks(templates[templateListComboBox.SelectedIndex - 1].Message);
-                ReloadTags();
-                ColorifyText(messageRichTextBox, false);
-                ColorifyText(previewRichTextBox, true);
+                ReloadTags(template);
+                ReloadBlocks(template.Message);
+                ReloadTagInputs();
+                ColorifyText();
             }
         }
 
@@ -111,8 +109,161 @@ namespace Story2
         /// <param name="e"></param>
         private void SendButton_Click(object sender, EventArgs e)
         {
-            // todo: send notification by emails
-            MessageBox.Show("Notification sent successfully!");
+            // get Notification data from controls
+            Notification notification = GetNotification();
+            if (!ValidateNotification(notification))
+            {
+                return;
+            }
+
+            // insert and get subscriberIds
+            List<Account> subscribers = new List<Account>();
+            if (!NotificationDB.SendNotification(notification, ref subscribers))
+            {
+                MessageBox.Show("Insert notification failed!");
+                return;
+            }
+            try
+            {
+                // loop subscriberIds and send emails
+                foreach (Account subscriber in subscribers)
+                {
+                    string email = subscriber.Email;
+                    string subject = notification.Subject;
+                    string message = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
+                    // todo: send notification by emails
+                }
+
+                MessageBox.Show("Notification sent successfully!");
+
+                // clear data to prevent submitting again
+                clearButton.PerformClick();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Send email failed!");
+            }
+        }
+
+        /// <summary>
+        /// Validate Notification data
+        /// </summary>
+        /// <param name="notification"></param>
+        /// <returns></returns>
+        private bool ValidateNotification(Notification notification)
+        {
+            string errorMessage = string.Empty;
+
+            // check Subject
+            if (string.IsNullOrWhiteSpace(notification.Subject))
+            {
+                errorMessage += "Subject is required!" + Environment.NewLine;
+            }
+
+            // check Message
+            if (string.IsNullOrWhiteSpace(notification.Subject))
+            {
+                errorMessage += "Message is required!" + Environment.NewLine;
+            }
+
+            // check tags
+            foreach (MessageBlock tagBlock in tagBlocks)
+            {
+                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
+                {
+                    errorMessage += "Tag \"" + tagBlock.Tag.Name + "\" is required!" + Environment.NewLine;
+                }
+            }
+
+            // show errorMessage if any
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                MessageBox.Show(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Get Notification data from controls
+        /// </summary>
+        /// <returns></returns>
+        private Notification GetNotification()
+        {
+            string message = GetInputFilledMessage();
+
+            Notification notification = new Notification
+            {
+                Subject = subjectTextBox.Text,
+                Message = message,
+                SentAccountId = staff.AccountId
+            };
+
+            if (templateComboBox.SelectedIndex != 0)
+            {
+                Template template = templates[templateComboBox.SelectedIndex - 1];
+                notification.TemplateId = template.TemplateId;
+            }
+
+            return notification;
+        }
+
+        /// <summary>
+        /// Get message that user inputs has been filled
+        /// </summary>
+        /// <returns></returns>
+        private string GetInputFilledMessage()
+        {
+            string message = string.Empty;
+
+            foreach (MessageBlock messageBlock in messageBlocks)
+            {
+                if (messageBlock.IsTag)
+                {
+                    if (messageBlock.Tag.Type == TagType.UserInput)
+                    {
+                        message += messageBlock.Input;
+                    }
+                    else
+                    {
+                        message += "{$" + messageBlock.Tag.Name + "}";
+                    }
+                }
+                else
+                {
+                    message += messageBlock.Message;
+                }
+            }
+
+            return message;
+        }
+
+        /// <summary>
+        /// Replace DatabaseField of message
+        /// </summary>
+        /// <param name="subscriber">The subscriber</param>
+        /// <param name="message">Message from the template</param>
+        /// <param name="tags">tags of the template</param>
+        /// <returns></returns>
+        private string ReplaceDatabaseField(Account subscriber, string message, ref List<Tag> tags)
+        {
+            foreach (Tag tag in tags)
+            {
+                if (tag.Type == TagType.DatabaseField)
+                {
+                    switch (tag.Name)
+                    {
+                        case "Student Name":
+                            message = message.Replace("{$Student Name}", subscriber.Name);
+                            break;
+                        case "Staff Name":
+                            message = message.Replace("{$Staff Name}", staff.Name);
+                            break;
+                    }
+                }
+            }
+            return message;
         }
 
         /// <summary>
@@ -122,16 +273,40 @@ namespace Story2
         /// <param name="e"></param>
         private void clearButton_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < tagsDataGridView.Rows.Count; i++)
+            // reset subject
+            subjectTextBox.Text = string.Empty;
+
+            // reset tag inputs
+            foreach (Control control in tagsPanel.Controls)
             {
-                // reset tagBlocks
-                tagBlocks[i].Input = string.Empty;
-                // reset tagsDataGridView
-                tagsDataGridView.Rows[i].Cells[1].Value = string.Empty;
+                if (control is TextBox)
+                {
+                    (control as TextBox).Text = string.Empty;
+                }
             }
 
-            // reset previewRichTextBox
-            ColorifyText(previewRichTextBox, true);
+            // reset messageRichTextBox
+            ColorifyText();
+        }
+
+        /// <summary>
+        /// Load tags by TemplateId
+        /// </summary>
+        /// <param name="template"></param>
+        private void ReloadTags(Template template)
+        {
+            if (template != null)
+            {
+                // load tags
+                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
+                {
+                    MessageBox.Show("Loading tags failed!");
+                }
+            }
+            else
+            {
+                tags.Clear();
+            }
         }
 
         /// <summary>
@@ -153,10 +328,13 @@ namespace Story2
                 bool isTag = Regex.IsMatch(block, @"^\{\$.*?\}$");
                 if (isTag)
                 {
+                    string tagName = block.Substring(2, block.Length - 3);
+                    Tag tag = tags.Find(x => x.Name == tagName);
                     MessageBlock messageBlock = new MessageBlock
                     {
+                        Tag = tag,
                         IsTag = true,
-                        Message = block,
+                        Message = tagName,
                         Input = string.Empty
                     };
                     messageBlocks.Add(messageBlock);
@@ -166,6 +344,7 @@ namespace Story2
                 {
                     MessageBlock messageBlock = new MessageBlock
                     {
+                        Tag = null,
                         IsTag = false,
                         Message = block,
                         Input = null
@@ -178,114 +357,97 @@ namespace Story2
         /// <summary>
         /// Load tagBlocks into tagsDataGridView.
         /// </summary>
-        private void ReloadTags()
+        private void ReloadTagInputs()
         {
-            // reset rows
-            tagsDataGridView.Rows.Clear();
+            // reset tag inputs
+            tagsPanel.Controls.Clear();
+            tagsPanel.Width = 800;
+            int index = 0;
+            int tabIndex = 0;
+            Font font = new Font("Arial Narrow", 13.875F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
-            // add tagBlock into rows of tagsDataGridView
+            // add tagBlock into tag inputs
             foreach (MessageBlock tagBlock in tagBlocks)
             {
-                DataGridViewRow row = new DataGridViewRow();
-                DataGridViewCell tagCell = new DataGridViewTextBoxCell
+                if (tagBlock.Tag.Type == TagType.DatabaseField)
                 {
-                    Value = tagBlock.Message
-                };
-                row.Cells.Add(tagCell);
-                DataGridViewCell inputCell = new DataGridViewTextBoxCell
+                    continue;
+                }
+                Label tagLabel = new Label
                 {
-                    Value = string.Empty
+                    AutoSize = true,
+                    Font = font,
+                    Location = new Point(20, 84 + (index * 56)),
+                    Name = tagBlock.Tag.Name + "Label",
+                    Size = new Size(120, 43),
+                    TabIndex = tabIndex++,
+                    Text = "&" + (index + 1) + ". " + tagBlock.Tag.Name
                 };
-                row.Cells.Add(inputCell);
-                tagsDataGridView.Rows.Add(row);
+                tagsPanel.Controls.Add(tagLabel);
+                TextBox tagTextBox = new TextBox
+                {
+                    Font = font,
+                    Location = new Point(230, 80 + (index * 56)),
+                    Name = tagBlock.Tag.Name + "TextBox",
+                    Size = new Size(240, 50),
+                    TabIndex = tabIndex++
+                };
+                tagTextBox.TextChanged += TagTextBox_TextChanged;
+                tagsPanel.Controls.Add(tagTextBox);
+                index++;
             }
         }
 
         /// <summary>
-        /// Colorify RichTextBox's text.
+        /// Update messageRichTextBox when tagInput's text changed
         /// </summary>
-        /// <param name="richTextBox">target RichTextBox</param>
-        /// <param name="isPreview">whether the RichTextBox is preview box</param>
-        private void ColorifyText(RichTextBox richTextBox, bool isPreview)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TagTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            string tagName = textBox.Name.Replace("TextBox", "");
+            MessageBlock tagBlock = tagBlocks.Find(x => x.Tag.Name == tagName);
+            tagBlock.Input = textBox.Text;
+            ColorifyText();
+        }
+
+        /// <summary>
+        /// Colorify messageRichTextBox's text.
+        /// </summary>
+        private void ColorifyText()
         {
             // reset text value
-            richTextBox.Clear();
+            messageRichTextBox.Clear();
 
-            // append all blocks to be text value of RichTextBox
+            // append all blocks to be text value of messageRichTextBox
             foreach (MessageBlock messageBlock in messageBlocks)
             {
                 if (!messageBlock.IsTag)
                 {
                     // set normal text color to be black
-                    richTextBox.SelectionColor = Color.Black;
-                    richTextBox.AppendText(messageBlock.Message);
+                    messageRichTextBox.SelectionColor = Color.Black;
+                    messageRichTextBox.AppendText(messageBlock.Message);
                 }
                 else
                 {
-                    if (isPreview)
+                    switch (messageBlock.Tag.Type)
                     {
-                        // set tag text of preview box to be red
-                        // if there has user input, set text to be green
-                        bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input);
-                        richTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
-                        richTextBox.AppendText(hasInput ? messageBlock.Input : messageBlock.Message);
-                    }
-                    else
-                    {
-                        // set tag text of message box to be red
-                        richTextBox.SelectionColor = Color.Red;
-                        richTextBox.AppendText(messageBlock.Message);
+                        case TagType.DatabaseField:
+                            // if TagType is DatabaseField, set tag text to be blue
+                            messageRichTextBox.SelectionColor = Color.Blue;
+                            messageRichTextBox.AppendText(messageBlock.Message);
+                            break;
+                        case TagType.UserInput:
+                            // if TagType is UserInput, set tag text to be red
+                            // if there has user input, set tag text to be green
+                            bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input);
+                            messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
+                            messageRichTextBox.AppendText(hasInput ? messageBlock.Input : messageBlock.Message);
+                            break;
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// When cell is focused, if the cell is editable (not a label), switch it to the edit mode.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TagsDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            bool isEditable = e.ColumnIndex == 1 && e.RowIndex >= 0 && e.RowIndex < tagsDataGridView.Rows.Count;
-            if (isEditable)
-            {
-                // auto switch to edit mode if it is editable
-                tagsDataGridView.ReadOnly = false;
-                tagsDataGridView.BeginEdit(true);
-            }
-            else
-            {
-                // a label is ReadOnly
-                tagsDataGridView.ReadOnly = true;
-            }
-        }
-
-        /// <summary>
-        /// When switch to the edit mode, register KeyUp event in order to update preview simultaneously.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TagsDataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = e.Control as DataGridViewTextBoxEditingControl;
-            dataGridViewTextBoxEditingControl.KeyUp += DataGridViewTextBoxEditingControl_KeyUp;
-            // unsubscribe event to prevent triggering KeyUp event multiple times
-            tagsDataGridView.EditingControlShowing -= TagsDataGridView_EditingControlShowing;
-        }
-
-        /// <summary>
-        /// Update messageBlock and reflash preview message.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DataGridViewTextBoxEditingControl_KeyUp(object sender, KeyEventArgs e)
-        {
-            DataGridViewTextBoxEditingControl dataGridViewTextBoxEditingControl = sender as DataGridViewTextBoxEditingControl;
-            string input = dataGridViewTextBoxEditingControl.Text;
-            int index = tagsDataGridView.CurrentCell.RowIndex;
-            tagBlocks[index].Input = input;
-            ColorifyText(previewRichTextBox, true);
         }
     }
 }

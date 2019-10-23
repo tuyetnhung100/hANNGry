@@ -1,85 +1,81 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/13/2019
+ * Date:               10/21/2019
  * What the code does: Data access layer of Template.
  */
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Windows.Forms;
 
 namespace TemplateLibrary
 {
     public class TemplateDB
     {
+        // It will be removed when DBConnect project is merged.
+        private static SqlConnection GetConnection()
+        {
+            SqlConnection connect = new SqlConnection("Server=cisdbss.pcc.edu;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
+            return connect;
+        }
+
         /// <summary>
         /// Load all templates.
         /// </summary>
         /// <param name="templates">result list of templates</param>
-        /// <returns></returns>
-        public static Boolean Load(ref List<Template> templates)
+        /// <returns>whether the command is succeeded</returns>
+        public static bool Load(ref List<Template> templates)
         {
-            // todo: load real templates from DB
-            LoadFakeTemplates(ref templates);
-            return true;
-        }
+            templates.Clear();
 
-        /// <summary>
-        /// Load fake templates. Only use for testing.
-        /// </summary>
-        /// <param name="templates">result list of templates</param>
-        private static void LoadFakeTemplates(ref List<Template> templates)
-        {
-            templates.Add(new Template
+            try
             {
-                TemplateId = 1,
-                Name = "Basic Template",
-                Message = @"Dear {$student.name},
-There will be {$food} at the {$campus} campus in {$room} on {$date} from {$startTime} to {$endTime}.
+                SqlConnection connection = GetConnection();
+                connection.Open();
+                string sql = @"
+SELECT
+  Templates.TemplateId,
+  Templates.Name,
+  Templates.Message,
+  Accounts.Name AS CreatedAccountName,
+  Templates.CreatedDate
+FROM Templates
+INNER JOIN Accounts
+  ON Accounts.AccountId = Templates.CreatedAccountId;";
+                SqlCommand command = new SqlCommand(sql, connection);
+                SqlDataReader reader = command.ExecuteReader();
 
-Thanks,
+                int templateId = reader.GetOrdinal("TemplateId");
+                int name = reader.GetOrdinal("Name");
+                int message = reader.GetOrdinal("Message");
+                int createdAccountName = reader.GetOrdinal("CreatedAccountName");
+                int createdDate = reader.GetOrdinal("CreatedDate");
 
-{$staff.name}",
-                CreatedAccountId = 1,
-                CreatedDate = DateTime.Now
-            });
-            templates.Add(new Template
-            {
-                TemplateId = 2,
-                Name = "Cool Template",
-                Message = @"Dear {$student.name},
-{$campus} campus will have {$eventName} at {$room} on {$date} from {$startTime} to {$endTime}.
-We would like to invite you to join us.
+                while (reader.Read())
+                {
+                    Template template = new Template
+                    {
+                        TemplateId = reader.GetInt32(templateId),
+                        Name = reader.GetString(name),
+                        Message = reader.GetString(message),
+                        CreatedAccountName = reader.GetString(createdAccountName),
+                        CreatedDate = reader.GetDateTime(createdDate)
+                    };
+                    templates.Add(template);
+                }
 
-Thanks,
+                reader.Close();
 
-{$staff.name}",
-                CreatedAccountId = 1,
-                CreatedDate = DateTime.Now
-            });
-            templates.Add(new Template
+                connection.Close();
+
+                return true;
+            }
+            catch (Exception ex)
             {
-                TemplateId = 3,
-                Name = "Super Template",
-                Message = "Super Template",
-                CreatedAccountId = 1,
-                CreatedDate = DateTime.Now
-            });
-            templates.Add(new Template
-            {
-                TemplateId = 4,
-                Name = "Gorgeous Template",
-                Message = "Gorgeous Template",
-                CreatedAccountId = 2,
-                CreatedDate = DateTime.Now
-            });
-            templates.Add(new Template
-            {
-                TemplateId = 5,
-                Name = "Superior Template",
-                Message = "Superior Template",
-                CreatedAccountId = 2,
-                CreatedDate = DateTime.Now
-            });
+                MessageBox.Show(ex.Message);
+                return false;
+            }
         }
     }
 }
