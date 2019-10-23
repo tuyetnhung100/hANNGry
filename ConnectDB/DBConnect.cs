@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 
 namespace ConnectDB
 {
+    // Connects to the DB with the credentials.
     public class DBConnect
     {
         public static SqlConnection GetConnection()

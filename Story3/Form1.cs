@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using TagLibrary;
+using TemplateLibrary;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
@@ -21,6 +22,7 @@ namespace Story3
             InitializeComponent();
         }
 
+        // Loads the templateCreator, adds all of the tags to the tag combo box from the db.
         private void templateCreator_Load(object sender, EventArgs e)
         {
             List<Tag> myTagList = new List<Tag>();
@@ -43,6 +45,7 @@ namespace Story3
         }
 
         // Promts the user for a tag name, then inserts the tag into the RTB.
+        // If the tag already exists, warns user to select from the drop down.
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
@@ -65,6 +68,17 @@ namespace Story3
         private void customTagComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             templateRichTextBox.SelectedText = customTagComboBox.SelectedItem.ToString();
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            string input = Interaction.InputBox("Please name your Template before saving: ", "Save Template", "");
+            if (!templateSelectorComboBox.Items.Contains(input))
+            {
+                Template myTemplate = new Template();
+                myTemplate.Name = input;
+                myTemplate.Message = templateRichTextBox.Text;
+            }
         }
     }
 }

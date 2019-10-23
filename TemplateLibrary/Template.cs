@@ -9,5 +9,6 @@ namespace TemplateLibrary
         public string Message { get; set; }
         public int CreatedAccountId { get; set; }
         public DateTime CreatedDate { get; set; }
+        public virtual string CreatedAccountName { get; set; }
     }
 }

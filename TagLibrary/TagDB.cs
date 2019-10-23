@@ -7,6 +7,7 @@ namespace TagLibrary
 {
     public class TagDB
     {
+        // Connects to the Tag db and loads the Type and Name for each tag.
         public static Boolean Load(ref List<Tag> tags)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -33,6 +34,7 @@ namespace TagLibrary
             return true;
         }
 
+        // Adds values to Tag table for Type and Name.
         public static Boolean Add(Tag myTag)
         {
             SqlConnection connect = DBConnect.GetConnection();
