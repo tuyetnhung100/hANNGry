@@ -10,6 +10,28 @@ namespace Story1.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet]
+        public ActionResult Login()
+        {
+            ViewBag.Message = "Your login page.";
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(LoginViewModel model)
+        {
+            Account myAccount = AccountDB.FindAccount(model.uname);
+
+            if (myAccount.Email == model.uname && myAccount.PasswordHash == model.psw)
+            {
+
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
         public ActionResult Register()
         {
             ViewBag.Message = "Your register page.";
@@ -18,13 +40,6 @@ namespace Story1.Controllers
                 name = "foo"
             };
             return View(model);
-        }
-
-        public ActionResult Login()
-        {
-            ViewBag.Message = "Your login page.";
-
-            return View();
         }
 
         [HttpPost]
@@ -39,21 +54,6 @@ namespace Story1.Controllers
             AccountDB.Add(myAccount);
 
             return View(model);
-        }
-
-        public ActionResult Register2()
-        {
-            ViewBag.Message = "Your register page.";
-
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Register2(RegisterViewModel model)
-        {
-            ViewBag.Message = "Your register page.";
-
-            return View();
         }
     }
 }

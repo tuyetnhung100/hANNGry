@@ -24,28 +24,51 @@ namespace AccountLibrary
             connect.Close();
             return true;
         }
+
         //public static Boolean Load(ref List<Account> accounts)
         //{
         //    SqlConnection connect = ConnectDB.GetConnection();
-        //    connect.Open();
+        //    connect.Open();                                                             
 
-        //    SqlCommand command = new SqlCommand("Select Name, Email from Accounts", connect);
+        //    SqlCommand command = new SqlCommand("Select Email, PasswordHash from Accounts", connect);
+        //    SqlDataReader reader = command.ExecuteReader();
+        //    Account myAccount;
 
-        //    //SqlDataReader reader = command.ExecuteReader();
-        //    //Subscriber mySubscriber;
+        //    while (reader.Read())
+        //    {
+        //        myAccount = new Account();
+        //        myAccount.Email = reader.GetString(0);
+        //        myAccount.PasswordHash = reader.GetString(1);
+        //    }
 
-        //    //while (reader.Read())
-        //    //{
-        //    //    mySubscriber = new Subscriber();
-        //    //    mySubscriber.name = reader.GetString(0);
-        //    //    mySubscriber.email = reader.GetString(1);
-        //    //    subcribers.Add(mySubscriber);
-        //    //}
-
-        //    //reader.Close();
-
+        //    reader.Close();
+        //    command.ExecuteNonQuery();
         //    connect.Close();
         //    return true;
-        ////}
+        //}
+
+        public static Account FindAccount(string email)
+        {
+            SqlConnection connect = ConnectDB.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Select Email, PasswordHash, PasswordSalt from Accounts where Email = @email", connect);
+            command.Parameters.AddWithValue("@email", email);
+            SqlDataReader reader = command.ExecuteReader();
+            Account myAccount = null;
+
+            while (reader.Read())
+            {
+                myAccount = new Account();
+                myAccount.Email = reader.GetString(0);
+                myAccount.PasswordHash = reader.GetString(1);
+                myAccount.PasswordSalt = reader.GetString(2);
+            }
+
+            reader.Close();
+            command.ExecuteNonQuery();
+            connect.Close();
+            return myAccount;
+        }
     }
 }
