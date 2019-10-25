@@ -7,24 +7,66 @@
 using AccountLibrary;
 using System;
 using System.Collections.Generic;
+
+
+
 using System.Data.SqlClient;
 using System.Windows.Forms;
+
 
 namespace NotificationLibrary
 {
     public class NotificationDB
     {
-        // It will be removed when DBConnect project is merged.
-        private static SqlConnection GetConnection()
-        {
-            SqlConnection connect = new SqlConnection("Server=cisdbss.pcc.edu;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
-            return connect;
-        }
 
-        public static bool Load(ref List<Notification> notifications)
+        public static Boolean Load(DateTime start, DateTime end, ref List<Notification> notifications)
+
         {
+            SqlConnection connect = ConnectDB.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE SentDate > @start
+AND SentDate < @end", connect);
+
+            command.Parameters.AddWithValue("@start", start);
+            command.Parameters.AddWithValue("@end", end);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SenderName=reader.GetString(senderName);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+
+            connect.Close();
+
+            
             return true;
         }
+
 
         /// <summary>
         /// Insert a Notification.
@@ -143,5 +185,6 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
                 return false;
             }
         }
+
     }
 }

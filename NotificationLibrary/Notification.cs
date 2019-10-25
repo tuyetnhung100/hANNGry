@@ -16,5 +16,6 @@ namespace NotificationLibrary
         public int? TemplateId { get; set; }
         public int SentAccountId { get; set; }
         public DateTime SentDate { get; set; }
+        public string SenderName { get; set; }
     }
 }

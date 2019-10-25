@@ -9,6 +9,7 @@ namespace AccountLibrary
     public enum Role : int
     {
         Subscriber = 0,
-        Employee = 1
+        Employee = 1,
+        Manager = 2
     }
 }
