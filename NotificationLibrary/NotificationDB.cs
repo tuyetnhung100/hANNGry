@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DBConnect1;
 using System.Data.SqlClient;
 
+
 namespace NotificationLibrary
 {
     public class NotificationDB
@@ -12,7 +13,17 @@ namespace NotificationLibrary
             SqlConnection connect = ConnectDB.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Subject, Message, SentAccountId, SentDate from Notifications where SentDate > @start and SentDate < @end ", connect);
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE SentDate > @start
+AND SentDate < @end", connect);
 
             command.Parameters.AddWithValue("@start", start);
             command.Parameters.AddWithValue("@end", end);
@@ -20,13 +31,19 @@ namespace NotificationLibrary
             SqlDataReader reader = command.ExecuteReader();
 
             Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+
             while (reader.Read())
             {
                 myNotification = new Notification();
-                myNotification.Subject = reader.GetString(0);
-                myNotification.Message = reader.GetString(1);
-                myNotification.SentAccountId = reader.GetInt32(2);
-                myNotification.SentDate = reader.GetDateTime(3);
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SenderName=reader.GetString(senderName);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
                 notifications.Add(myNotification);
             }
 
@@ -34,31 +51,31 @@ namespace NotificationLibrary
 
             connect.Close();
 
-            //LoadFakeNotifications(ref notifications);
+            
             return true;
         }
-        private static void LoadFakeNotifications(ref List<Notification> notifications)
-        {
-            Notification note1 = new Notification();
-            note1.Subject = "Food";
-            note1.Message = "BLAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" + Environment.NewLine + "BLAAAHHHHHHHHHHHHHHHHAAH";
-            note1.SentDate = DateTime.Now;
+        //private static void LoadFakeNotifications(ref List<Notification> notifications)
+        //{
+        //    Notification note1 = new Notification();
+        //    note1.Subject = "Food";
+        //    note1.Message = "BLAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH" + Environment.NewLine + "BLAAAHHHHHHHHHHHHHHHHAAH";
+        //    note1.SentDate = DateTime.Now;
 
-            Notification note2 = new Notification();
-            note2.Subject = "DOOF";
-            note2.Message = "BLAHHHHHHHHHHHHHHHHsdfsdfsdfsfsdfHHHHHHHHHHHHHHHHHHHHHHH";
-            note2.SentDate = DateTime.Now;
+        //    Notification note2 = new Notification();
+        //    note2.Subject = "DOOF";
+        //    note2.Message = "BLAHHHHHHHHHHHHHHHHsdfsdfsdfsfsdfHHHHHHHHHHHHHHHHHHHHHHH";
+        //    note2.SentDate = DateTime.Now;
 
-            Notification note3 = new Notification();
-            note3.Subject = "DOOF";
-            note3.Message = "BLAHHHHHHHHHHHHHHHHsdfsdfsdfsfsdfHHHHHHHHHHHHHHdgsbdgsfdhHHHHHHHHH";
-            note3.SentDate = DateTime.Now;
+        //    Notification note3 = new Notification();
+        //    note3.Subject = "DOOF";
+        //    note3.Message = "BLAHHHHHHHHHHHHHHHHsdfsdfsdfsfsdfHHHHHHHHHHHHHHdgsbdgsfdhHHHHHHHHH";
+        //    note3.SentDate = DateTime.Now;
 
-            notifications.Add(note1);
-            notifications.Add(note2);
-            notifications.Add(note3);
+        //    notifications.Add(note1);
+        //    notifications.Add(note2);
+        //    notifications.Add(note3);
 
 
-        }
+        //}
     }
 }
