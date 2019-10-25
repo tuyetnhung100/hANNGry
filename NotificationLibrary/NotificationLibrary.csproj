@@ -47,10 +47,13 @@
     <Compile Include="NotificationDB.cs" />
   </ItemGroup>
   <ItemGroup>
-
     <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
       <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
       <Name>AccountLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
