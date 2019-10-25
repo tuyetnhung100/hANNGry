@@ -7,17 +7,32 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using ConnectDB;
 using System.Windows.Forms;
+
 
 namespace TemplateLibrary
 {
     public class TemplateDB
     {
-        // It will be removed when DBConnect project is merged.
-        private static SqlConnection GetConnection()
+        // Adds values to Template table.
+        public static Boolean Add(Template myTemplate)
         {
-            SqlConnection connect = new SqlConnection("Server=cisdbss.pcc.edu;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
-            return connect;
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Insert into Template(Name, Message, CreatedAccountId, CreatedDate)" +
+                " Values(@Name, @Message, @CreatedAccountId, @CreatedDate)", connect);
+
+            command.Parameters.AddWithValue("@Name", myTemplate.Name);
+            command.Parameters.AddWithValue("@Message", myTemplate.Message);
+            command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
+            command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
+
+            command.ExecuteNonQuery();
+
+            connect.Close();
+          return true;
         }
 
         /// <summary>
@@ -31,7 +46,7 @@ namespace TemplateLibrary
 
             try
             {
-                SqlConnection connection = GetConnection();
+                SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
 SELECT
@@ -76,39 +91,6 @@ INNER JOIN Accounts
                 MessageBox.Show(ex.Message);
                 return false;
             }
-        }
-
-        // fake version of Load in case the DB data is messed up
-        public static bool FakeLoad(ref List<Template> templates)
-        {
-            templates.Clear();
-            templates.Add(new Template
-            {
-                TemplateId = 1,
-                Name = "Time event",
-                Message = @"Dear {$Student Name},
-There will be {$Food} at the {$Campus Name} campus in {$Room} on {$Date} from {$Start Time} to {$End Time}.
-
-Thanks,
-
-{$Staff Name}",
-                CreatedAccountId = 1,
-                CreatedDate = DateTime.Now
-            });
-            templates.Add(new Template
-            {
-                TemplateId = 2,
-                Name = "All day event",
-                Message = @"Dear {$Student Name},
-There will be {$Food} at the {$Campus Name} campus in {$Room} on {$Date} All day.
-
-Thanks,
-
-{$Staff Name}",
-                CreatedAccountId = 1,
-                CreatedDate = DateTime.Now
-            });
-            return true;
         }
     }
 }

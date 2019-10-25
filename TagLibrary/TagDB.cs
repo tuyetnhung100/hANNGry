@@ -1,23 +1,38 @@
-﻿/*
- * Programmer(s):      Gong-Hao
- * Date:               10/23/2019
- * What the code does: Data access layer of Tag.
- */
+/*
+* Programmer(s):      Gong-Hao
+* Date:               10/23/2019
+* What the code does: Data access layer of Tag.
+*/
 
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+
+using ConnectDB;
 using System.Windows.Forms;
+
 
 namespace TagLibrary
 {
     public class TagDB
     {
-        // It will be removed when DBConnect project is merged.
-        private static SqlConnection GetConnection()
+        // Adds values to Tag table for Type and Name.
+        public static Boolean Add(Tag myTag)
         {
-            SqlConnection connect = new SqlConnection("Server=cisdbss.pcc.edu;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
-            return connect;
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Insert into Tags(Type, Name)" +
+                " Values(1, @Name)", connect);
+
+            command.Parameters.AddWithValue("@Type", myTag.Type);
+            command.Parameters.AddWithValue("@Name", myTag.Name);
+
+            command.ExecuteNonQuery();
+
+
+            connect.Close();
+            return true;
         }
 
         /// <summary>
@@ -31,7 +46,7 @@ namespace TagLibrary
 
             try
             {
-                SqlConnection connection = GetConnection();
+                SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
 SELECT
@@ -82,7 +97,7 @@ FROM Tags;";
 
             try
             {
-                SqlConnection connection = GetConnection();
+                SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
 SELECT
@@ -124,61 +139,6 @@ WHERE Templates_TemplateId = @TemplateId);";
                 MessageBox.Show(ex.Message);
                 return false;
             }
-        }
-
-        // fake version of LoadByTemplateId in case the DB data is messed up
-        public static bool FakeLoadByTemplateId(ref List<Tag> tags, int templateId)
-        {
-            tags.Clear();
-            tags.Add(new Tag
-            {
-                TagId = 1,
-                Type = TagType.DatabaseField,
-                Name = "Student Name"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 2,
-                Type = TagType.DatabaseField,
-                Name = "Staff Name"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 3,
-                Type = TagType.UserInput,
-                Name = "Food"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 4,
-                Type = TagType.UserInput,
-                Name = "Campus Name"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 5,
-                Type = TagType.UserInput,
-                Name = "Room"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 6,
-                Type = TagType.UserInput,
-                Name = "Date"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 7,
-                Type = TagType.UserInput,
-                Name = "Start Time"
-            });
-            tags.Add(new Tag
-            {
-                TagId = 8,
-                Type = TagType.UserInput,
-                Name = "End Time"
-            });
-            return true;
         }
     }
 }
