@@ -67,7 +67,7 @@ namespace Story2
             templateComboBox.SelectedIndex = 0;
 
             // load templates
-            if (TemplateDB.FakeLoad(ref templates))
+            if (TemplateDB.Load(ref templates))
             {
                 templateComboBox.Items.AddRange(templates.ToArray());
             }
@@ -342,7 +342,7 @@ namespace Story2
             if (template != null)
             {
                 // load tags
-                if (!TagDB.FakeLoadByTemplateId(ref tags, template.TemplateId))
+                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
                 {
                     MessageBox.Show("Loading tags failed!");
                 }
