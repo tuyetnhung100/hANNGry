@@ -81,6 +81,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
+      <Project>{ba98a12e-63e4-4b34-9b2c-e6dab3d01be0}</Project>
+      <Name>AccountLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TagLibrary\TagLibrary.csproj">
       <Project>{1b6105fb-109b-4530-91f0-5988f570d64b}</Project>
       <Name>TagLibrary</Name>

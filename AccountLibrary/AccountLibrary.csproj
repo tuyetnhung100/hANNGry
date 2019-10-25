@@ -47,5 +47,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Role.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
-      <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
+      <Project>{ba98a12e-63e4-4b34-9b2c-e6dab3d01be0}</Project>
       <Name>AccountLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">

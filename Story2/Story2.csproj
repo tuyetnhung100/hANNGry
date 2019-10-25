@@ -84,6 +84,10 @@
       <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
       <Name>AccountLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NotificationLibrary\NotificationLibrary.csproj">
       <Project>{8C1AB096-7F59-4D72-8328-0716E7A2FC20}</Project>
       <Name>NotificationLibrary</Name>
@@ -93,7 +97,7 @@
       <Name>TagLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\TemplateLibrary\TemplateLibrary.csproj">
-      <Project>{D91A0F58-168A-4E4B-8D3F-3A25B8AE124B}</Project>
+      <Project>{d91a0f58-168a-4e4b-8d3f-3a25b8ae124b}</Project>
       <Name>TemplateLibrary</Name>
     </ProjectReference>
   </ItemGroup>
