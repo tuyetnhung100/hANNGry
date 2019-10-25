@@ -1,41 +1,20 @@
-﻿using System;
+﻿/*
+ * Programmer(s):      Gong-Hao
+ * Date:               10/23/2019
+ * What the code does: Data access layer of Template.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using ConnectDB;
+using System.Windows.Forms;
+
 
 namespace TemplateLibrary
 {
     public class TemplateDB
     {
-        // Connects to the Template db and loads the attributes for each template.
-        public static Boolean Load(ref List<Template> template)
-        {
-            SqlConnection connect = DBConnect.GetConnection();
-            connect.Open();
-
-            SqlCommand command = new SqlCommand("Select Name, Message, CreatedAccountId, CreatedDate from Template", connect);
-
-            SqlDataReader reader = command.ExecuteReader();
-            Template myTemplate;
-
-            while (reader.Read())
-            {
-                myTemplate = new Template();
-                myTemplate.Name = reader.GetString(0);
-                myTemplate.Message = reader.GetString(1);
-                myTemplate.CreatedAccountId = reader.GetInt32(2);
-                myTemplate.CreatedDate = reader.GetDateTime(3);
-                template.Add(myTemplate);
-            }
-
-            reader.Close();
-
-            connect.Close();
-
-
-            return true;
-        }
-
         // Adds values to Template table.
         public static Boolean Add(Template myTemplate)
         {
@@ -53,7 +32,65 @@ namespace TemplateLibrary
             command.ExecuteNonQuery();
 
             connect.Close();
-            return true;
+          return true;
+        }
+
+        /// <summary>
+        /// Load all templates.
+        /// </summary>
+        /// <param name="templates">The result list of templates</param>
+        /// <returns>Whether the command is succeeded</returns>
+        public static bool Load(ref List<Template> templates)
+        {
+            templates.Clear();
+
+            try
+            {
+                SqlConnection connection = DBConnect.GetConnection();
+                connection.Open();
+                string sql = @"
+SELECT
+  Templates.TemplateId,
+  Templates.Name,
+  Templates.Message,
+  Accounts.Name AS CreatedAccountName,
+  Templates.CreatedDate
+FROM Templates
+INNER JOIN Accounts
+  ON Accounts.AccountId = Templates.CreatedAccountId;";
+                SqlCommand command = new SqlCommand(sql, connection);
+                SqlDataReader reader = command.ExecuteReader();
+
+                int templateId = reader.GetOrdinal("TemplateId");
+                int name = reader.GetOrdinal("Name");
+                int message = reader.GetOrdinal("Message");
+                int createdAccountName = reader.GetOrdinal("CreatedAccountName");
+                int createdDate = reader.GetOrdinal("CreatedDate");
+
+                while (reader.Read())
+                {
+                    Template template = new Template
+                    {
+                        TemplateId = reader.GetInt32(templateId),
+                        Name = reader.GetString(name),
+                        Message = reader.GetString(message),
+                        CreatedAccountName = reader.GetString(createdAccountName),
+                        CreatedDate = reader.GetDateTime(createdDate)
+                    };
+                    templates.Add(template);
+                }
+
+                reader.Close();
+
+                connection.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
         }
     }
 }
