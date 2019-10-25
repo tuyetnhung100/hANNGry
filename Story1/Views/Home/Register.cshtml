@@ -1,6 +1,4 @@
-﻿@{
-    ViewBag.Title = "Register";
-}
+﻿@model Story1.Models.ViewModels.RegisterViewModel
 
 @*
     Programmer: Nina Hoang
@@ -38,10 +36,10 @@
             background: #f1f1f1;
         }
 
-        input[type=text]:focus, input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
+            input[type=text]:focus, input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+            }
 
         /* Overwrite default styles of hr */
         hr {
@@ -61,9 +59,9 @@
             opacity: 0.9;
         }
 
-        .registerbtn:hover {
-            opacity: 1;
-        }
+            .registerbtn:hover {
+                opacity: 1;
+            }
 
         /* Add a blue text color to links */
         a {
@@ -78,8 +76,8 @@
     </style>
 </head>
 <body>
-
-    <form action="/action_page.php">
+    @*<h1>@Model.name</h1>*@
+    <form method="post" action="/Home/Register">
         <div class="container">
             <h1>PCC Panther Pantry Register</h1>
             <p>Please fill in this form to create an account.</p>
@@ -95,7 +93,7 @@
             <input type="password" placeholder="Enter Password" name="psw" required>
 
             <label for="psw-repeat"><b>Repeat Password</b></label>
-            <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+            <input type="password" placeholder="Repeat Password" name="pswRepeat" required>
 
             <label for="name"><b>Name</b></label>
             <input type="text" placeholder="Enter Name" name="name" required>
