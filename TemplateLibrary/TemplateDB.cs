@@ -4,19 +4,18 @@
  * What the code does: Data access layer of Template.
  */
 
+using ConnectDB;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using ConnectDB;
 using System.Windows.Forms;
-
 
 namespace TemplateLibrary
 {
     public class TemplateDB
     {
         // Adds values to Template table.
-        public static Boolean Add(Template myTemplate)
+        public static bool Add(Template myTemplate)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -32,7 +31,7 @@ namespace TemplateLibrary
             command.ExecuteNonQuery();
 
             connect.Close();
-          return true;
+            return true;
         }
 
         /// <summary>
