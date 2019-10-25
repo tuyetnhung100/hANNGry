@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,9 +47,10 @@
     <Compile Include="NotificationDB.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DBConnect1\DBConnect1.csproj">
-      <Project>{f484cae1-7ca4-4162-96f2-c986b39ec133}</Project>
-      <Name>DBConnect1</Name>
+
+    <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
+      <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
+      <Name>AccountLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
