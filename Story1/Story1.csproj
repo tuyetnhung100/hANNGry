@@ -187,6 +187,10 @@
       <Project>{ba98a12e-63e4-4b34-9b2c-e6dab3d01be0}</Project>
       <Name>AccountLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -48,9 +48,9 @@
     <Compile Include="Role.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DBconnect\DBconnect.csproj">
-      <Project>{24375107-d054-4a9b-a6da-0f46a6f26b29}</Project>
-      <Name>DBconnect</Name>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

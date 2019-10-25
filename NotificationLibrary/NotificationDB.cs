@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 
 
-
+using ConnectDB;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -22,7 +22,7 @@ namespace NotificationLibrary
         public static Boolean Load(DateTime start, DateTime end, ref List<Notification> notifications)
 
         {
-            SqlConnection connect = ConnectDB.GetConnection();
+            SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
@@ -160,7 +160,7 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
         {
             try
             {
-                SqlConnection connection = GetConnection();
+                SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
 
                 SqlCommand command = new SqlCommand();

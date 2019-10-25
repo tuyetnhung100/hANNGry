@@ -19,7 +19,7 @@ namespace AccountLibrary
 
         public static Boolean Add(Account myAccount)
         {
-            SqlConnection connect = ConnectDB.GetConnection();
+            SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
             SqlCommand command = new SqlCommand("Insert into Accounts(Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
@@ -38,7 +38,7 @@ namespace AccountLibrary
 
         public static Account FindAccount(string email)
         {
-            SqlConnection connect = ConnectDB.GetConnection();
+            SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
             SqlCommand command = new SqlCommand("Select Email, PasswordHash, PasswordSalt from Accounts where Email = @email", connect);
@@ -66,7 +66,7 @@ namespace AccountLibrary
         {
             try
             {
-                SqlConnection connection = GetConnection();
+                SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
 
                 string sql = @"

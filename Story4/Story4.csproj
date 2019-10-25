@@ -80,6 +80,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AccountLibrary\AccountLibrary.csproj">
+      <Project>{ba98a12e-63e4-4b34-9b2c-e6dab3d01be0}</Project>
+      <Name>AccountLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ConnectDB\ConnectDB.csproj">
+      <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
+      <Name>ConnectDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NotificationLibrary\NotificationLibrary.csproj">
       <Project>{8c1ab096-7f59-4d72-8328-0716e7a2fc20}</Project>
       <Name>NotificationLibrary</Name>
