@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/21/2019
+ * Date:               10/23/2019
  * What the code does: 1. Using a template to from a notification message
  *                     2. Sending the notification to subscribers
  */
@@ -9,7 +9,11 @@ using AccountLibrary;
 using NotificationLibrary;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using TagLibrary;
@@ -42,11 +46,11 @@ namespace Story2
         }
 
         /// <summary>
-        /// Load Logined Staff
+        /// Load Logined Staff.
         /// </summary>
         private void LoadLoginedStaff()
         {
-            if (!AccountDB.GetLoginedStaff(ref staff))
+            if (!AccountDB.FakeGetLoginedStaff(ref staff))
             {
                 MessageBox.Show("Loading Logined Staff failed!");
             }
@@ -63,7 +67,7 @@ namespace Story2
             templateComboBox.SelectedIndex = 0;
 
             // load templates
-            if (TemplateDB.Load(ref templates))
+            if (TemplateDB.FakeLoad(ref templates))
             {
                 templateComboBox.Items.AddRange(templates.ToArray());
             }
@@ -123,33 +127,64 @@ namespace Story2
                 MessageBox.Show("Insert notification failed!");
                 return;
             }
+
             try
             {
-                // loop subscriberIds and send emails
-                foreach (Account subscriber in subscribers)
-                {
-                    string email = subscriber.Email;
-                    string subject = notification.Subject;
-                    string message = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-                    // todo: send notification by emails
-                }
-
-                MessageBox.Show("Notification sent successfully!");
-
-                // clear data to prevent submitting again
-                clearButton.PerformClick();
+                SmtpClient smtpClient = GetSmtpClient();
+                FakeSendEmails(notification, subscribers, smtpClient);
+                smtpClient.Dispose();
             }
             catch (Exception)
             {
                 MessageBox.Show("Send email failed!");
+                return;
+            }
+
+            MessageBox.Show("Notification sent successfully!");
+
+            // clear data to prevent submitting again
+            clearButton.PerformClick();
+        }
+
+        // fake version of SendEmails that only send one email to myself
+        private void FakeSendEmails(Notification notification, List<Account> subscribers, SmtpClient smtpClient)
+        {
+            subscribers.Clear();
+            subscribers.Add(new Account
+            {
+                Email = "gonghao.wei@pcc.edu",
+                Name = "Gong-Hao Wei"
+            });
+            subscribers.Add(new Account
+            {
+                Email = "weig@my.lanecc.edu",
+                Name = "Gong-Hao"
+            });
+            SendEmails(notification, subscribers, smtpClient);
+        }
+
+        /// <summary>
+        /// Loop subscribers and send emails.
+        /// </summary>
+        /// <param name="notification">The notification that is about to send</param>
+        /// <param name="subscribers">The subscribers thst need to receive emails</param>
+        /// <param name="smtpClient">The SmtpClient</param>
+        private void SendEmails(Notification notification, List<Account> subscribers, SmtpClient smtpClient)
+        {
+            foreach (Account subscriber in subscribers)
+            {
+                string email = subscriber.Email;
+                string subject = notification.Subject;
+                string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
+                SendEmail(smtpClient, email, subject, body);
             }
         }
 
         /// <summary>
-        /// Validate Notification data
+        /// Validate Notification data.
         /// </summary>
-        /// <param name="notification"></param>
-        /// <returns></returns>
+        /// <param name="notification">The Notification object that will be validated</param>
+        /// <returns>Whether the notification is valid</returns>
         private bool ValidateNotification(Notification notification)
         {
             string errorMessage = string.Empty;
@@ -166,7 +201,7 @@ namespace Story2
                 errorMessage += "Message is required!" + Environment.NewLine;
             }
 
-            // check tags
+            // check Tags
             foreach (MessageBlock tagBlock in tagBlocks)
             {
                 if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
@@ -186,9 +221,9 @@ namespace Story2
         }
 
         /// <summary>
-        /// Get Notification data from controls
+        /// Get Notification data from controls.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The Notification object</returns>
         private Notification GetNotification()
         {
             string message = GetInputFilledMessage();
@@ -210,24 +245,33 @@ namespace Story2
         }
 
         /// <summary>
-        /// Get message that user inputs has been filled
+        /// Get the message that combines with filled user inputs.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The filled message</returns>
         private string GetInputFilledMessage()
         {
+            // when the template is None, just return the text of the messageRichTextBox
+            if (templateComboBox.SelectedIndex == 0)
+            {
+                return messageRichTextBox.Text;
+            }
+
             string message = string.Empty;
 
+            // concatenate messageBlocks to be filled message
+            // only left DatabaseField as original tag format for later use
             foreach (MessageBlock messageBlock in messageBlocks)
             {
                 if (messageBlock.IsTag)
                 {
-                    if (messageBlock.Tag.Type == TagType.UserInput)
+                    switch (messageBlock.Tag.Type)
                     {
-                        message += messageBlock.Input;
-                    }
-                    else
-                    {
-                        message += "{$" + messageBlock.Tag.Name + "}";
+                        case TagType.DatabaseField:
+                            message += "{$" + messageBlock.Tag.Name + "}";
+                            break;
+                        case TagType.UserInput:
+                            message += messageBlock.Input;
+                            break;
                     }
                 }
                 else
@@ -240,11 +284,11 @@ namespace Story2
         }
 
         /// <summary>
-        /// Replace DatabaseField of message
+        /// Replace DatabaseField of message.
         /// </summary>
         /// <param name="subscriber">The subscriber</param>
-        /// <param name="message">Message from the template</param>
-        /// <param name="tags">tags of the template</param>
+        /// <param name="message">The message from the template</param>
+        /// <param name="tags">The tags of the template</param>
         /// <returns></returns>
         private string ReplaceDatabaseField(Account subscriber, string message, ref List<Tag> tags)
         {
@@ -290,15 +334,15 @@ namespace Story2
         }
 
         /// <summary>
-        /// Load tags by TemplateId
+        /// Load tags by TemplateId.
         /// </summary>
-        /// <param name="template"></param>
+        /// <param name="template">The current template</param>
         private void ReloadTags(Template template)
         {
             if (template != null)
             {
                 // load tags
-                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
+                if (!TagDB.FakeLoadByTemplateId(ref tags, template.TemplateId))
                 {
                     MessageBox.Show("Loading tags failed!");
                 }
@@ -330,6 +374,14 @@ namespace Story2
                 {
                     string tagName = block.Substring(2, block.Length - 3);
                     Tag tag = tags.Find(x => x.Name == tagName);
+                    // tag should never be null unless data in the DB is missing
+                    if (tag == null)
+                    {
+                        MessageBox.Show("Tag " + tagName + " is missing from DB");
+                        messageBlocks.Clear();
+                        tagBlocks.Clear();
+                        return;
+                    }
                     MessageBlock messageBlock = new MessageBlock
                     {
                         Tag = tag,
@@ -355,18 +407,19 @@ namespace Story2
         }
 
         /// <summary>
-        /// Load tagBlocks into tagsDataGridView.
+        /// Reload tag inputs.
         /// </summary>
         private void ReloadTagInputs()
         {
-            // reset tag inputs
+            // reset tag inputs area
             tagsPanel.Controls.Clear();
             tagsPanel.Width = 800;
+
             int index = 0;
             int tabIndex = 0;
             Font font = new Font("Arial Narrow", 13.875F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
-            // add tagBlock into tag inputs
+            // loop tagBlocks and add dynamic labels and textBoxs into tagsPanel
             foreach (MessageBlock tagBlock in tagBlocks)
             {
                 if (tagBlock.Tag.Type == TagType.DatabaseField)
@@ -399,7 +452,7 @@ namespace Story2
         }
 
         /// <summary>
-        /// Update messageRichTextBox when tagInput's text changed
+        /// When tagInput's text changed, update messageRichTextBox.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -448,6 +501,68 @@ namespace Story2
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Create a SmtpClient.
+        /// </summary>
+        /// <returns>The SmtpClient</returns>
+        private SmtpClient GetSmtpClient()
+        {
+            NetworkCredential credentials = new NetworkCredential("hANNGry2019@gmail.com", "RUSerious?");
+            SmtpClient smtpClient = new SmtpClient
+            {
+                Port = 587,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Host = "smtp.gmail.com",
+                EnableSsl = true,
+                Credentials = credentials
+            };
+            smtpClient.SendCompleted += SmtpClient_SendCompleted;
+            return smtpClient;
+        }
+
+        /// <summary>
+        /// The SendCompleted callback.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SmtpClient_SendCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            string email = (string)e.UserState;
+            if (e.Cancelled)
+            {
+                MessageBox.Show("Sent " + email + " canceled!");
+            }
+            else if (e.Error != null)
+            {
+                MessageBox.Show("Sent " + email + " failed!" + Environment.NewLine + e.Error.ToString());
+            }
+            else
+            {
+                // Message sent successfully.
+            }
+        }
+
+        /// <summary>
+        /// Set MailMessage and send it.
+        /// </summary>
+        /// <param name="client">The SmtpClient</param>
+        /// <param name="email">The receiver's email address</param>
+        /// <param name="subject">The email subject</param>
+        /// <param name="body">The email body</param>
+        private void SendEmail(SmtpClient client, string email, string subject, string body)
+        {
+            MailAddress from = new MailAddress("hANNGry2019@gmail.com");
+            MailAddress to = new MailAddress(email);
+            MailMessage message = new MailMessage(from, to);
+            message.Body = body;
+            message.BodyEncoding = Encoding.UTF8;
+            message.Subject = subject;
+            message.SubjectEncoding = Encoding.UTF8;
+            client.Send(message);
+            message.Dispose();
         }
     }
 }

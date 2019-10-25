@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/21/2019
+ * Date:               10/23/2019
  * What the code does: Data access layer of Template.
  */
 
@@ -23,8 +23,8 @@ namespace TemplateLibrary
         /// <summary>
         /// Load all templates.
         /// </summary>
-        /// <param name="templates">result list of templates</param>
-        /// <returns>whether the command is succeeded</returns>
+        /// <param name="templates">The result list of templates</param>
+        /// <returns>Whether the command is succeeded</returns>
         public static bool Load(ref List<Template> templates)
         {
             templates.Clear();
@@ -76,6 +76,39 @@ INNER JOIN Accounts
                 MessageBox.Show(ex.Message);
                 return false;
             }
+        }
+
+        // fake version of Load in case the DB data is messed up
+        public static bool FakeLoad(ref List<Template> templates)
+        {
+            templates.Clear();
+            templates.Add(new Template
+            {
+                TemplateId = 1,
+                Name = "Time event",
+                Message = @"Dear {$Student Name},
+There will be {$Food} at the {$Campus Name} campus in {$Room} on {$Date} from {$Start Time} to {$End Time}.
+
+Thanks,
+
+{$Staff Name}",
+                CreatedAccountId = 1,
+                CreatedDate = DateTime.Now
+            });
+            templates.Add(new Template
+            {
+                TemplateId = 2,
+                Name = "All day event",
+                Message = @"Dear {$Student Name},
+There will be {$Food} at the {$Campus Name} campus in {$Room} on {$Date} All day.
+
+Thanks,
+
+{$Staff Name}",
+                CreatedAccountId = 1,
+                CreatedDate = DateTime.Now
+            });
+            return true;
         }
     }
 }
