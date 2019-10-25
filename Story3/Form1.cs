@@ -45,11 +45,12 @@ namespace Story3
         }
 
         // Promts the user for a tag name, then inserts the tag into the RTB.
+        // If the tag is blank, it closes out.
         // If the tag already exists, warns user to select from the drop down.
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
-            if (!customTagComboBox.Items.Contains("{$" + input + "}"))
+            if (!customTagComboBox.Items.Contains("{$" + input + "}") && input != "")
             {
                 Tag myTag = new Tag();
                 myTag.Name = "{$" + input + "}";
@@ -57,9 +58,13 @@ namespace Story3
                 customTagComboBox.Items.Add("{$" + input + "}");
                 templateRichTextBox.SelectedText = "{$" + input + "}";
             }
-            else
+            else if (customTagComboBox.Items.Contains("{$" + input + "}"))
             {
                 MessageBox.Show("Custom Tag already exists! Please select the tag from the dropdown box.", "Warning!");
+            }
+            else
+            {
+                return;
             }
             
         }
@@ -73,7 +78,7 @@ namespace Story3
         private void saveButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please name your Template before saving: ", "Save Template", "");
-            if (!templateSelectorComboBox.Items.Contains(input))
+            if (!templateSelectorComboBox.Items.Contains(input) && input != "")
             {
                 Template myTemplate = new Template();
                 myTemplate.Name = input;
