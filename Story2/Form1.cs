@@ -27,7 +27,7 @@ namespace Story2
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
 
-        private Account staff = new Account();
+        private Account employee = new Account();
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
@@ -53,20 +53,20 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            LoadLoginedStaff();
+            LoadLoginedEmployee();
             InitializeTemplateComboBox();
             InitializeLabels();
             InitializeSmtpClient();
         }
 
         /// <summary>
-        /// Load Logined Staff.
+        /// Load Logined Employee.
         /// </summary>
-        private void LoadLoginedStaff()
+        private void LoadLoginedEmployee()
         {
-            if (!AccountDB.FakeGetLoginedStaff(ref staff))
+            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
             {
-                ShowErrorMessageBox(DatabaseError, "Loading Logined Staff failed!");
+                ShowErrorMessageBox(DatabaseError, "Loading Logined Employee failed!");
             }
         }
 
@@ -377,7 +377,7 @@ namespace Story2
             {
                 Subject = subjectTextBox.Text,
                 Message = message,
-                SentAccountId = staff.AccountId
+                SentAccountId = employee.AccountId
             };
 
             if (templateComboBox.SelectedIndex != 0)
@@ -446,8 +446,8 @@ namespace Story2
                         case "Student Name":
                             message = message.Replace("{$Student Name}", subscriber.Name);
                             break;
-                        case "Staff Name":
-                            message = message.Replace("{$Staff Name}", staff.Name);
+                        case "Employee Name":
+                            message = message.Replace("{$Employee Name}", employee.Name);
                             break;
                     }
                 }

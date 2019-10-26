@@ -57,8 +57,8 @@ namespace AccountLibrary
         }
 
         // Return first data just for test right now
-        // todo: load real logined staff
-        public static bool FakeGetLoginedStaff(ref Account account)
+        // todo: load real logined employee
+        public static bool FakeGetLoginedEmployee(ref Account account)
         {
             try
             {

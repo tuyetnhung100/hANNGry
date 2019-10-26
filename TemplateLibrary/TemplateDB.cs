@@ -52,7 +52,7 @@ SELECT
   Templates.TemplateId,
   Templates.Name,
   Templates.Message,
-  Accounts.Name AS CreatedAccountName,
+  Accounts.Name AS CreatedEmployeeName,
   Templates.CreatedDate
 FROM Templates
 INNER JOIN Accounts
@@ -63,7 +63,7 @@ INNER JOIN Accounts
                 int templateId = reader.GetOrdinal("TemplateId");
                 int name = reader.GetOrdinal("Name");
                 int message = reader.GetOrdinal("Message");
-                int createdAccountName = reader.GetOrdinal("CreatedAccountName");
+                int createdEmployeeName = reader.GetOrdinal("CreatedEmployeeName");
                 int createdDate = reader.GetOrdinal("CreatedDate");
 
                 while (reader.Read())
@@ -73,7 +73,7 @@ INNER JOIN Accounts
                         TemplateId = reader.GetInt32(templateId),
                         Name = reader.GetString(name),
                         Message = reader.GetString(message),
-                        CreatedAccountName = reader.GetString(createdAccountName),
+                        CreatedEmployeeName = reader.GetString(createdEmployeeName),
                         CreatedDate = reader.GetDateTime(createdDate)
                     };
                     templates.Add(template);
