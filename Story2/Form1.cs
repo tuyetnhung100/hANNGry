@@ -207,7 +207,7 @@ namespace Story2
             }
 
             // this is only for testing
-            UseFakeSubscribers(ref subscribers);
+            // UseFakeSubscribers(ref subscribers);
 
             // lock the sendButton until finished
             sendButton.Enabled = false;
