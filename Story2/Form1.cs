@@ -174,7 +174,7 @@ namespace Story2
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
                 ColorifyText();
-                subjectTextBox.Text = template.Name;
+                subjectTextBox.Text = template.Subject;
             }
         }
 

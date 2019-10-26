@@ -81,7 +81,7 @@ namespace Story3
             if (!templateSelectorComboBox.Items.Contains(input) && input != "")
             {
                 Template myTemplate = new Template();
-                myTemplate.Name = input;
+                myTemplate.Subject = input;
                 myTemplate.Message = templateRichTextBox.Text;
             }
         }
