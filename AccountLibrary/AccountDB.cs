@@ -4,19 +4,16 @@
  * What the code does: Data access layer of Account.
  */
 
+using ConnectDB;
 using System;
 using System.Collections.Generic;
-
-using ConnectDB;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-
 
 namespace AccountLibrary
 {
     public class AccountDB
     {
-
         public static Boolean Add(Account myAccount)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -34,7 +31,6 @@ namespace AccountLibrary
             connect.Close();
             return true;
         }
-
 
         public static Account FindAccount(string email)
         {
@@ -61,8 +57,8 @@ namespace AccountLibrary
         }
 
         // Return first data just for test right now
-        // todo: load real logined staff
-        public static bool FakeGetLoginedStaff(ref Account account)
+        // todo: load real logined employee
+        public static bool FakeGetLoginedEmployee(ref Account account)
         {
             try
             {
