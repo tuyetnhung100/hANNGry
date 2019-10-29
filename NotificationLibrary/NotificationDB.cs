@@ -21,16 +21,16 @@ namespace NotificationLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-SELECT
-  Name AS 'SenderName',
-  Subject,
-  Message,
-  SentDate
-FROM Notifications
-INNER JOIN Accounts
-  ON Notifications.SentAccountId = Accounts.AccountId
-WHERE SentDate > @start
-AND SentDate < @end", connect);
+                                                SELECT
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE SentDate > @start
+                                                AND SentDate < @end", connect);
 
             command.Parameters.AddWithValue("@start", start);
             command.Parameters.AddWithValue("@end", end);
@@ -52,6 +52,7 @@ AND SentDate < @end", connect);
                 myNotification.Message = reader.GetString(message);
                 myNotification.SentDate = reader.GetDateTime(sentDate);
                 notifications.Add(myNotification);
+                
             }
 
             reader.Close();
