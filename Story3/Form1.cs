@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using TagLibrary;
 using TemplateLibrary;
-using System.Data.SqlClient;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
