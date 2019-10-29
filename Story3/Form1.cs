@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using TagLibrary;
 using TemplateLibrary;
+using System.Data.SqlClient;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
@@ -27,10 +28,17 @@ namespace Story3
         {
             List<Tag> myTagList = new List<Tag>();
             TagDB.Load(ref myTagList);
+            List<Template> myTemplateList = new List<Template>();
+            TemplateDB.Load(ref myTemplateList);
 
             foreach(Tag myTag in myTagList)
             {
                 customTagComboBox.Items.Add(myTag.Name);
+            }
+            
+            foreach(Template template in myTemplateList)
+            {
+                templateSelectorComboBox.Items.Add(template.Subject);
             }
         }
 
@@ -50,15 +58,15 @@ namespace Story3
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
-            if (!customTagComboBox.Items.Contains("{$" + input + "}") && input != "")
+            if (!customTagComboBox.Items.Contains(input.ToLower()) && input != "")
             {
                 Tag myTag = new Tag();
-                myTag.Name = "{$" + input + "}";
+                myTag.Name = input.ToLower();
                 TagDB.Add(myTag);
-                customTagComboBox.Items.Add("{$" + input + "}");
-                templateRichTextBox.SelectedText = "{$" + input + "}";
+                customTagComboBox.Items.Add(input.ToLower());
+                templateRichTextBox.SelectedText = "{$" + input.ToLower() + "}";
             }
-            else if (customTagComboBox.Items.Contains("{$" + input + "}"))
+            else if (customTagComboBox.Items.Contains(input.ToLower()))
             {
                 MessageBox.Show("Custom Tag already exists! Please select the tag from the dropdown box.", "Warning!");
             }
@@ -66,24 +74,40 @@ namespace Story3
             {
                 return;
             }
-            
         }
 
         // Inserts selected tag into RTB.
         private void customTagComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            templateRichTextBox.SelectedText = customTagComboBox.SelectedItem.ToString();
+            templateRichTextBox.SelectedText =  "{$" + customTagComboBox.SelectedItem.ToString() + "}";
         }
 
+        // Saves the template to the database with the subject being the name for the template.
         private void saveButton_Click(object sender, EventArgs e)
         {
-            string input = Interaction.InputBox("Please name your Template before saving: ", "Save Template", "");
-            if (!templateSelectorComboBox.Items.Contains(input) && input != "")
+            string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
+            if (!templateSelectorComboBox.Items.Contains(input.ToLower()) && input != "")
             {
                 Template myTemplate = new Template();
-                myTemplate.Name = input;
+                myTemplate.Subject = input;
                 myTemplate.Message = templateRichTextBox.Text;
+                myTemplate.CreatedAccountId = 1;
+                myTemplate.CreatedDate = DateTime.Now;
+                TemplateDB.Add(myTemplate);
+                templateSelectorComboBox.Items.Add(input.ToLower());
             }
+            else if(templateSelectorComboBox.Items.Contains(input.ToLower()))
+            {
+                MessageBox.Show("Template already exists under that subject! Please select the template from the dropdown box.", "Warning!");
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void templateSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }

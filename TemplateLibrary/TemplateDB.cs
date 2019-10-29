@@ -15,26 +15,6 @@ namespace TemplateLibrary
 {
     public class TemplateDB
     {
-        // Adds values to Template table.
-        public static Boolean Add(Template myTemplate)
-        {
-            SqlConnection connect = DBConnect.GetConnection();
-            connect.Open();
-
-            SqlCommand command = new SqlCommand("Insert into Template(Name, Message, CreatedAccountId, CreatedDate)" +
-                " Values(@Name, @Message, @CreatedAccountId, @CreatedDate)", connect);
-
-            command.Parameters.AddWithValue("@Name", myTemplate.Name);
-            command.Parameters.AddWithValue("@Message", myTemplate.Message);
-            command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
-            command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
-
-            command.ExecuteNonQuery();
-
-            connect.Close();
-          return true;
-        }
-
         /// <summary>
         /// Load all templates.
         /// </summary>
@@ -49,20 +29,20 @@ namespace TemplateLibrary
                 SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
-SELECT
-  Templates.TemplateId,
-  Templates.Name,
-  Templates.Message,
-  Accounts.Name AS CreatedAccountName,
-  Templates.CreatedDate
-FROM Templates
-INNER JOIN Accounts
-  ON Accounts.AccountId = Templates.CreatedAccountId;";
+                    SELECT
+                        Templates.TemplateId,
+                        Templates.Subject,
+                        Templates.Message,
+                        Accounts.Name AS CreatedAccountName,
+                        Templates.CreatedDate
+                        FROM Templates
+                        INNER JOIN Accounts
+                        ON Accounts.AccountId = Templates.CreatedAccountId;";
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 int templateId = reader.GetOrdinal("TemplateId");
-                int name = reader.GetOrdinal("Name");
+                int subject = reader.GetOrdinal("Subject");
                 int message = reader.GetOrdinal("Message");
                 int createdAccountName = reader.GetOrdinal("CreatedAccountName");
                 int createdDate = reader.GetOrdinal("CreatedDate");
@@ -72,7 +52,7 @@ INNER JOIN Accounts
                     Template template = new Template
                     {
                         TemplateId = reader.GetInt32(templateId),
-                        Name = reader.GetString(name),
+                        Subject = reader.GetString(subject),
                         Message = reader.GetString(message),
                         CreatedAccountName = reader.GetString(createdAccountName),
                         CreatedDate = reader.GetDateTime(createdDate)
@@ -91,6 +71,26 @@ INNER JOIN Accounts
                 MessageBox.Show(ex.Message);
                 return false;
             }
+        }
+
+        // Adds values to Template table.
+        public static Boolean Add(Template myTemplate)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Insert into Templates(Subject, Message, CreatedAccountId, CreatedDate)" +
+                " Values(@Subject, @Message, @CreatedAccountId, @CreatedDate)", connect);
+
+            command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
+            command.Parameters.AddWithValue("@Message", myTemplate.Message);
+            command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
+            command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
+
+            command.ExecuteNonQuery();
+
+            connect.Close();
+            return true;
         }
     }
 }

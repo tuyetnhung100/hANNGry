@@ -12,7 +12,7 @@ namespace ConnectDB
     {
         public static SqlConnection GetConnection()
         {
-            SqlConnection connect = new SqlConnection("Server=cisdbss;Database=234a_hANNGry;User Id=234a_hANNGry;Password = RUSerious?; ");
+            SqlConnection connect = new SqlConnection("Server = cisdbss.pcc.edu; Database = 234a_hANNGry; User Id = 234a_hANNGry; Password = RUSerious?; ");
             return connect;
         }
     }
