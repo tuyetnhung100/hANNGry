@@ -57,14 +57,14 @@ namespace Story4
 
             foreach (Notification notification in notifications)
             {
-                datatable.Rows.Add(notification.SentAccountId, notification.Subject, notification.Message, notification.SentDate);
+                datatable.Rows.Add(notification.SenderName, notification.Subject, notification.Message, notification.SentDate);
             }
 
             notificationDataGridView.DataSource = datatable;
 
-            notificationDataGridView.Columns[0].Width = 100;
+            notificationDataGridView.Columns[0].Width = 75;
             notificationDataGridView.Columns[1].Width = 100;
-            notificationDataGridView.Columns[2].Width = 510;
+            notificationDataGridView.Columns[2].Width = 535;
             notificationDataGridView.Columns[3].Width = 125;
 
 
