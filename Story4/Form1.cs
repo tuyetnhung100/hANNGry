@@ -17,8 +17,10 @@ using System.Windows.Forms;
 
 namespace Story4
 {
+    
     public partial class Form1 : Form
     {
+
         public Form1()
         {
             InitializeComponent();
@@ -26,6 +28,7 @@ namespace Story4
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
 
         }
 
@@ -40,12 +43,13 @@ namespace Story4
             
             
         }
-
+        // Creates the data table add that data to datagridview
         private void findButton_Click(object sender, EventArgs e)
         {
 
-            DateTime startTime = firstDateTimePicker.Value;
-            DateTime endTime = secondDateTimePicker.Value;
+            DateTime startTime = TimeReset.ResetTimeToStartOfDay(firstDateTimePicker.Value);
+            
+            DateTime endTime = TimeReset.ResetTimeToEndOfDay(secondDateTimePicker.Value);
 
             List<Notification> notifications = new List<Notification>();
             NotificationDB.Load(startTime, endTime, ref notifications);
@@ -62,7 +66,7 @@ namespace Story4
                     notification.SenderName,
                     notification.Subject,
                     notification.Message,
-                    notification.SentDate,
+                    notification.SentDate.ToString("MM/dd/yyyy HH:mm"),
                     notification.NumberSent
                 );
             }
@@ -71,7 +75,7 @@ namespace Story4
 
             notificationDataGridView.Columns[0].Width = 75;
             notificationDataGridView.Columns[1].Width = 85;
-            notificationDataGridView.Columns[2].Width = 510;
+            notificationDataGridView.Columns[2].Width = 575;
             notificationDataGridView.Columns[3].Width = 110;
             notificationDataGridView.Columns[4].Width = 50;
 
@@ -86,8 +90,12 @@ namespace Story4
             // notificationDataGridView.Rows[0].Height = 50;
 
 
+
         }
 
 
     }
+
+
+    
 }
