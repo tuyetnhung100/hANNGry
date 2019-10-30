@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.sendButton = new System.Windows.Forms.Button();
             this.messageRichTextBox = new System.Windows.Forms.RichTextBox();
             this.templateComboBox = new System.Windows.Forms.ComboBox();
@@ -42,7 +43,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.sendingEmailsLabel = new System.Windows.Forms.Label();
+            this.succeededEmailsLabel = new System.Windows.Forms.Label();
+            this.failedEmailsLabel = new System.Windows.Forms.Label();
+            this.cancelledEmailsLabel = new System.Windows.Forms.Label();
             this.tagsPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // sendButton
@@ -193,11 +200,60 @@
             this.label1.Text = "&1. tag1";
             this.label1.Visible = false;
             // 
+            // errorProvider
+            // 
+            this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorProvider.ContainerControl = this;
+            // 
+            // sendingEmailsLabel
+            // 
+            this.sendingEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sendingEmailsLabel.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.sendingEmailsLabel.Location = new System.Drawing.Point(862, 16);
+            this.sendingEmailsLabel.Name = "sendingEmailsLabel";
+            this.sendingEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.sendingEmailsLabel.TabIndex = 10;
+            this.sendingEmailsLabel.Text = "sendingEmailsLabel";
+            // 
+            // succeededEmailsLabel
+            // 
+            this.succeededEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.succeededEmailsLabel.ForeColor = System.Drawing.Color.ForestGreen;
+            this.succeededEmailsLabel.Location = new System.Drawing.Point(862, 74);
+            this.succeededEmailsLabel.Name = "succeededEmailsLabel";
+            this.succeededEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.succeededEmailsLabel.TabIndex = 11;
+            this.succeededEmailsLabel.Text = "succeededEmailsLabel";
+            // 
+            // failedEmailsLabel
+            // 
+            this.failedEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.failedEmailsLabel.ForeColor = System.Drawing.Color.OrangeRed;
+            this.failedEmailsLabel.Location = new System.Drawing.Point(862, 132);
+            this.failedEmailsLabel.Name = "failedEmailsLabel";
+            this.failedEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.failedEmailsLabel.TabIndex = 12;
+            this.failedEmailsLabel.Text = "failedEmailsLabel";
+            // 
+            // cancelledEmailsLabel
+            // 
+            this.cancelledEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelledEmailsLabel.ForeColor = System.Drawing.Color.Gray;
+            this.cancelledEmailsLabel.Location = new System.Drawing.Point(862, 190);
+            this.cancelledEmailsLabel.Name = "cancelledEmailsLabel";
+            this.cancelledEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.cancelledEmailsLabel.TabIndex = 13;
+            this.cancelledEmailsLabel.Text = "cancelledEmailsLabel";
+            // 
             // Story2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2185, 1129);
+            this.Controls.Add(this.cancelledEmailsLabel);
+            this.Controls.Add(this.failedEmailsLabel);
+            this.Controls.Add(this.succeededEmailsLabel);
+            this.Controls.Add(this.sendingEmailsLabel);
             this.Controls.Add(this.tagsPanel);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.sendButton);
@@ -215,6 +271,7 @@
             this.Load += new System.EventHandler(this.Story2_Load);
             this.tagsPanel.ResumeLayout(false);
             this.tagsPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -236,6 +293,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.Label sendingEmailsLabel;
+        private System.Windows.Forms.Label cancelledEmailsLabel;
+        private System.Windows.Forms.Label failedEmailsLabel;
+        private System.Windows.Forms.Label succeededEmailsLabel;
     }
 }
 

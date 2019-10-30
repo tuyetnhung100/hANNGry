@@ -4,20 +4,18 @@
 * What the code does: Data access layer of Tag.
 */
 
+using ConnectDB;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-
-using ConnectDB;
 using System.Windows.Forms;
-
 
 namespace TagLibrary
 {
     public class TagDB
     {
         // Adds values to Tag table for Type and Name.
-        public static Boolean Add(Tag myTag)
+        public static bool Add(Tag myTag)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -29,7 +27,6 @@ namespace TagLibrary
             command.Parameters.AddWithValue("@Name", myTag.Name);
 
             command.ExecuteNonQuery();
-
 
             connect.Close();
             return true;
@@ -107,7 +104,7 @@ SELECT
 FROM Tags
 WHERE TagId IN (SELECT
   Tags_TagId
-FROM dbo.TagTemplate
+FROM TagTemplate
 WHERE Templates_TemplateId = @TemplateId);";
                 SqlCommand command = new SqlCommand(sql, connection);
                 command.Parameters.AddWithValue("@TemplateId", templateId);

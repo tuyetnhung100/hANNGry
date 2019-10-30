@@ -23,11 +23,23 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
-        private Account staff = new Account();
+        private const string DatabaseError = "Database Error";
+        private const string SMTPError = "SMTP Error";
+        private const string DataError = "Data Error";
+
+        private Account employee = new Account();
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
+
+        private SmtpClient smtpClient = null;
+        private List<Account> subscribers = new List<Account>();
+        private Notification notification = null;
+        private int sendEmailIndex = -1;
+        private int succeededCount = 0;
+        private int cancelledCount = 0;
+        private int failedCount = 0;
 
         public Story2()
         {
@@ -41,18 +53,20 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            LoadLoginedStaff();
+            LoadLoginedEmployee();
             InitializeTemplateComboBox();
+            InitializeLabels();
+            InitializeSmtpClient();
         }
 
         /// <summary>
-        /// Load Logined Staff.
+        /// Load Logined Employee.
         /// </summary>
-        private void LoadLoginedStaff()
+        private void LoadLoginedEmployee()
         {
-            if (!AccountDB.FakeGetLoginedStaff(ref staff))
+            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
             {
-                MessageBox.Show("Loading Logined Staff failed!");
+                ShowErrorMessageBox(DatabaseError, "Loading Logined Employee failed!");
             }
         }
 
@@ -73,8 +87,63 @@ namespace Story2
             }
             else
             {
-                MessageBox.Show("Loading templates failed!");
+                ShowErrorMessageBox(DatabaseError, "Loading templates failed!");
             }
+        }
+
+        /// <summary>
+        /// Remove texts of labels
+        /// </summary>
+        private void InitializeLabels()
+        {
+            sendingEmailsLabel.Text = string.Empty;
+            succeededEmailsLabel.Text = string.Empty;
+            failedEmailsLabel.Text = string.Empty;
+            cancelledEmailsLabel.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// Initialize SmtpClient
+        /// </summary>
+        private void InitializeSmtpClient()
+        {
+            NetworkCredential credentials = new NetworkCredential("hANNGry2019@gmail.com", "RUSerious?");
+            smtpClient = new SmtpClient
+            {
+                Port = 587,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Host = "smtp.gmail.com",
+                EnableSsl = true,
+                Credentials = credentials
+            };
+            smtpClient.SendCompleted += SmtpClient_SendCompleted;
+        }
+
+        /// <summary>
+        /// The SendCompleted callback.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SmtpClient_SendCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            int accountId = (int)e.UserState;
+            if (e.Cancelled)
+            {
+                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, true, null);
+                cancelledCount++;
+            }
+            else if (e.Error != null)
+            {
+                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, false, e.Error.ToString());
+                failedCount++;
+            }
+            else
+            {
+                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, true, false, null);
+                succeededCount++;
+            }
+            SendNextEmail();
         }
 
         /// <summary>
@@ -93,6 +162,8 @@ namespace Story2
                 ReloadBlocks(string.Empty);
                 ReloadTagInputs();
                 messageRichTextBox.Text = string.Empty;
+                subjectTextBox.Text = string.Empty;
+                subjectTextBox.Focus();
             }
             else
             {
@@ -103,6 +174,7 @@ namespace Story2
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
                 ColorifyText();
+                subjectTextBox.Text = template.Subject;
             }
         }
 
@@ -114,110 +186,183 @@ namespace Story2
         private void SendButton_Click(object sender, EventArgs e)
         {
             // get Notification data from controls
-            Notification notification = GetNotification();
+            notification = GetNotification();
             if (!ValidateNotification(notification))
             {
                 return;
             }
 
-            // insert and get subscriberIds
-            List<Account> subscribers = new List<Account>();
+            // make a confirmation to prevent the accidentally button click
+            DialogResult dialogResult = ShowConfirmMessageBox("Send Notification Confirmation", "Do you want to send the notification?");
+            if (dialogResult != DialogResult.OK)
+            {
+                return;
+            }
+
+            // insert and get subscribers
             if (!NotificationDB.SendNotification(notification, ref subscribers))
             {
-                MessageBox.Show("Insert notification failed!");
+                ShowErrorMessageBox(DatabaseError, "Insert notification failed!");
                 return;
             }
 
-            try
-            {
-                SmtpClient smtpClient = GetSmtpClient();
-                FakeSendEmails(notification, subscribers, smtpClient);
-                smtpClient.Dispose();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Send email failed!");
-                return;
-            }
+            // this is only for testing
+            // UseFakeSubscribers(ref subscribers);
 
-            MessageBox.Show("Notification sent successfully!");
+            // lock the sendButton until finished
+            sendButton.Enabled = false;
 
-            // clear data to prevent submitting again
-            clearButton.PerformClick();
+            SendNextEmail();
         }
 
-        // fake version of SendEmails that only send one email to myself
-        private void FakeSendEmails(Notification notification, List<Account> subscribers, SmtpClient smtpClient)
+        // send to myself
+        private void UseFakeSubscribers(ref List<Account> subscribers)
         {
             subscribers.Clear();
             subscribers.Add(new Account
             {
+                AccountId = 5,
                 Email = "gonghao.wei@pcc.edu",
                 Name = "Gong-Hao Wei"
             });
             subscribers.Add(new Account
             {
+                AccountId = 1,
                 Email = "weig@my.lanecc.edu",
                 Name = "Gong-Hao"
             });
-            SendEmails(notification, subscribers, smtpClient);
         }
 
         /// <summary>
-        /// Loop subscribers and send emails.
+        /// Send email to the next subscriber.
         /// </summary>
-        /// <param name="notification">The notification that is about to send</param>
-        /// <param name="subscribers">The subscribers thst need to receive emails</param>
-        /// <param name="smtpClient">The SmtpClient</param>
-        private void SendEmails(Notification notification, List<Account> subscribers, SmtpClient smtpClient)
+        private void SendNextEmail()
         {
-            foreach (Account subscriber in subscribers)
+            sendEmailIndex++;
+            sendingEmailsLabel.Text = "Sending emails... ( " + sendEmailIndex + " / " + subscribers.Count + " )";
+            succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
+            failedEmailsLabel.Text = "Failed: " + failedCount;
+            cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
+
+            if (sendEmailIndex < subscribers.Count)
             {
-                string email = subscriber.Email;
-                string subject = notification.Subject;
-                string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-                SendEmail(smtpClient, email, subject, body);
+                Account subscriber = subscribers[sendEmailIndex];
+                SendEmail(subscriber);
+            }
+            else
+            {
+                FinishSendingEmails();
             }
         }
 
         /// <summary>
-        /// Validate Notification data.
+        /// Send email asynchronously.
+        /// </summary>
+        /// <param name="subscriber">The target subscriber</param>
+        private void SendEmail(Account subscriber)
+        {
+            string email = subscriber.Email;
+            string subject = notification.Subject;
+            string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
+            MailMessage mailMessage = GetMailMessage(smtpClient, email, subject, body);
+            smtpClient.SendAsync(mailMessage, subscriber.AccountId);
+        }
+
+        /// <summary>
+        /// Set and return MailMessage object.
+        /// </summary>
+        /// <param name="client">The SmtpClient</param>
+        /// <param name="email">The receiver's email address</param>
+        /// <param name="subject">The email subject</param>
+        /// <param name="body">The email body</param>
+        /// <returns>The MailMessage object</returns>
+        private MailMessage GetMailMessage(SmtpClient client, string email, string subject, string body)
+        {
+            MailAddress from = new MailAddress("hANNGry2019@gmail.com");
+            MailAddress to = new MailAddress(email);
+            MailMessage message = new MailMessage(from, to);
+            message.Body = body;
+            message.BodyEncoding = Encoding.UTF8;
+            message.Subject = subject;
+            message.SubjectEncoding = Encoding.UTF8;
+            return message;
+        }
+
+        /// <summary>
+        /// When sending emails finished, Reset variables and UI.
+        /// </summary>
+        private void FinishSendingEmails()
+        {
+            ShowSuccessMessageBox("Sent Notification Completed", "Notification sent successfully!");
+
+            // unlock the sendButton
+            sendButton.Enabled = true;
+
+            // clear labels
+            InitializeLabels();
+
+            // reset variables
+            subscribers.Clear();
+            notification = null;
+            sendEmailIndex = -1;
+            succeededCount = 0;
+            cancelledCount = 0;
+            failedCount = 0;
+
+            // clear data to prevent submitting again
+            ClearData();
+
+            if (templateComboBox.SelectedIndex == 0)
+            {
+                messageRichTextBox.Focus();
+            }
+            else
+            {
+                TextBox firstTagTextBox = tagsPanel.Controls[1] as TextBox;
+                firstTagTextBox.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Validate Notification data with errorProvider.
         /// </summary>
         /// <param name="notification">The Notification object that will be validated</param>
         /// <returns>Whether the notification is valid</returns>
         private bool ValidateNotification(Notification notification)
         {
-            string errorMessage = string.Empty;
+            bool isValid = true;
+            errorProvider.Clear();
+
+            // check Tags bottom-up
+            for (int i = tagBlocks.Count - 1; i >= 0; i--)
+            {
+                MessageBlock tagBlock = tagBlocks[i];
+                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
+                {
+                    TextBox tagTextBox = tagsPanel.Controls.Find(tagBlock.Tag.Name + "TextBox", false)[0] as TextBox;
+                    errorProvider.SetError(tagTextBox, "Please enter Tag " + tagBlock.Tag.Name);
+                    tagTextBox.Focus();
+                    isValid = false;
+                }
+            }
+
+            // check Message
+            if (string.IsNullOrWhiteSpace(notification.Message))
+            {
+                errorProvider.SetError(messageRichTextBox, "Please enter Message");
+                messageRichTextBox.Focus();
+                isValid = false;
+            }
 
             // check Subject
             if (string.IsNullOrWhiteSpace(notification.Subject))
             {
-                errorMessage += "Subject is required!" + Environment.NewLine;
+                errorProvider.SetError(subjectTextBox, "Please enter Subject");
+                subjectTextBox.Focus();
+                isValid = false;
             }
 
-            // check Message
-            if (string.IsNullOrWhiteSpace(notification.Subject))
-            {
-                errorMessage += "Message is required!" + Environment.NewLine;
-            }
-
-            // check Tags
-            foreach (MessageBlock tagBlock in tagBlocks)
-            {
-                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
-                {
-                    errorMessage += "Tag \"" + tagBlock.Tag.Name + "\" is required!" + Environment.NewLine;
-                }
-            }
-
-            // show errorMessage if any
-            if (!string.IsNullOrWhiteSpace(errorMessage))
-            {
-                MessageBox.Show(errorMessage);
-                return false;
-            }
-
-            return true;
+            return isValid;
         }
 
         /// <summary>
@@ -232,7 +377,7 @@ namespace Story2
             {
                 Subject = subjectTextBox.Text,
                 Message = message,
-                SentAccountId = staff.AccountId
+                SentAccountId = employee.AccountId
             };
 
             if (templateComboBox.SelectedIndex != 0)
@@ -301,8 +446,8 @@ namespace Story2
                         case "Student Name":
                             message = message.Replace("{$Student Name}", subscriber.Name);
                             break;
-                        case "Staff Name":
-                            message = message.Replace("{$Staff Name}", staff.Name);
+                        case "Employee Name":
+                            message = message.Replace("{$Employee Name}", employee.Name);
                             break;
                     }
                 }
@@ -316,6 +461,20 @@ namespace Story2
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void clearButton_Click(object sender, EventArgs e)
+        {
+            // make a confirmation to prevent the accidentally button click
+            DialogResult dialogResult = ShowConfirmMessageBox("Clear Inputs Confirmation", "Do you want to clear everything?");
+            if (dialogResult != DialogResult.OK)
+            {
+                return;
+            }
+            ClearData();
+        }
+
+        /// <summary>
+        /// Clear Data
+        /// </summary>
+        private void ClearData()
         {
             // reset subject
             subjectTextBox.Text = string.Empty;
@@ -344,7 +503,7 @@ namespace Story2
                 // load tags
                 if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
                 {
-                    MessageBox.Show("Loading tags failed!");
+                    ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
                 }
             }
             else
@@ -377,7 +536,7 @@ namespace Story2
                     // tag should never be null unless data in the DB is missing
                     if (tag == null)
                     {
-                        MessageBox.Show("Tag " + tagName + " is missing from DB");
+                        ShowErrorMessageBox(DataError, "Tag " + tagName + " is missing from DB");
                         messageBlocks.Clear();
                         tagBlocks.Clear();
                         return;
@@ -447,6 +606,10 @@ namespace Story2
                 };
                 tagTextBox.TextChanged += TagTextBox_TextChanged;
                 tagsPanel.Controls.Add(tagTextBox);
+                if (index == 0)
+                {
+                    tagTextBox.Focus();
+                }
                 index++;
             }
         }
@@ -459,7 +622,7 @@ namespace Story2
         private void TagTextBox_TextChanged(object sender, EventArgs e)
         {
             TextBox textBox = sender as TextBox;
-            string tagName = textBox.Name.Replace("TextBox", "");
+            string tagName = textBox.Name.Replace("TextBox", string.Empty);
             MessageBlock tagBlock = tagBlocks.Find(x => x.Tag.Name == tagName);
             tagBlock.Input = textBox.Text;
             ColorifyText();
@@ -504,65 +667,41 @@ namespace Story2
         }
 
         /// <summary>
-        /// Create a SmtpClient.
+        /// Show the unexpected error, such as SQL exceptions.
         /// </summary>
-        /// <returns>The SmtpClient</returns>
-        private SmtpClient GetSmtpClient()
+        /// <param name="title">The title of the error</param>
+        /// <param name="message">The message needs to show</param>
+        private void ShowErrorMessageBox(string title, string message)
         {
-            NetworkCredential credentials = new NetworkCredential("hANNGry2019@gmail.com", "RUSerious?");
-            SmtpClient smtpClient = new SmtpClient
-            {
-                Port = 587,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Host = "smtp.gmail.com",
-                EnableSsl = true,
-                Credentials = credentials
-            };
-            smtpClient.SendCompleted += SmtpClient_SendCompleted;
-            return smtpClient;
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
-        /// The SendCompleted callback.
+        /// Show the success message.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SmtpClient_SendCompleted(object sender, AsyncCompletedEventArgs e)
+        /// <param name="title">The title of the action</param>
+        /// <param name="message">The message needs to show</param>
+        private void ShowSuccessMessageBox(string title, string message)
         {
-            string email = (string)e.UserState;
-            if (e.Cancelled)
-            {
-                MessageBox.Show("Sent " + email + " canceled!");
-            }
-            else if (e.Error != null)
-            {
-                MessageBox.Show("Sent " + email + " failed!" + Environment.NewLine + e.Error.ToString());
-            }
-            else
-            {
-                // Message sent successfully.
-            }
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
-        /// Set MailMessage and send it.
+        /// Show the confirm box.
         /// </summary>
-        /// <param name="client">The SmtpClient</param>
-        /// <param name="email">The receiver's email address</param>
-        /// <param name="subject">The email subject</param>
-        /// <param name="body">The email body</param>
-        private void SendEmail(SmtpClient client, string email, string subject, string body)
+        /// <param name="title">The title of the action</param>
+        /// <param name="message">The message needs to show</param>
+        /// <returns>The DialogResult object</returns>
+        private DialogResult ShowConfirmMessageBox(string title, string message)
         {
-            MailAddress from = new MailAddress("hANNGry2019@gmail.com");
-            MailAddress to = new MailAddress(email);
-            MailMessage message = new MailMessage(from, to);
-            message.Body = body;
-            message.BodyEncoding = Encoding.UTF8;
-            message.Subject = subject;
-            message.SubjectEncoding = Encoding.UTF8;
-            client.Send(message);
-            message.Dispose();
+            DialogResult dialogResult = MessageBox.Show(
+                message,
+                title,
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2
+            );
+            return dialogResult;
         }
     }
 }
