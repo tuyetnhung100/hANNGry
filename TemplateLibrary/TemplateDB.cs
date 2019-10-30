@@ -20,7 +20,27 @@ namespace TemplateLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Template(Subject, Message, CreatedAccountId, CreatedDate)" +
+            SqlCommand command = new SqlCommand("UPDATE Templates SET Message = @Message, CreatedAccountId = @CreatedAccountId, " +
+                "CreatedDate = @CreatedDate WHERE Subject = @Subject", connect);
+
+            command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
+            command.Parameters.AddWithValue("@Message", myTemplate.Message);
+            command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
+            command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
+
+            command.ExecuteNonQuery();
+
+            connect.Close();
+            return true;
+        }
+
+        // Updates values in Template table.
+        public static bool Update(Template myTemplate)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Insert into Templates(Subject, Message, CreatedAccountId, CreatedDate)" +
                 " Values(@Subject, @Message, @CreatedAccountId, @CreatedDate)", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);

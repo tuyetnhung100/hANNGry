@@ -17,6 +17,9 @@ namespace Story3
 {
     public partial class templateCreator : Form
     {
+        private List<Tag> tags = new List<Tag>();
+        private List<Template> templates = new List<Template>();
+
         public templateCreator()
         {
             InitializeComponent();
@@ -30,21 +33,21 @@ namespace Story3
 
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            
+            TemplateDB.Load(ref templates);
+            TagDB.Load(ref tags);
 
-            List<Tag> myTagList = new List<Tag>();
-            TagDB.Load(ref myTagList);
-            List<Template> myTemplateList = new List<Template>();
-            TemplateDB.Load(ref myTemplateList);
-
-            foreach(Tag myTag in myTagList)
+            foreach (Tag myTag in tags)
             {
                 customTagComboBox.Items.Add(myTag.Name);
             }
             
-            foreach(Template template in myTemplateList)
+            foreach(Template template in templates)
             {
-                templateSelectorComboBox.Items.Add(template.Subject);
+                templateSelectorComboBox.Items.Add(template);
             }
+
+            templateRichTextBox.Text = null;
         }
 
         // Clears the rich text box.
@@ -100,11 +103,21 @@ namespace Story3
                 myTemplate.CreatedAccountId = 1;
                 myTemplate.CreatedDate = DateTime.Now;
                 TemplateDB.Add(myTemplate);
-                templateSelectorComboBox.Items.Add(input.ToLower());
+                templateSelectorComboBox.Items.Add(myTemplate);
             }
             else if(templateSelectorComboBox.Items.Contains(input.ToLower()))
             {
-                MessageBox.Show("Template already exists under that subject! Please select the template from the dropdown box.", "Warning!");
+                DialogResult save = MessageBox.Show("Template already exists under that subject! " +
+                    "Are you sure you want to overwrite the previous template?", "Warning!", MessageBoxButtons.YesNo);
+                if (save == DialogResult.Yes)
+                {
+                    Template myTemplate = new Template();
+                    myTemplate.Subject = input;
+                    myTemplate.Message = templateRichTextBox.Text;
+                    myTemplate.CreatedAccountId = 1;
+                    myTemplate.CreatedDate = DateTime.Now;
+                    TemplateDB.Update(myTemplate);
+                }
             }
             else
             {
@@ -114,6 +127,8 @@ namespace Story3
 
         private void templateSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Template template = (Template)templateSelectorComboBox.SelectedItem;
+            templateRichTextBox.Text = template.Message;
         }
     }
 }
