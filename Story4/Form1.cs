@@ -37,7 +37,7 @@ namespace Story4
             notificationDataGridView.Rows.Clear();
 
 
-            MessageBox.Show("Cleared Successfully");
+            
             
         }
 
@@ -54,18 +54,26 @@ namespace Story4
             datatable.Columns.Add("Subject");
             datatable.Columns.Add("Message");
             datatable.Columns.Add("Date Sent");
+            datatable.Columns.Add("Number Sent");
 
             foreach (Notification notification in notifications)
             {
-                datatable.Rows.Add(notification.SenderName, notification.Subject, notification.Message, notification.SentDate);
+                datatable.Rows.Add(
+                    notification.SenderName,
+                    notification.Subject,
+                    notification.Message,
+                    notification.SentDate,
+                    notification.NumberSent
+                );
             }
 
             notificationDataGridView.DataSource = datatable;
 
             notificationDataGridView.Columns[0].Width = 75;
-            notificationDataGridView.Columns[1].Width = 100;
-            notificationDataGridView.Columns[2].Width = 535;
-            notificationDataGridView.Columns[3].Width = 125;
+            notificationDataGridView.Columns[1].Width = 85;
+            notificationDataGridView.Columns[2].Width = 510;
+            notificationDataGridView.Columns[3].Width = 110;
+            notificationDataGridView.Columns[4].Width = 50;
 
 
 
@@ -79,5 +87,7 @@ namespace Story4
 
 
         }
+
+
     }
 }
