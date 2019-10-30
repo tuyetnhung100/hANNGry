@@ -25,6 +25,12 @@ namespace Story3
         // Loads the templateCreator, adds all of the tags to the tag combo box from the db.
         private void templateCreator_Load(object sender, EventArgs e)
         {
+            this.MinimumSize = new Size(this.Width, this.Height);
+            this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+            this.AutoSize = true;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
             List<Tag> myTagList = new List<Tag>();
             TagDB.Load(ref myTagList);
             List<Template> myTemplateList = new List<Template>();
@@ -67,7 +73,8 @@ namespace Story3
             }
             else if (customTagComboBox.Items.Contains(input.ToLower()))
             {
-                MessageBox.Show("Custom Tag already exists! Please select the tag from the dropdown box.", "Warning!");
+                MessageBox.Show("Custom Tag already exists, inserting into the RichTexttention");
+                templateRichTextBox.SelectedText = "{$" + input.ToLower() + "}";
             }
             else
             {
