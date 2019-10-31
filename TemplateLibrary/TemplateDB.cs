@@ -20,8 +20,8 @@ namespace TemplateLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("UPDATE Templates SET Message = @Message, CreatedAccountId = @CreatedAccountId, " +
-                "CreatedDate = @CreatedDate WHERE Subject = @Subject", connect);
+            SqlCommand command = new SqlCommand("Insert into Templates(Subject, Message, CreatedAccountId, CreatedDate)" +
+                " Values(@Subject, @Message, @CreatedAccountId, @CreatedDate)", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);
@@ -40,8 +40,8 @@ namespace TemplateLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Templates(Subject, Message, CreatedAccountId, CreatedDate)" +
-                " Values(@Subject, @Message, @CreatedAccountId, @CreatedDate)", connect);
+            SqlCommand command = new SqlCommand("UPDATE Templates SET Message = @Message, CreatedAccountId = @CreatedAccountId, " +
+                "CreatedDate = @CreatedDate WHERE Subject = @Subject", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);

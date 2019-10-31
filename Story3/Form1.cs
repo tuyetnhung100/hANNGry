@@ -46,8 +46,6 @@ namespace Story3
             {
                 templateSelectorComboBox.Items.Add(template);
             }
-
-            templateRichTextBox.Text = null;
         }
 
         // Clears the rich text box.
@@ -92,10 +90,14 @@ namespace Story3
         }
 
         // Saves the template to the database with the subject being the name for the template.
+        // If the template has the same subject as one already in the DB, prompts user to make sure they want to overwrite.
+        // Then, updates the template in the database.
         private void saveButton_Click(object sender, EventArgs e)
         {
+            string currentItem = templateSelectorComboBox.SelectedItem.ToString();
             string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
-            if (!templateSelectorComboBox.Items.Contains(input.ToLower()) && input != "")
+
+            if (currentItem != input && input != "")
             {
                 Template myTemplate = new Template();
                 myTemplate.Subject = input;
@@ -104,8 +106,9 @@ namespace Story3
                 myTemplate.CreatedDate = DateTime.Now;
                 TemplateDB.Add(myTemplate);
                 templateSelectorComboBox.Items.Add(myTemplate);
+                templateSelectorComboBox.SelectedItem.Equals(myTemplate);
             }
-            else if(templateSelectorComboBox.Items.Contains(input.ToLower()))
+            else if (currentItem == input)
             {
                 DialogResult save = MessageBox.Show("Template already exists under that subject! " +
                     "Are you sure you want to overwrite the previous template?", "Warning!", MessageBoxButtons.YesNo);
@@ -117,14 +120,27 @@ namespace Story3
                     myTemplate.CreatedAccountId = 1;
                     myTemplate.CreatedDate = DateTime.Now;
                     TemplateDB.Update(myTemplate);
+                    templateSelectorComboBox.SelectedItem.Equals(myTemplate);
                 }
             }
             else
             {
                 return;
             }
+
+            foreach (Template template in templates)
+            {
+                templateSelectorComboBox.Items.Add(template);
+            }
+            templateSelectorComboBox.Items.Clear();
+            TemplateDB.Load(ref templates);
+            foreach (Template template in templates)
+            {
+                templateSelectorComboBox.Items.Add(template);
+            }
         }
 
+        // Loads a template from the DB when selected, and inserts the message column into the RTB.
         private void templateSelectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             Template template = (Template)templateSelectorComboBox.SelectedItem;
