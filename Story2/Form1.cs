@@ -158,10 +158,11 @@ namespace Story2
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
+                messagePanel.BackColor = SystemColors.Window;
+                messageRichTextBox.Text = string.Empty;
                 ReloadTags(null);
                 ReloadBlocks(string.Empty);
                 ReloadTagInputs();
-                messageRichTextBox.Text = string.Empty;
                 subjectTextBox.Text = string.Empty;
                 subjectTextBox.Focus();
             }
@@ -170,6 +171,7 @@ namespace Story2
                 // using a templat - disable messageRichTextBox and rely on tags
                 Template template = templates[templateComboBox.SelectedIndex - 1];
                 messageRichTextBox.Enabled = false;
+                messagePanel.BackColor = SystemColors.Control;
                 ReloadTags(template);
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
@@ -209,8 +211,8 @@ namespace Story2
             // this is only for testing
             // UseFakeSubscribers(ref subscribers);
 
-            // lock the sendButton until finished
-            sendButton.Enabled = false;
+            // lock controls until finished
+            SetControlsEnabled(false);
 
             SendNextEmail();
         }
@@ -295,8 +297,8 @@ namespace Story2
         {
             ShowSuccessMessageBox("Sent Notification Completed", "Notification sent successfully!");
 
-            // unlock the sendButton
-            sendButton.Enabled = true;
+            // unlock controls
+            SetControlsEnabled(true);
 
             // clear labels
             InitializeLabels();
@@ -316,7 +318,7 @@ namespace Story2
             {
                 messageRichTextBox.Focus();
             }
-            else
+            else if (tagsPanel.Controls.Count > 0)
             {
                 TextBox firstTagTextBox = tagsPanel.Controls[1] as TextBox;
                 firstTagTextBox.Focus();
@@ -576,7 +578,10 @@ namespace Story2
 
             int index = 0;
             int tabIndex = 0;
-            Font font = new Font("Arial Narrow", 13.875F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            int space = 60;
+            int startX = 0;
+            int startY = 5;
+            Font font = new Font("Arial Narrow", 22.125F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
             // loop tagBlocks and add dynamic labels and textBoxs into tagsPanel
             foreach (MessageBlock tagBlock in tagBlocks)
@@ -589,7 +594,7 @@ namespace Story2
                 {
                     AutoSize = true,
                     Font = font,
-                    Location = new Point(20, 84 + (index * 56)),
+                    Location = new Point(startX, startY + (index * space)),
                     Name = tagBlock.Tag.Name + "Label",
                     Size = new Size(120, 43),
                     TabIndex = tabIndex++,
@@ -599,9 +604,9 @@ namespace Story2
                 TextBox tagTextBox = new TextBox
                 {
                     Font = font,
-                    Location = new Point(230, 80 + (index * 56)),
+                    Location = new Point(startX + 220, startY - 4 + (index * space)),
                     Name = tagBlock.Tag.Name + "TextBox",
-                    Size = new Size(240, 50),
+                    Size = new Size(360, 50),
                     TabIndex = tabIndex++
                 };
                 tagTextBox.TextChanged += TagTextBox_TextChanged;
@@ -702,6 +707,38 @@ namespace Story2
                 MessageBoxDefaultButton.Button2
             );
             return dialogResult;
+        }
+
+        /// <summary>
+        /// Enable or disable all controls
+        /// </summary>
+        /// <param name="enabled">Whether controls are enabled</param>
+        private void SetControlsEnabled(bool enabled)
+        {
+            SetControlsEnabledRecursion(this, enabled);
+        }
+
+        /// <summary>
+        /// Use recursion to enable or disable all controls
+        /// </summary>
+        /// <param name="target">The target control</param>
+        /// <param name="enabled">Whether controls are enabled</param>
+        private void SetControlsEnabledRecursion(Control target, bool enabled)
+        {
+            foreach (Control control in target.Controls)
+            {
+                if (!(control is Label))
+                {
+                    control.Enabled = enabled;
+                }
+                if (control.Controls.Count > 0)
+                {
+                    foreach (Control child in control.Controls)
+                    {
+                        SetControlsEnabledRecursion(child, enabled);
+                    }
+                }
+            }
         }
     }
 }
