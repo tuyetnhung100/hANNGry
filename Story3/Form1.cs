@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using TagLibrary;
 using TemplateLibrary;
+using AccountLibrary;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
@@ -19,10 +20,22 @@ namespace Story3
     {
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
+        private Account employee = new Account();
+        private const string DatabaseError = "Database Error";
 
         public templateCreator()
         {
             InitializeComponent();
+        }
+
+        // Borrowed this from Story 2 to load in the account id in place of the 1 I had originally set for testing purposes. 
+        // Loads all the employees from the database.
+        private void LoadEmployee()
+        {
+            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
+            {
+                MessageBox.Show(DatabaseError, "Loading Employee failed!");
+            }
         }
 
         // Loads the templateCreator, adds all of the tags to the tag combo box from the db.
@@ -117,7 +130,7 @@ namespace Story3
                     Template myTemplate = new Template();
                     myTemplate.Subject = input;
                     myTemplate.Message = templateRichTextBox.Text;
-                    myTemplate.CreatedAccountId = 1;
+                    myTemplate.CreatedAccountId = employee.AccountId;
                     myTemplate.CreatedDate = DateTime.Now;
                     TemplateDB.Update(myTemplate);
                     templateSelectorComboBox.SelectedItem.Equals(myTemplate);
