@@ -164,7 +164,6 @@ namespace Story2
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.Enabled = true;
-                messagePanel.BackColor = SystemColors.Window;
                 messageRichTextBox.Text = string.Empty;
                 ReloadTags(null);
                 ReloadBlocks(string.Empty);
@@ -177,7 +176,6 @@ namespace Story2
                 // using a templat - disable messageRichTextBox and rely on tags
                 Template template = templateComboBox.SelectedItem as Template;
                 messageRichTextBox.Enabled = false;
-                messagePanel.BackColor = SystemColors.Control;
                 ReloadTags(template);
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
@@ -386,7 +384,7 @@ namespace Story2
             // check Message
             if (string.IsNullOrWhiteSpace(messageRichTextBox.Text))
             {
-                errorProvider.SetError(messagePanel, "Please enter Message");
+                errorProvider.SetError(messageRichTextBox, "Please enter Message");
                 messageRichTextBox.Focus();
                 isValid = false;
             }
@@ -613,7 +611,7 @@ namespace Story2
 
             int index = 0;
             int tabIndex = 0;
-            int space = 60;
+            int space = 50;
             int startX = 0;
             int startY = 5;
             Font font = new Font("Arial Narrow", 22.125F, FontStyle.Regular, GraphicsUnit.Point, 0);
