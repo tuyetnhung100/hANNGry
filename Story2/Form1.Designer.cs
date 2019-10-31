@@ -44,9 +44,7 @@
             this.succeededEmailsLabel = new System.Windows.Forms.Label();
             this.failedEmailsLabel = new System.Windows.Forms.Label();
             this.cancelledEmailsLabel = new System.Windows.Forms.Label();
-            this.messagePanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-            this.messagePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // sendButton
@@ -64,15 +62,14 @@
             // 
             // messageRichTextBox
             // 
+            this.messageRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.messageRichTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.messageRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.messageRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageRichTextBox.Enabled = false;
             this.messageRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.messageRichTextBox.Location = new System.Drawing.Point(2, 3);
+            this.messageRichTextBox.Location = new System.Drawing.Point(120, 158);
             this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.messageRichTextBox.Name = "messageRichTextBox";
-            this.messageRichTextBox.Size = new System.Drawing.Size(365, 397);
+            this.messageRichTextBox.Size = new System.Drawing.Size(370, 405);
             this.messageRichTextBox.TabIndex = 6;
             this.messageRichTextBox.Text = "";
             // 
@@ -85,9 +82,10 @@
             this.templateComboBox.Location = new System.Drawing.Point(120, 53);
             this.templateComboBox.Margin = new System.Windows.Forms.Padding(1);
             this.templateComboBox.Name = "templateComboBox";
-            this.templateComboBox.Size = new System.Drawing.Size(371, 41);
+            this.templateComboBox.Size = new System.Drawing.Size(370, 41);
             this.templateComboBox.TabIndex = 2;
-            this.templateComboBox.SelectedIndexChanged += new System.EventHandler(this.TemplateComboBox_SelectedIndexChanged);
+            this.templateComboBox.DropDownClosed += new System.EventHandler(this.templateComboBox_DropDownClosed);
+            this.templateComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.templateComboBox_KeyUp);
             // 
             // templateLabel
             // 
@@ -128,7 +126,7 @@
             this.subjectTextBox.Location = new System.Drawing.Point(120, 105);
             this.subjectTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.subjectTextBox.Name = "subjectTextBox";
-            this.subjectTextBox.Size = new System.Drawing.Size(371, 41);
+            this.subjectTextBox.Size = new System.Drawing.Size(370, 41);
             this.subjectTextBox.TabIndex = 4;
             // 
             // titleLabel
@@ -145,7 +143,7 @@
             // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.clearButton.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(311, 568);
+            this.clearButton.Location = new System.Drawing.Point(310, 568);
             this.clearButton.Margin = new System.Windows.Forms.Padding(1);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(180, 53);
@@ -162,7 +160,7 @@
             this.tagsPanel.Location = new System.Drawing.Point(518, 157);
             this.tagsPanel.Margin = new System.Windows.Forms.Padding(1);
             this.tagsPanel.Name = "tagsPanel";
-            this.tagsPanel.Size = new System.Drawing.Size(369, 405);
+            this.tagsPanel.Size = new System.Drawing.Size(370, 405);
             this.tagsPanel.TabIndex = 9;
             // 
             // errorProvider
@@ -214,26 +212,12 @@
             this.cancelledEmailsLabel.TabIndex = 13;
             this.cancelledEmailsLabel.Text = "cancelledEmailsLabel";
             // 
-            // messagePanel
-            // 
-            this.messagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.messagePanel.BackColor = System.Drawing.SystemColors.Window;
-            this.messagePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.messagePanel.Controls.Add(this.messageRichTextBox);
-            this.messagePanel.Location = new System.Drawing.Point(120, 157);
-            this.messagePanel.Margin = new System.Windows.Forms.Padding(1);
-            this.messagePanel.Name = "messagePanel";
-            this.messagePanel.Padding = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.messagePanel.Size = new System.Drawing.Size(371, 405);
-            this.messagePanel.TabIndex = 10;
-            // 
             // Story2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1008, 631);
-            this.Controls.Add(this.messagePanel);
+            this.Controls.Add(this.messageRichTextBox);
             this.Controls.Add(this.cancelledEmailsLabel);
             this.Controls.Add(this.failedEmailsLabel);
             this.Controls.Add(this.succeededEmailsLabel);
@@ -253,7 +237,6 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Story2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-            this.messagePanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -276,7 +259,6 @@
         private System.Windows.Forms.Label cancelledEmailsLabel;
         private System.Windows.Forms.Label failedEmailsLabel;
         private System.Windows.Forms.Label succeededEmailsLabel;
-        private System.Windows.Forms.Panel messagePanel;
     }
 }
 
