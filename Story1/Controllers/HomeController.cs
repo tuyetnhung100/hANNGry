@@ -73,7 +73,7 @@ namespace Story1.Controllers
         {
             if (ModelState.IsValid)
             {
-                Account existingAccount = AccountDB.FindAccount(model.username);
+                Account existingAccount = AccountDB.FindAccount(model.username, model.email);
                 if (existingAccount == null)
                 {
                     Account myAccount = new Account();
@@ -85,14 +85,18 @@ namespace Story1.Controllers
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
                 }
+                else if (model.email == existingAccount.Email)
+                {
+                    model.errMessage = "Account already exists. Please enter a different Email.";
+                }
                 else
                 {
-                    model.errMessage = "Username already exists.";
+                    model.errMessage = "Account already exists. Please enter a different Username.";
                 }
             }
             else
             {
-                model.errMessage = "Incorrect data";
+                model.errMessage = "Please enter valid information.";
             }
             return View(model);
         }

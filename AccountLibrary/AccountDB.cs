@@ -36,13 +36,42 @@ namespace AccountLibrary
         }
 
         // Look for a user's account info in the DB, based on the entered username on the login form
+        public static Account FindAccount(string username, string email)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Select Username, Email, PasswordHash, PasswordSalt, Name from Accounts " +
+                "where Username = @username OR Email = @email", connect);
+            command.Parameters.AddWithValue("@username", username);
+            command.Parameters.AddWithValue("@email", email);
+            SqlDataReader reader = command.ExecuteReader();
+            Account myAccount = null;
+
+            while (reader.Read())
+            {
+                myAccount = new Account();
+                myAccount.Username = reader.GetString(0);
+                myAccount.Email = reader.GetString(1);
+                myAccount.PasswordHash = reader.GetString(2);
+                myAccount.PasswordSalt = reader.GetString(3);
+                myAccount.Name = reader.GetString(4);
+            }
+
+            reader.Close();
+            command.ExecuteNonQuery();
+            connect.Close();
+            return myAccount;
+        }
+
         public static Account FindAccount(string username)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Username, PasswordHash, PasswordSalt, Name from Accounts where Username = @username", connect);
-            command.Parameters.AddWithValue("@username", username);
+            SqlCommand command = new SqlCommand("Select Username, PasswordHash, PasswordSalt, Name from Accounts " +
+                "where Username = @username", connect);
+            command.Parameters.AddWithValue("@username", username);          
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
 
