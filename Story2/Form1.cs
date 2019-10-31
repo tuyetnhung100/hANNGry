@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/23/2019
+ * Date:               10/30/2019
  * What the code does: 1. Using a template to from a notification message
  *                     2. Sending the notification to subscribers
  */
@@ -23,6 +23,7 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
+        private const string NoneOption = "None";
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
@@ -36,7 +37,7 @@ namespace Story2
         private SmtpClient smtpClient = null;
         private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
-        private int sendEmailIndex = -1;
+        private int sendingEmailCount = -1;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
@@ -77,7 +78,7 @@ namespace Story2
         {
             // set the default option to be "None"
             templateComboBox.Items.Clear();
-            templateComboBox.Items.Add("None");
+            templateComboBox.Items.Add(NoneOption);
             templateComboBox.SelectedIndex = 0;
 
             // load templates
@@ -147,13 +148,18 @@ namespace Story2
         }
 
         /// <summary>
-        /// When changed, applies selected template into messageRichTextBox.
+        /// When drop down closed, applies selected template into messageRichTextBox.
         /// If selected "None", then clears text of messageRichTextBox.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TemplateComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void templateComboBox_DropDownClosed(object sender, EventArgs e)
         {
+            if (templateComboBox.SelectedIndex == -1)
+            {
+                return;
+            }
+            errorProvider.Clear();
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
@@ -169,7 +175,7 @@ namespace Story2
             else
             {
                 // using a templat - disable messageRichTextBox and rely on tags
-                Template template = templates[templateComboBox.SelectedIndex - 1];
+                Template template = templateComboBox.SelectedItem as Template;
                 messageRichTextBox.Enabled = false;
                 messagePanel.BackColor = SystemColors.Control;
                 ReloadTags(template);
@@ -177,6 +183,35 @@ namespace Story2
                 ReloadTagInputs();
                 ColorifyText();
                 subjectTextBox.Text = template.Subject;
+            }
+        }
+
+        /// <summary>
+        /// When press Enter key, checks selected value
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void templateComboBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (templateComboBox.Text == NoneOption)
+                {
+                    templateComboBox.SelectedIndex = 0;
+                    templateComboBox_DropDownClosed(sender, e);
+                }
+                else
+                {
+                    for (int i = 1; i < templateComboBox.Items.Count; i++)
+                    {
+                        Template template = templateComboBox.Items[i] as Template;
+                        if (template.Subject == templateComboBox.Text)
+                        {
+                            templateComboBox.SelectedIndex = i;
+                            templateComboBox_DropDownClosed(sender, e);
+                        }
+                    }
+                }
             }
         }
 
@@ -218,37 +253,37 @@ namespace Story2
         }
 
         // send to myself
-        private void UseFakeSubscribers(ref List<Account> subscribers)
-        {
-            subscribers.Clear();
-            subscribers.Add(new Account
-            {
-                AccountId = 5,
-                Email = "gonghao.wei@pcc.edu",
-                Name = "Gong-Hao Wei"
-            });
-            subscribers.Add(new Account
-            {
-                AccountId = 1,
-                Email = "weig@my.lanecc.edu",
-                Name = "Gong-Hao"
-            });
-        }
+        // private void UseFakeSubscribers(ref List<Account> subscribers)
+        // {
+        //     subscribers.Clear();
+        //     subscribers.Add(new Account
+        //     {
+        //         AccountId = 5,
+        //         Email = "gonghao.wei@pcc.edu",
+        //         Name = "Gong-Hao Wei"
+        //     });
+        //     subscribers.Add(new Account
+        //     {
+        //         AccountId = 1,
+        //         Email = "weig@my.lanecc.edu",
+        //         Name = "Gong-Hao"
+        //     });
+        // }
 
         /// <summary>
         /// Send email to the next subscriber.
         /// </summary>
         private void SendNextEmail()
         {
-            sendEmailIndex++;
-            sendingEmailsLabel.Text = "Sending emails... ( " + sendEmailIndex + " / " + subscribers.Count + " )";
+            sendingEmailCount++;
+            sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
             cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
 
-            if (sendEmailIndex < subscribers.Count)
+            if (sendingEmailCount < subscribers.Count)
             {
-                Account subscriber = subscribers[sendEmailIndex];
+                Account subscriber = subscribers[sendingEmailCount];
                 SendEmail(subscriber);
             }
             else
@@ -306,7 +341,7 @@ namespace Story2
             // reset variables
             subscribers.Clear();
             notification = null;
-            sendEmailIndex = -1;
+            sendingEmailCount = -1;
             succeededCount = 0;
             cancelledCount = 0;
             failedCount = 0;
@@ -349,9 +384,9 @@ namespace Story2
             }
 
             // check Message
-            if (string.IsNullOrWhiteSpace(notification.Message))
+            if (string.IsNullOrWhiteSpace(messageRichTextBox.Text))
             {
-                errorProvider.SetError(messageRichTextBox, "Please enter Message");
+                errorProvider.SetError(messagePanel, "Please enter Message");
                 messageRichTextBox.Focus();
                 isValid = false;
             }
@@ -384,7 +419,7 @@ namespace Story2
 
             if (templateComboBox.SelectedIndex != 0)
             {
-                Template template = templates[templateComboBox.SelectedIndex - 1];
+                Template template = templateComboBox.SelectedItem as Template;
                 notification.TemplateId = template.TemplateId;
             }
 

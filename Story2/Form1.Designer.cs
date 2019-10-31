@@ -67,7 +67,6 @@
             this.messageRichTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.messageRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.messageRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.messageRichTextBox.Enabled = false;
             this.messageRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
             this.messageRichTextBox.Location = new System.Drawing.Point(2, 3);
             this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(1);
@@ -87,7 +86,8 @@
             this.templateComboBox.Name = "templateComboBox";
             this.templateComboBox.Size = new System.Drawing.Size(371, 41);
             this.templateComboBox.TabIndex = 2;
-            this.templateComboBox.SelectedIndexChanged += new System.EventHandler(this.TemplateComboBox_SelectedIndexChanged);
+            this.templateComboBox.DropDownClosed += new System.EventHandler(this.templateComboBox_DropDownClosed);
+            this.templateComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.templateComboBox_KeyUp);
             // 
             // templateLabel
             // 
