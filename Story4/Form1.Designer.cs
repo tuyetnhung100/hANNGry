@@ -52,7 +52,7 @@
             // findButton
             // 
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findButton.Location = new System.Drawing.Point(87, 224);
+            this.findButton.Location = new System.Drawing.Point(101, 224);
             this.findButton.Name = "findButton";
             this.findButton.Size = new System.Drawing.Size(160, 60);
             this.findButton.TabIndex = 1;
@@ -63,7 +63,7 @@
             // firstDateTimePicker
             // 
             this.firstDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.firstDateTimePicker.Location = new System.Drawing.Point(302, 117);
+            this.firstDateTimePicker.Location = new System.Drawing.Point(265, 117);
             this.firstDateTimePicker.Name = "firstDateTimePicker";
             this.firstDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.firstDateTimePicker.TabIndex = 2;
@@ -71,7 +71,7 @@
             // secondDateTimePicker
             // 
             this.secondDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.secondDateTimePicker.Location = new System.Drawing.Point(302, 171);
+            this.secondDateTimePicker.Location = new System.Drawing.Point(265, 171);
             this.secondDateTimePicker.Name = "secondDateTimePicker";
             this.secondDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.secondDateTimePicker.TabIndex = 3;
@@ -80,7 +80,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(419, 71);
+            this.label1.Location = new System.Drawing.Point(374, 71);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(242, 31);
             this.label1.TabIndex = 4;
@@ -91,7 +91,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.label3.Location = new System.Drawing.Point(407, 9);
+            this.label3.Location = new System.Drawing.Point(363, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(264, 33);
             this.label3.TabIndex = 6;
@@ -100,7 +100,7 @@
             // clearButton
             // 
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(777, 224);
+            this.clearButton.Location = new System.Drawing.Point(724, 224);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(160, 60);
             this.clearButton.TabIndex = 7;
