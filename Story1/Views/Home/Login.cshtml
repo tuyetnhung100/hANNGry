@@ -36,10 +36,10 @@
             background: #f1f1f1;
         }
 
-            input[type=text]:focus, input[type=password]:focus {
-                background-color: #ddd;
-                outline: none;
-            }
+        input[type=text]:focus, input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
 
         /* Overwrite default styles of hr */
         hr {
@@ -58,9 +58,9 @@
             width: 100%;
         }
 
-            .loginbtn:hover {
-                opacity: 0.8;
-            }
+        .loginbtn:hover {
+            opacity: 0.8;
+        }
 
         .cancelbtn {
             width: auto;
@@ -77,33 +77,74 @@
             float: right;
             padding-top: 16px;
         }
+
+        span.errMsg {
+            float: right;
+            color: red;
+        }
     </style>
 </head>
 <body>
 
-    <form action="/action_page.php" method="post">
+    <form action="/Home/Login" method="post">
         <div class="container">
             <h1>PCC Panther Pantry Login Form</h1>
             <hr>
-            <label for="uname"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="uname" required>
+            <label for="uname"><b>@Html.LabelFor(model => model.uname)</b></label>
+            <span class="errMsg">@Html.ValidationMessageFor(model => model.uname, "")</span>
+            @Html.EditorFor(model => model.uname, new { htmlAttributes = new { placeholder = "Enter Username" } })
 
-            <label for="psw"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="psw" required>
+            <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
+            <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
+            @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password" } })
+
+            @*<label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="uname" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" required>*@
             <hr>
             <button type="submit" class="loginbtn">Login</button>
 
-            <label>
-                <input type="checkbox" checked="checked" name="remember"> Remember me
-            </label>
+            @*<label>
+            <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>*@
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
             <button type="button" class="cancelbtn">Cancel</button>
+            @*<a href="http://pcc.edu" class="cancelbtn">Cancel</a>*@
             <span class="psw">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
 
         </div>
     </form>
 
+    @{
+        // Prompts a message box when user enters valid or invalid login info
+        if (Model != null)
+        {
+            if (!string.IsNullOrWhiteSpace(Model.message))
+            {
+                @*<script>alert("@Model.message");</script>*@
+                <script>
+                    Swal.fire(
+                        '@Model.message',
+                        'Welcome @Model.name!',
+                        'success'
+                    );
+                </script>
+            }
+            if (!string.IsNullOrWhiteSpace(Model.errMessage))
+            {
+                <script>
+                    Swal.fire(
+                        '@Model.errMessage',
+                        'Please enter valid username and password.',
+                        'error'
+                    );
+                </script>
+            }
+        }
+    }
 </body>
 </html> 

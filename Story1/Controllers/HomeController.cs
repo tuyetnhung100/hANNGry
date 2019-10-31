@@ -1,4 +1,11 @@
-﻿using Story1.Models.ViewModels;
+﻿/*
+    Programmer: Nina Hoang
+    Class: CIS234A
+    Date: 10/20/2019
+    Purpose: To handle user's requests.
+*/
+
+using Story1.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +25,38 @@ namespace Story1.Controllers
             return View();
         }
 
+        // Validates user's login (username and password)
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
-            Account myAccount = AccountDB.FindAccount(model.uname);
+            model.message = "";
+            model.errMessage = "";
 
-            if (myAccount.Email == model.uname && myAccount.PasswordHash == model.psw)
+            if (model.uname == null || model.psw == null)
             {
-
+                model.errMessage = "Login failed";
+                return View(model);
             }
 
+            Account myAccount = AccountDB.FindAccount(model.uname);
+            if (myAccount==null)
+            {
+                model.errMessage = "Login failed";
+                return View(model);
+            }
+            else
+            {
+                model.name = myAccount.Name;
+            }
+
+            if (myAccount.Username == model.uname && myAccount.PasswordHash == model.psw)
+            {
+                model.message = "Login successfully";
+            }
+            else
+            {
+                model.errMessage = "Login failed";
+            }
             return View(model);
         }
 
@@ -35,24 +64,36 @@ namespace Story1.Controllers
         public ActionResult Register()
         {
             ViewBag.Message = "Your register page.";
-            RegisterViewModel model = new RegisterViewModel
-            {
-                name = "foo"
-            };
+            RegisterViewModel model = new RegisterViewModel();
             return View(model);
         }
 
         [HttpPost]
         public ActionResult Register(RegisterViewModel model)
         {
-            Account myAccount = new Account();
+            if (ModelState.IsValid)
+            {
+                Account existingAccount = AccountDB.FindAccount(model.username);
+                if (existingAccount == null)
+                {
+                    Account myAccount = new Account();
+                    myAccount.Username = model.username;
+                    myAccount.Name = model.name;
+                    myAccount.Email = model.email;
+                    myAccount.PasswordHash = model.psw;
 
-            myAccount.Name = model.name;
-            myAccount.Email = model.email;
-            myAccount.PasswordHash = model.psw;
-
-            AccountDB.Add(myAccount);
-
+                    AccountDB.Add(myAccount);
+                    model.message = "Register successfully";
+                }
+                else
+                {
+                    model.errMessage = "Username already exists.";
+                }
+            }
+            else
+            {
+                model.errMessage = "Incorrect data";
+            }
             return View(model);
         }
     }

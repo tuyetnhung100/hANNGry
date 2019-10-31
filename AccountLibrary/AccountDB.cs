@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-
 using ConnectDB;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -22,9 +21,10 @@ namespace AccountLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Accounts(Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
-                " Values(@Name, @Email, 0, @PasswordHash, ' ', @Date)", connect);
+            SqlCommand command = new SqlCommand("Insert into Accounts(Username, Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
+                " Values(@Username, @Name, @Email, 0, @PasswordHash, ' ', @Date)", connect);
 
+            command.Parameters.AddWithValue("@Username", myAccount.Username);
             command.Parameters.AddWithValue("@Name", myAccount.Name);
             command.Parameters.AddWithValue("@Email", myAccount.Email);
             command.Parameters.AddWithValue("@PasswordHash", myAccount.PasswordHash);
@@ -35,23 +35,24 @@ namespace AccountLibrary
             return true;
         }
 
-
-        public static Account FindAccount(string email)
+        // Look for a user's account info in the DB, based on the entered username on the login form
+        public static Account FindAccount(string username)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Email, PasswordHash, PasswordSalt from Accounts where Email = @email", connect);
-            command.Parameters.AddWithValue("@email", email);
+            SqlCommand command = new SqlCommand("Select Username, PasswordHash, PasswordSalt, Name from Accounts where Username = @username", connect);
+            command.Parameters.AddWithValue("@username", username);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
 
             while (reader.Read())
             {
                 myAccount = new Account();
-                myAccount.Email = reader.GetString(0);
+                myAccount.Username = reader.GetString(0);
                 myAccount.PasswordHash = reader.GetString(1);
                 myAccount.PasswordSalt = reader.GetString(2);
+                myAccount.Name = reader.GetString(3);
             }
 
             reader.Close();
