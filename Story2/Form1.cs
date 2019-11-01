@@ -37,7 +37,7 @@ namespace Story2
         private SmtpClient smtpClient = null;
         private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
-        private int sendingEmailCount = -1;
+        private int sendingEmailCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
@@ -163,7 +163,7 @@ namespace Story2
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
-                messageRichTextBox.Enabled = true;
+                messageRichTextBox.ReadOnly = false;
                 messageRichTextBox.Text = string.Empty;
                 ReloadTags(null);
                 ReloadBlocks(string.Empty);
@@ -175,7 +175,7 @@ namespace Story2
             {
                 // using a templat - disable messageRichTextBox and rely on tags
                 Template template = templateComboBox.SelectedItem as Template;
-                messageRichTextBox.Enabled = false;
+                messageRichTextBox.ReadOnly = true;
                 ReloadTags(template);
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
@@ -279,7 +279,7 @@ namespace Story2
             failedEmailsLabel.Text = "Failed: " + failedCount;
             cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
 
-            if (sendingEmailCount < subscribers.Count)
+            if (sendingEmailCount == subscribers.Count)
             {
                 Account subscriber = subscribers[sendingEmailCount];
                 SendEmail(subscriber);
@@ -339,7 +339,7 @@ namespace Story2
             // reset variables
             subscribers.Clear();
             notification = null;
-            sendingEmailCount = -1;
+            sendingEmailCount = 0;
             succeededCount = 0;
             cancelledCount = 0;
             failedCount = 0;
