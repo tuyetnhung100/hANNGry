@@ -103,11 +103,11 @@ namespace Story1.Controllers
                 }
                 else if (model.email == existingAccount.Email)
                 {
-                    model.errMessage = "Account already exists. Please enter a different Email.";
+                    model.errMessage = "Account email already exists. Please enter a different Email.";
                 }
                 else
                 {
-                    model.errMessage = "Account already exists. Please enter a different Username.";
+                    model.errMessage = "Account username already exists. Please enter a different Username.";
                 }
             }
             else
