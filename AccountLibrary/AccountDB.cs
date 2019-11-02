@@ -1,12 +1,12 @@
 ﻿/*
- * Programmer(s):      Gong-Hao
+ * Programmer(s):      Gong-Hao, Nina Hoang
  * Date:               10/23/2019
  * What the code does: Data access layer of Account.
  */
 
+using ConnectDB;
 using System;
 using System.Collections.Generic;
-using ConnectDB;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Security.Cryptography;
@@ -15,7 +15,6 @@ namespace AccountLibrary
 {
     public class AccountDB
     {
-
         public static Boolean Add(Account myAccount)
         {
             string salt = CreateSalt();
@@ -96,8 +95,8 @@ namespace AccountLibrary
         }
 
         // Return first data just for test right now
-        // todo: load real logined staff
-        public static bool FakeGetLoginedStaff(ref Account account)
+        // todo: load real logined employee
+        public static bool FakeGetLoginedEmployee(ref Account account)
         {
             try
             {

@@ -5,22 +5,17 @@
  */
 
 using AccountLibrary;
+using ConnectDB;
 using System;
 using System.Collections.Generic;
-
-
-using ConnectDB;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-
 
 namespace NotificationLibrary
 {
     public class NotificationDB
     {
-
-        public static Boolean Load(DateTime start, DateTime end, ref List<Notification> notifications)
-
+        public static bool Load(DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -52,21 +47,17 @@ AND SentDate < @end", connect);
             while (reader.Read())
             {
                 myNotification = new Notification();
+                myNotification.SenderName = reader.GetString(senderName);
                 myNotification.Subject = reader.GetString(subject);
                 myNotification.Message = reader.GetString(message);
-                myNotification.SenderName=reader.GetString(senderName);
                 myNotification.SentDate = reader.GetDateTime(sentDate);
                 notifications.Add(myNotification);
             }
 
             reader.Close();
-
             connect.Close();
-
-            
             return true;
         }
-
 
         /// <summary>
         /// Insert a Notification.
@@ -158,6 +149,8 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
         /// <returns>Whether the command is succeeded</returns>
         public static bool SendNotification(Notification notification, ref List<Account> subscribers)
         {
+            subscribers.Clear();
+
             try
             {
                 SqlConnection connection = DBConnect.GetConnection();
@@ -168,6 +161,7 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
 
                 // insert Notification and get the new notificationId
                 int notificationId = InsertNotification(command, notification);
+                notification.NotificationId = notificationId;
                 // select all subscribers that role is Role.Subscriber
                 AccountDB.GetSubscribers(command, ref subscribers);
                 // insert SubscriberNotification map table
@@ -186,5 +180,71 @@ INSERT INTO SubscriberNotification (Subscribers_AccountId
             }
         }
 
+        /// <summary>
+        /// Update SubscriberNotification after SendCompleted callback
+        /// </summary>
+        /// <param name="notificationId">The NotificationId</param>
+        /// <param name="accountId">The Subscriber's AccountId</param>
+        /// <param name="succeeded">Whether the sending email succeeded</param>
+        /// <param name="cancelled">Whether the sending email cancelled</param>
+        /// <param name="errorMessage">The errorMessage if sending email failed</param>
+        /// <returns>Whether the command is succeeded</returns>
+        public static bool UpdateSubscriberNotification(
+            int notificationId,
+            int accountId,
+            bool succeeded,
+            bool cancelled,
+            string errorMessage
+        )
+        {
+            try
+            {
+                SqlConnection connection = DBConnect.GetConnection();
+                connection.Open();
+
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+
+                bool failed = !string.IsNullOrWhiteSpace(errorMessage);
+
+                // set Parameters
+                command.Parameters.AddWithValue("@NotificationId", notificationId);
+                command.Parameters.AddWithValue("@AccountId", accountId);
+                command.Parameters.AddWithValue("@Succeeded", succeeded);
+                command.Parameters.AddWithValue("@Cancelled", cancelled);
+                command.Parameters.AddWithValue("@Failed", failed);
+                if (failed)
+                {
+                    command.Parameters.AddWithValue("@ErrorMessage", errorMessage);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@ErrorMessage", DBNull.Value);
+                }
+
+                string sql = @"
+UPDATE SubscriberNotification
+SET Succeeded = @Succeeded,
+    Cancelled = @Cancelled,
+    Failed = @Failed,
+    ErrorMessage = @ErrorMessage
+WHERE Subscribers_AccountId = @AccountId
+AND ReceivedNotifications_NotificationId = @NotificationId;";
+
+                command.CommandText = sql;
+                command.ExecuteNonQuery();
+
+                connection.Close();
+                connection.Dispose();
+                command.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using AccountLibrary;
 using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using TagLibrary;
 using TemplateLibrary;
 
@@ -17,6 +12,8 @@ namespace Story3
 {
     public partial class templateCreator : Form
     {
+        public static Account LoginedEmployee;
+
         public templateCreator()
         {
             InitializeComponent();
@@ -28,7 +25,7 @@ namespace Story3
             List<Tag> myTagList = new List<Tag>();
             TagDB.Load(ref myTagList);
 
-            foreach(Tag myTag in myTagList)
+            foreach (Tag myTag in myTagList)
             {
                 customTagComboBox.Items.Add(myTag.Name);
             }
@@ -66,7 +63,7 @@ namespace Story3
             {
                 return;
             }
-            
+
         }
 
         // Inserts selected tag into RTB.
@@ -81,7 +78,7 @@ namespace Story3
             if (!templateSelectorComboBox.Items.Contains(input) && input != "")
             {
                 Template myTemplate = new Template();
-                myTemplate.Name = input;
+                myTemplate.Subject = input;
                 myTemplate.Message = templateRichTextBox.Text;
             }
         }

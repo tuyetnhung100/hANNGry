@@ -4,27 +4,26 @@
  * What the code does: Data access layer of Template.
  */
 
+using ConnectDB;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using ConnectDB;
 using System.Windows.Forms;
-
 
 namespace TemplateLibrary
 {
     public class TemplateDB
     {
         // Adds values to Template table.
-        public static Boolean Add(Template myTemplate)
+        public static bool Add(Template myTemplate)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Template(Name, Message, CreatedAccountId, CreatedDate)" +
-                " Values(@Name, @Message, @CreatedAccountId, @CreatedDate)", connect);
+            SqlCommand command = new SqlCommand("Insert into Template(Subject, Message, CreatedAccountId, CreatedDate)" +
+                " Values(@Subject, @Message, @CreatedAccountId, @CreatedDate)", connect);
 
-            command.Parameters.AddWithValue("@Name", myTemplate.Name);
+            command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);
             command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
             command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
@@ -32,7 +31,7 @@ namespace TemplateLibrary
             command.ExecuteNonQuery();
 
             connect.Close();
-          return true;
+            return true;
         }
 
         /// <summary>
@@ -51,9 +50,9 @@ namespace TemplateLibrary
                 string sql = @"
 SELECT
   Templates.TemplateId,
-  Templates.Name,
+  Templates.Subject,
   Templates.Message,
-  Accounts.Name AS CreatedAccountName,
+  Accounts.Name AS CreatedEmployeeName,
   Templates.CreatedDate
 FROM Templates
 INNER JOIN Accounts
@@ -62,9 +61,9 @@ INNER JOIN Accounts
                 SqlDataReader reader = command.ExecuteReader();
 
                 int templateId = reader.GetOrdinal("TemplateId");
-                int name = reader.GetOrdinal("Name");
+                int subject = reader.GetOrdinal("Subject");
                 int message = reader.GetOrdinal("Message");
-                int createdAccountName = reader.GetOrdinal("CreatedAccountName");
+                int createdEmployeeName = reader.GetOrdinal("CreatedEmployeeName");
                 int createdDate = reader.GetOrdinal("CreatedDate");
 
                 while (reader.Read())
@@ -72,9 +71,9 @@ INNER JOIN Accounts
                     Template template = new Template
                     {
                         TemplateId = reader.GetInt32(templateId),
-                        Name = reader.GetString(name),
+                        Subject = reader.GetString(subject),
                         Message = reader.GetString(message),
-                        CreatedAccountName = reader.GetString(createdAccountName),
+                        CreatedEmployeeName = reader.GetString(createdEmployeeName),
                         CreatedDate = reader.GetDateTime(createdDate)
                     };
                     templates.Add(template);
