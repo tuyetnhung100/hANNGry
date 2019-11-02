@@ -23,12 +23,13 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
+        public static Account LoginedEmployee;
+
         private const string NoneOption = "None";
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
 
-        private Account employee = new Account();
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
@@ -54,21 +55,10 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            LoadLoginedEmployee();
             InitializeTemplateComboBox();
             InitializeLabels();
             InitializeSmtpClient();
-        }
-
-        /// <summary>
-        /// Load Logined Employee.
-        /// </summary>
-        private void LoadLoginedEmployee()
-        {
-            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
-            {
-                ShowErrorMessageBox(DatabaseError, "Loading Logined Employee failed!");
-            }
+            subjectTextBox.Focus();
         }
 
         /// <summary>
@@ -100,7 +90,6 @@ namespace Story2
             sendingEmailsLabel.Text = string.Empty;
             succeededEmailsLabel.Text = string.Empty;
             failedEmailsLabel.Text = string.Empty;
-            cancelledEmailsLabel.Text = string.Empty;
         }
 
         /// <summary>
@@ -277,7 +266,6 @@ namespace Story2
             sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
-            cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
 
             if (sendingEmailCount == subscribers.Count)
             {
@@ -412,7 +400,7 @@ namespace Story2
             {
                 Subject = subjectTextBox.Text,
                 Message = message,
-                SentAccountId = employee.AccountId
+                SentAccountId = LoginedEmployee.AccountId
             };
 
             if (templateComboBox.SelectedIndex != 0)
@@ -482,7 +470,7 @@ namespace Story2
                             message = message.Replace("{$Student Name}", subscriber.Name);
                             break;
                         case "Employee Name":
-                            message = message.Replace("{$Employee Name}", employee.Name);
+                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
                             break;
                     }
                 }
