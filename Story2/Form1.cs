@@ -263,13 +263,13 @@ namespace Story2
         private void SendNextEmail()
         {
             sendingEmailCount++;
-            sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
 
-            if (sendingEmailCount == subscribers.Count)
+            if (sendingEmailCount <= subscribers.Count)
             {
-                Account subscriber = subscribers[sendingEmailCount];
+                sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
+                Account subscriber = subscribers[sendingEmailCount - 1];
                 SendEmail(subscriber);
             }
             else
