@@ -12,6 +12,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using AccountLibrary;
+using System.Security.Cryptography;
+using System.Windows.Forms;
+using Story2;
 
 namespace Story1.Controllers
 {
@@ -25,7 +28,7 @@ namespace Story1.Controllers
             return View();
         }
 
-        // Validates user's login (username and password)
+        // Validate user's login (username and password)
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
@@ -49,9 +52,20 @@ namespace Story1.Controllers
                 model.name = myAccount.Name;
             }
 
-            if (myAccount.Username == model.uname && myAccount.PasswordHash == model.psw)
+            string userHash = AccountDB.CreateHash(model.psw, myAccount.PasswordSalt);
+            model.role = myAccount.Role;
+            if (myAccount.Username == model.uname && userHash == myAccount.PasswordHash)
             {
-                model.message = "Login successfully";
+                if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) 
+                {
+                    model.message = "Hi staff!";
+                    Story2.Story2 myStory = new Story2.Story2();
+                    myStory.ShowDialog();
+                }
+                else if (myAccount.Role == Role.Subscriber)
+                {
+                    model.message = "Login successfully";
+                }
             }
             else
             {
@@ -68,6 +82,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Validate inputs and create an account
         [HttpPost]
         public ActionResult Register(RegisterViewModel model)
         {
@@ -84,6 +99,7 @@ namespace Story1.Controllers
 
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
+
                 }
                 else if (model.email == existingAccount.Email)
                 {

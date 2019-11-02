@@ -88,31 +88,31 @@
 
     <form action="/Home/Login" method="post">
         <div class="container">
-            <h1>PCC Panther Pantry Login Form</h1>
+            <h1>PCC Panther Pantry Login</h1>
             <hr>
             <label for="uname"><b>@Html.LabelFor(model => model.uname)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.uname, "")</span>
-            @Html.EditorFor(model => model.uname, new { htmlAttributes = new { placeholder = "Enter Username" } })
+            @Html.EditorFor(model => model.uname, new { htmlAttributes = new { placeholder = "Enter Username", autofocus = "" } })
 
             <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
-            @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password" } })
+            @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
 
             @*<label for="uname"><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="uname" required>
+                <input type="text" placeholder="Enter Username" name="uname" required>
 
-        <label for="psw"><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="psw" required>*@
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" required>*@
             <hr>
             <button type="submit" class="loginbtn">Login</button>
 
             @*<label>
-            <input type="checkbox" checked="checked" name="remember"> Remember me
-        </label>*@
+                <input type="checkbox" checked="checked" name="remember"> Remember me
+                </label>*@
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
-            <button type="button" class="cancelbtn">Cancel</button>
+            <button type="reset" class="cancelbtn">Cancel</button>
             @*<a href="http://pcc.edu" class="cancelbtn">Cancel</a>*@
             <span class="psw">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
 
@@ -127,21 +127,27 @@
             {
                 @*<script>alert("@Model.message");</script>*@
                 <script>
-                    Swal.fire(
-                        '@Model.message',
-                        'Welcome @Model.name!',
-                        'success'
-                    );
+                    Swal.fire({
+                        title: '@Model.message',
+                        text:  'Welcome @Model.name!',
+                        type:  'success',
+                        onClose: function () {
+                            location.href = '/Home/Login';
+                        }
+                    });
                 </script>
             }
             if (!string.IsNullOrWhiteSpace(Model.errMessage))
             {
                 <script>
-                    Swal.fire(
-                        '@Model.errMessage',
-                        'Please enter valid username and password.',
-                        'error'
-                    );
+                    Swal.fire({
+                        title: '@Model.errMessage',
+                        text:  'Please enter valid username and password.',
+                        type:  'error',
+                        onClose: function () {
+                            location.href = '/Home/Login';
+                        }
+                    });
                 </script>
             }
         }
