@@ -23,12 +23,13 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
+        public static Account LoginedEmployee;
+
         private const string NoneOption = "None";
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
 
-        private Account employee = new Account();
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
@@ -37,7 +38,7 @@ namespace Story2
         private SmtpClient smtpClient = null;
         private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
-        private int sendingEmailCount = -1;
+        private int sendingEmailCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
@@ -54,20 +55,21 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            LoadLoginedEmployee();
+            InitializeTags();
             InitializeTemplateComboBox();
             InitializeLabels();
             InitializeSmtpClient();
+            subjectTextBox.Focus();
         }
 
         /// <summary>
-        /// Load Logined Employee.
+        /// Load tags.
         /// </summary>
-        private void LoadLoginedEmployee()
+        private void InitializeTags()
         {
-            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
+            if (!TagDB.Load(ref tags))
             {
-                ShowErrorMessageBox(DatabaseError, "Loading Logined Employee failed!");
+                ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
             }
         }
 
@@ -100,7 +102,6 @@ namespace Story2
             sendingEmailsLabel.Text = string.Empty;
             succeededEmailsLabel.Text = string.Empty;
             failedEmailsLabel.Text = string.Empty;
-            cancelledEmailsLabel.Text = string.Empty;
         }
 
         /// <summary>
@@ -163,9 +164,8 @@ namespace Story2
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
-                messageRichTextBox.Enabled = true;
+                messageRichTextBox.ReadOnly = false;
                 messageRichTextBox.Text = string.Empty;
-                ReloadTags(null);
                 ReloadBlocks(string.Empty);
                 ReloadTagInputs();
                 subjectTextBox.Text = string.Empty;
@@ -175,8 +175,7 @@ namespace Story2
             {
                 // using a templat - disable messageRichTextBox and rely on tags
                 Template template = templateComboBox.SelectedItem as Template;
-                messageRichTextBox.Enabled = false;
-                ReloadTags(template);
+                messageRichTextBox.ReadOnly = true;
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
                 ColorifyText();
@@ -274,14 +273,13 @@ namespace Story2
         private void SendNextEmail()
         {
             sendingEmailCount++;
-            sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
-            cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
 
-            if (sendingEmailCount < subscribers.Count)
+            if (sendingEmailCount <= subscribers.Count)
             {
-                Account subscriber = subscribers[sendingEmailCount];
+                sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
+                Account subscriber = subscribers[sendingEmailCount - 1];
                 SendEmail(subscriber);
             }
             else
@@ -339,7 +337,7 @@ namespace Story2
             // reset variables
             subscribers.Clear();
             notification = null;
-            sendingEmailCount = -1;
+            sendingEmailCount = 0;
             succeededCount = 0;
             cancelledCount = 0;
             failedCount = 0;
@@ -412,7 +410,7 @@ namespace Story2
             {
                 Subject = subjectTextBox.Text,
                 Message = message,
-                SentAccountId = employee.AccountId
+                SentAccountId = LoginedEmployee.AccountId
             };
 
             if (templateComboBox.SelectedIndex != 0)
@@ -482,7 +480,7 @@ namespace Story2
                             message = message.Replace("{$Student Name}", subscriber.Name);
                             break;
                         case "Employee Name":
-                            message = message.Replace("{$Employee Name}", employee.Name);
+                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
                             break;
                     }
                 }
@@ -525,26 +523,6 @@ namespace Story2
 
             // reset messageRichTextBox
             ColorifyText();
-        }
-
-        /// <summary>
-        /// Load tags by TemplateId.
-        /// </summary>
-        /// <param name="template">The current template</param>
-        private void ReloadTags(Template template)
-        {
-            if (template != null)
-            {
-                // load tags
-                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
-                {
-                    ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
-                }
-            }
-            else
-            {
-                tags.Clear();
-            }
         }
 
         /// <summary>
