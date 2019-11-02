@@ -60,7 +60,7 @@
             // 
             // messageRichTextBox
             // 
-            this.messageRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.messageRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.messageRichTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.messageRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
@@ -142,7 +142,7 @@
             // 
             // tagsPanel
             // 
-            this.tagsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.tagsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tagsPanel.BackColor = System.Drawing.SystemColors.Control;
             this.tagsPanel.Location = new System.Drawing.Point(523, 169);
@@ -193,7 +193,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 631);
+            this.ClientSize = new System.Drawing.Size(1264, 631);
             this.Controls.Add(this.messageRichTextBox);
             this.Controls.Add(this.failedEmailsLabel);
             this.Controls.Add(this.succeededEmailsLabel);
@@ -209,7 +209,6 @@
             this.MinimumSize = new System.Drawing.Size(1024, 670);
             this.Name = "Story2";
             this.Text = "Send Notifications";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Story2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);

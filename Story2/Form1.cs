@@ -55,10 +55,22 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
+            InitializeTags();
             InitializeTemplateComboBox();
             InitializeLabels();
             InitializeSmtpClient();
             subjectTextBox.Focus();
+        }
+
+        /// <summary>
+        /// Load tags.
+        /// </summary>
+        private void InitializeTags()
+        {
+            if (!TagDB.Load(ref tags))
+            {
+                ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
+            }
         }
 
         /// <summary>
@@ -154,7 +166,6 @@ namespace Story2
                 // not using a templat - enable messageRichTextBox and rely on only text
                 messageRichTextBox.ReadOnly = false;
                 messageRichTextBox.Text = string.Empty;
-                ReloadTags(null);
                 ReloadBlocks(string.Empty);
                 ReloadTagInputs();
                 subjectTextBox.Text = string.Empty;
@@ -165,7 +176,6 @@ namespace Story2
                 // using a templat - disable messageRichTextBox and rely on tags
                 Template template = templateComboBox.SelectedItem as Template;
                 messageRichTextBox.ReadOnly = true;
-                ReloadTags(template);
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
                 ColorifyText();
@@ -513,26 +523,6 @@ namespace Story2
 
             // reset messageRichTextBox
             ColorifyText();
-        }
-
-        /// <summary>
-        /// Load tags by TemplateId.
-        /// </summary>
-        /// <param name="template">The current template</param>
-        private void ReloadTags(Template template)
-        {
-            if (template != null)
-            {
-                // load tags
-                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
-                {
-                    ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
-                }
-            }
-            else
-            {
-                tags.Clear();
-            }
         }
 
         /// <summary>
