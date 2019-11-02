@@ -81,7 +81,6 @@
     </style>
 </head>
 <body>
-    @*<h1>@Model.name</h1>*@
     <form method="post" action="/Home/Register">
         <div class="container">
             <h1>PCC Panther Pantry Register</h1>
@@ -91,8 +90,6 @@
             <label for="username"><b>@Html.LabelFor(model => model.username)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.username, "")</span>
             @Html.EditorFor(model => model.username, new { htmlAttributes = new { placeholder = "Enter Username", autofocus = "" } })
-            @*<input type="text" placeholder="Enter Username" name="username" required>*@
-
 
             <label for="email"><b>@Html.LabelFor(model => model.email)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.email, "")</span>
@@ -109,18 +106,6 @@
             <label for="name"><b>@Html.LabelFor(model => model.name)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.name, "")</span>
             @Html.EditorFor(model => model.name, new { htmlAttributes = new { placeholder = "Enter Name" } })
-
-            @*<label for="email"><b>Email</b></label>
-                <input type="text" placeholder="Enter Email" name="email" required>
-
-                <label for="psw"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="psw" required>
-
-                <label for="psw-repeat"><b>Repeat Password</b></label>
-                <input type="password" placeholder="Repeat Password" name="pswRepeat" required>
-
-                <label for="name"><b>Name</b></label>
-                <input type="text" placeholder="Enter Name" name="name" required>*@
             <hr>
             <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
 
@@ -143,12 +128,11 @@
     }
 
     @{
-        // Prompt a message box when user tries to login
+        // Prompt an informational message box for when user tries to create an account
         if (Model != null)
         {
             if (!string.IsNullOrWhiteSpace(Model.message))
             {
-                @*<script>alert("@Model.message");</script>*@
                 <script>
                     Swal.fire({
                         title: '@Model.message',
@@ -166,10 +150,7 @@
                     Swal.fire({
                         title: 'Register failed',
                         text:  '@Model.errMessage',
-                        type:  'error'//,
-                        //onClose: function () {
-                        //    location.href = '/Home/Login';
-                        //}
+                        type:  'error'
                     });
                 </script>
             }

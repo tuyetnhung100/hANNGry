@@ -97,18 +97,8 @@
             <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
             @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
-
-            @*<label for="uname"><b>Username</b></label>
-                <input type="text" placeholder="Enter Username" name="uname" required>
-
-                <label for="psw"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="psw" required>*@
             <hr>
             <button type="submit" class="loginbtn">Login</button>
-
-            @*<label>
-                <input type="checkbox" checked="checked" name="remember"> Remember me
-                </label>*@
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
@@ -120,7 +110,7 @@
     </form>
 
     @{
-        // Prompts a message box when user enters valid or invalid login info
+        // Prompts a message box for when user enters valid or invalid login info
         if (Model != null)
         {
             if (!string.IsNullOrWhiteSpace(Model.message))
@@ -141,8 +131,8 @@
             {
                 <script>
                     Swal.fire({
-                        title: '@Model.errMessage',
-                        text:  'Please enter valid username and password.',
+                        title: 'Login failed',
+                        text:  '@Model.errMessage',
                         type:  'error',
                         onClose: function () {
                             location.href = '/Home/Login';

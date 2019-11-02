@@ -202,11 +202,7 @@ WHERE Role = @Role;";
 
         public static string CreateHash(string password, string salt)
         {
-            //// Generate a salt
-            //RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-            //byte[] salt = new byte[SALT_SIZE];
-            //provider.GetBytes(salt);
-
+            // Generate hash
             byte[] saltBuffer = Convert.FromBase64String(salt);
             Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, saltBuffer, ITERATIONS);
             byte[] hashBuffer = pbkdf2.GetBytes(HASH_SIZE);
