@@ -81,10 +81,6 @@
       <Project>{BA98A12E-63E4-4B34-9B2C-E6DAB3D01BE0}</Project>
       <Name>AccountLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Story1\Story1.csproj">
-      <Project>{584bfa06-41db-4037-85ee-ce6f9b268c0a}</Project>
-      <Name>Story1</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Story2\Story2.csproj">
       <Project>{C82FBF91-34E5-47BD-9686-5378EE931825}</Project>
       <Name>Story2</Name>
