@@ -5,16 +5,11 @@
     Purpose: To handle user's requests.
 */
 
-using Story1.Models.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using AccountLibrary;
-using System.Security.Cryptography;
+using Management;
+using Story1.Models.ViewModels;
+using System.Web.Mvc;
 using System.Windows.Forms;
-using Story2;
 
 namespace Story1.Controllers
 {
@@ -23,8 +18,7 @@ namespace Story1.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            ViewBag.Message = "Your login page.";
-
+            ViewBag.Title = "Login";
             return View();
         }
 
@@ -42,7 +36,7 @@ namespace Story1.Controllers
             }
 
             Account myAccount = AccountDB.FindAccount(model.uname);
-            if (myAccount==null) // If account not found, displays an error msg.
+            if (myAccount == null) // If account not found, displays an error msg.
             {
                 model.errMessage = "Please enter a valid username and password.";
                 return View(model);
@@ -59,7 +53,7 @@ namespace Story1.Controllers
                 if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) // Validate Roles, if staff then goes to Story2.
                 {
                     model.message = "Hi staff!";
-                    Story2.Story2 myStory = new Story2.Story2();
+                    Form myStory = new MainForm(myAccount);
                     myStory.ShowDialog();
                 }
                 else if (myAccount.Role == Role.Subscriber) // Validate Roles, if subscriber then promts a success login message.
@@ -81,7 +75,7 @@ namespace Story1.Controllers
         [HttpGet]
         public ActionResult Register()
         {
-            ViewBag.Message = "Your register page.";
+            ViewBag.Title = "Register";
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
         }
@@ -103,7 +97,6 @@ namespace Story1.Controllers
 
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
-
                 }
                 else if (model.email == existingAccount.Email) // Validate for an existing email.
                 {
