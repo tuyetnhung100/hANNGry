@@ -53,7 +53,7 @@
             this.sendButton.Margin = new System.Windows.Forms.Padding(1);
             this.sendButton.Name = "sendButton";
             this.sendButton.Size = new System.Drawing.Size(180, 53);
-            this.sendButton.TabIndex = 7;
+            this.sendButton.TabIndex = 9999;
             this.sendButton.Text = "&Send";
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += new System.EventHandler(this.SendButton_Click);
@@ -68,7 +68,7 @@
             this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.messageRichTextBox.Name = "messageRichTextBox";
             this.messageRichTextBox.Size = new System.Drawing.Size(370, 385);
-            this.messageRichTextBox.TabIndex = 6;
+            this.messageRichTextBox.TabIndex = 5;
             this.messageRichTextBox.Text = "";
             // 
             // templateComboBox
@@ -81,7 +81,7 @@
             this.templateComboBox.Margin = new System.Windows.Forms.Padding(1);
             this.templateComboBox.Name = "templateComboBox";
             this.templateComboBox.Size = new System.Drawing.Size(370, 41);
-            this.templateComboBox.TabIndex = 2;
+            this.templateComboBox.TabIndex = 1;
             this.templateComboBox.DropDownClosed += new System.EventHandler(this.templateComboBox_DropDownClosed);
             this.templateComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.templateComboBox_KeyUp);
             // 
@@ -93,7 +93,7 @@
             this.templateLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.templateLabel.Name = "templateLabel";
             this.templateLabel.Size = new System.Drawing.Size(118, 35);
-            this.templateLabel.TabIndex = 1;
+            this.templateLabel.TabIndex = 0;
             this.templateLabel.Text = "&Template";
             // 
             // messageLabel
@@ -104,7 +104,7 @@
             this.messageLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.messageLabel.Name = "messageLabel";
             this.messageLabel.Size = new System.Drawing.Size(115, 35);
-            this.messageLabel.TabIndex = 5;
+            this.messageLabel.TabIndex = 4;
             this.messageLabel.Text = "&Message";
             // 
             // subjectLabel
@@ -115,7 +115,7 @@
             this.subjectLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.subjectLabel.Name = "subjectLabel";
             this.subjectLabel.Size = new System.Drawing.Size(97, 35);
-            this.subjectLabel.TabIndex = 3;
+            this.subjectLabel.TabIndex = 2;
             this.subjectLabel.Text = "S&ubject";
             // 
             // subjectTextBox
@@ -125,7 +125,7 @@
             this.subjectTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.subjectTextBox.Name = "subjectTextBox";
             this.subjectTextBox.Size = new System.Drawing.Size(370, 41);
-            this.subjectTextBox.TabIndex = 4;
+            this.subjectTextBox.TabIndex = 3;
             // 
             // clearButton
             // 
@@ -135,7 +135,7 @@
             this.clearButton.Margin = new System.Windows.Forms.Padding(1);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(180, 53);
-            this.clearButton.TabIndex = 8;
+            this.clearButton.TabIndex = 10000;
             this.clearButton.Text = "&Clear";
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
@@ -149,7 +149,7 @@
             this.tagsPanel.Margin = new System.Windows.Forms.Padding(1);
             this.tagsPanel.Name = "tagsPanel";
             this.tagsPanel.Size = new System.Drawing.Size(370, 385);
-            this.tagsPanel.TabIndex = 9;
+            this.tagsPanel.TabIndex = 8;
             // 
             // errorProvider
             // 
@@ -164,7 +164,7 @@
             this.sendingEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.sendingEmailsLabel.Name = "sendingEmailsLabel";
             this.sendingEmailsLabel.Size = new System.Drawing.Size(417, 35);
-            this.sendingEmailsLabel.TabIndex = 10;
+            this.sendingEmailsLabel.TabIndex = 9;
             this.sendingEmailsLabel.Text = "sendingEmailsLabel";
             // 
             // succeededEmailsLabel
@@ -175,7 +175,7 @@
             this.succeededEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.succeededEmailsLabel.Name = "succeededEmailsLabel";
             this.succeededEmailsLabel.Size = new System.Drawing.Size(417, 35);
-            this.succeededEmailsLabel.TabIndex = 11;
+            this.succeededEmailsLabel.TabIndex = 10;
             this.succeededEmailsLabel.Text = "succeededEmailsLabel";
             // 
             // failedEmailsLabel
@@ -186,10 +186,10 @@
             this.failedEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.failedEmailsLabel.Name = "failedEmailsLabel";
             this.failedEmailsLabel.Size = new System.Drawing.Size(417, 35);
-            this.failedEmailsLabel.TabIndex = 12;
+            this.failedEmailsLabel.TabIndex = 11;
             this.failedEmailsLabel.Text = "failedEmailsLabel";
             // 
-            // Story2
+            // NotificationSender
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -207,7 +207,7 @@
             this.Controls.Add(this.subjectLabel);
             this.Controls.Add(this.subjectTextBox);
             this.MinimumSize = new System.Drawing.Size(1024, 670);
-            this.Name = "Story2";
+            this.Name = "NotificationSender";
             this.Text = "Send Notifications";
             this.Load += new System.EventHandler(this.Story2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
