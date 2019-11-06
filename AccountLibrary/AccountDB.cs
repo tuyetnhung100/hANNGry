@@ -62,6 +62,7 @@ INSERT INTO Accounts
 SELECT
   AccountId,
   Username,
+  Role,
   Email,
   PasswordHash,
   PasswordSalt,
@@ -77,6 +78,7 @@ OR Email = @Email;", connect);
             int accountIdIndex = reader.GetOrdinal("AccountId");
             int usernameIndex = reader.GetOrdinal("Username");
             int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
             int passwordHashIndex = reader.GetOrdinal("PasswordHash");
             int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
             int nameIndex = reader.GetOrdinal("Name");
@@ -87,6 +89,7 @@ OR Email = @Email;", connect);
                 myAccount.AccountId = reader.GetInt32(accountIdIndex);
                 myAccount.Username = reader.GetString(usernameIndex);
                 myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
                 myAccount.PasswordHash = reader.GetString(passwordHashIndex);
                 myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
                 myAccount.Name = reader.GetString(nameIndex);
@@ -109,6 +112,7 @@ SELECT
   AccountId,
   Username,
   Role,
+  Email,
   PasswordHash,
   PasswordSalt,
   Name
@@ -121,6 +125,7 @@ WHERE Username = @Username;", connect);
             int accountIdIndex = reader.GetOrdinal("AccountId");
             int usernameIndex = reader.GetOrdinal("Username");
             int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
             int passwordHashIndex = reader.GetOrdinal("PasswordHash");
             int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
             int nameIndex = reader.GetOrdinal("Name");
@@ -131,6 +136,7 @@ WHERE Username = @Username;", connect);
                 myAccount.AccountId = reader.GetInt32(accountIdIndex);
                 myAccount.Username = reader.GetString(usernameIndex);
                 myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
                 myAccount.PasswordHash = reader.GetString(passwordHashIndex);
                 myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
                 myAccount.Name = reader.GetString(nameIndex);
