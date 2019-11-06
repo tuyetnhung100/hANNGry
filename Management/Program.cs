@@ -39,19 +39,6 @@ namespace Management
 
             // mainForm = new MainForm(fakeEmployee);
             mainForm = new MainForm(fakeManager);
-            story2 = new Story2.Story2();
-            Story2.Story2.LoginedEmployee = account;
-            story2.FormClosed += (sender, e) => mainForm.Close();
-            story3 = new Story3.templateCreator();
-            Story3.templateCreator.LoginedEmployee = account;
-            story3.FormClosed += (sender, e) => mainForm.Close();
-            story4 = new Story4.Form1();
-            Story4.Form1.LoginedEmployee = account;
-            story4.FormClosed += (sender, e) => mainForm.Close();
-            InitializeButtonList(story2);
-            InitializeButtonList(story3);
-            InitializeButtonList(story4);
-
             Application.Run(mainForm);
         }
 
