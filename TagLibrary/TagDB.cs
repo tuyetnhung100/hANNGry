@@ -81,5 +81,61 @@ FROM Tags;";
                 return false;
             }
         }
+
+        /// <summary>
+        /// Load tags by templateId.
+        /// </summary>
+        /// <param name="tags">The result list of tags</param>
+        /// <param name="templateId">templateId</param>
+        /// <returns>Whether the command is succeeded</returns>
+        public static bool LoadByTemplateId(ref List<Tag> tags, int templateId)
+        {
+            tags.Clear();
+
+            try
+            {
+                SqlConnection connection = DBConnect.GetConnection();
+                connection.Open();
+                string sql = @"
+SELECT
+  TagId,
+  Type,
+  Name
+FROM Tags
+WHERE TagId IN (SELECT
+  Tags_TagId
+FROM TagTemplate
+WHERE Templates_TemplateId = @TemplateId);";
+                SqlCommand command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@TemplateId", templateId);
+                SqlDataReader reader = command.ExecuteReader();
+
+                int tagId = reader.GetOrdinal("TagId");
+                int type = reader.GetOrdinal("Type");
+                int name = reader.GetOrdinal("Name");
+
+                while (reader.Read())
+                {
+                    Tag tag = new Tag
+                    {
+                        TagId = reader.GetInt32(tagId),
+                        Type = (TagType)reader.GetInt32(type),
+                        Name = reader.GetString(name)
+                    };
+                    tags.Add(tag);
+                }
+
+                reader.Close();
+
+                connection.Close();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
     }
 }

@@ -42,6 +42,7 @@
             this.sendingEmailsLabel = new System.Windows.Forms.Label();
             this.succeededEmailsLabel = new System.Windows.Forms.Label();
             this.failedEmailsLabel = new System.Windows.Forms.Label();
+
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -188,6 +189,51 @@
             this.failedEmailsLabel.Size = new System.Drawing.Size(417, 35);
             this.failedEmailsLabel.TabIndex = 12;
             this.failedEmailsLabel.Text = "failedEmailsLabel";
+            // 
+            // errorProvider
+            // 
+            this.errorProvider.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorProvider.ContainerControl = this;
+            // 
+            // sendingEmailsLabel
+            // 
+            this.sendingEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sendingEmailsLabel.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.sendingEmailsLabel.Location = new System.Drawing.Point(862, 16);
+            this.sendingEmailsLabel.Name = "sendingEmailsLabel";
+            this.sendingEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.sendingEmailsLabel.TabIndex = 10;
+            this.sendingEmailsLabel.Text = "sendingEmailsLabel";
+            // 
+            // succeededEmailsLabel
+            // 
+            this.succeededEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.succeededEmailsLabel.ForeColor = System.Drawing.Color.ForestGreen;
+            this.succeededEmailsLabel.Location = new System.Drawing.Point(862, 74);
+            this.succeededEmailsLabel.Name = "succeededEmailsLabel";
+            this.succeededEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.succeededEmailsLabel.TabIndex = 11;
+            this.succeededEmailsLabel.Text = "succeededEmailsLabel";
+            // 
+            // failedEmailsLabel
+            // 
+            this.failedEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.failedEmailsLabel.ForeColor = System.Drawing.Color.OrangeRed;
+            this.failedEmailsLabel.Location = new System.Drawing.Point(862, 132);
+            this.failedEmailsLabel.Name = "failedEmailsLabel";
+            this.failedEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.failedEmailsLabel.TabIndex = 12;
+            this.failedEmailsLabel.Text = "failedEmailsLabel";
+            // 
+            // cancelledEmailsLabel
+            // 
+            this.cancelledEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelledEmailsLabel.ForeColor = System.Drawing.Color.Gray;
+            this.cancelledEmailsLabel.Location = new System.Drawing.Point(862, 190);
+            this.cancelledEmailsLabel.Name = "cancelledEmailsLabel";
+            this.cancelledEmailsLabel.Size = new System.Drawing.Size(904, 58);
+            this.cancelledEmailsLabel.TabIndex = 13;
+            this.cancelledEmailsLabel.Text = "cancelledEmailsLabel";
             // 
             // Story2
             // 

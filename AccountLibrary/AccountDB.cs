@@ -36,9 +36,10 @@ namespace AccountLibrary
             connect.Close();
             return true;
         }
-
+      
         // Look for a user's account info in the DB using username and email (for Register)
         public static Account FindAccount(string username, string email)
+
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
