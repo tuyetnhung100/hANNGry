@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using AccountLibrary;
 using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using TagLibrary;
 using TemplateLibrary;
 using AccountLibrary;
@@ -18,10 +13,7 @@ namespace Story3
 {
     public partial class templateCreator : Form
     {
-        private List<Tag> tags = new List<Tag>();
-        private List<Template> templates = new List<Template>();
-        private Account employee = new Account();
-        private const string DatabaseError = "Database Error";
+        public static Account LoginedEmployee;
 
         public templateCreator()
         {
@@ -50,8 +42,7 @@ namespace Story3
             TemplateDB.Load(ref templates);
             TagDB.Load(ref tags);
 
-
-            foreach (Tag myTag in tags)
+            foreach (Tag myTag in myTagList)
             {
                 customTagComboBox.Items.Add(myTag.Name);
             }
