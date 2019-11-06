@@ -8,6 +8,7 @@
 using AccountLibrary;
 using Management;
 using Story1.Models.ViewModels;
+using System.Threading;
 using System.Web.Mvc;
 using System.Windows.Forms;
 
@@ -53,8 +54,12 @@ namespace Story1.Controllers
                 if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) // Validate Roles, if staff then goes to Story2.
                 {
                     model.message = "Hi staff!";
-                    Form myStory = new MainForm(myAccount);
-                    myStory.ShowDialog();
+                    Thread thread = new Thread(() =>
+                    {
+                        Form mainForm = new MainForm(myAccount);
+                        mainForm.ShowDialog();
+                    });
+                    thread.Start();
                 }
                 else if (myAccount.Role == Role.Subscriber) // Validate Roles, if subscriber then promts a success login message.
                 {
