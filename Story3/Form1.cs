@@ -50,15 +50,17 @@ namespace Story3
             TemplateDB.Load(ref templates);
             TagDB.Load(ref tags);
 
+
             foreach (Tag myTag in tags)
             {
                 customTagComboBox.Items.Add(myTag.Name);
             }
-            
-            foreach(Template template in templates)
+
+            foreach (Template template in templates)
             {
                 templateSelectorComboBox.Items.Add(template);
             }
+            templateSelectorComboBox.SelectedIndex = 0;
         }
 
         // Clears the rich text box.
@@ -109,8 +111,12 @@ namespace Story3
         {
             string currentItem = templateSelectorComboBox.SelectedItem.ToString();
             string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
-
-            if (currentItem != input && input != "")
+            if (templateRichTextBox.Text == "")
+            {
+                templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
+                return;
+            }
+            else if (currentItem != input && input != "")
             {
                 Template myTemplate = new Template();
                 myTemplate.Subject = input;
