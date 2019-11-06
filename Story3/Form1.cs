@@ -33,6 +33,9 @@ namespace Story3
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
+            templateSelectorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            customTagComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+
             TemplateDB.Load(ref templates);
             TagDB.Load(ref tags);
 
