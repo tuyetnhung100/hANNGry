@@ -48,7 +48,15 @@ namespace Story3
             {
                 templateSelectorComboBox.Items.Add(template);
             }
-            templateSelectorComboBox.SelectedIndex = 0;
+            if (!TemplateDB.Load(ref templates))
+            {
+                MessageBox.Show("Unable to retrieve templates from the database. Now closing program.", "Error!");
+                this.Close();
+            }
+            else
+            {
+                templateSelectorComboBox.SelectedIndex = 0;
+            }
         }
 
         // Clears the rich text box.
