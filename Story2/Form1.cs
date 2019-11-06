@@ -476,11 +476,11 @@ namespace Story2
                 {
                     switch (tag.Name)
                     {
-                        case "Student Name":
-                            message = message.Replace("{$Student Name}", subscriber.Name);
+                        case "student name":
+                            message = message.Replace("{$student name}", subscriber.Name);
                             break;
-                        case "Employee Name":
-                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
+                        case "employee name":
+                            message = message.Replace("{$employee name}", LoginedEmployee.Name);
                             break;
                     }
                 }
