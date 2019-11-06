@@ -33,7 +33,9 @@
             this.firstDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.secondDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
+
             this.label3 = new System.Windows.Forms.Label();
+
             this.clearButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.notificationDataGridView)).BeginInit();
             this.SuspendLayout();
@@ -43,18 +45,22 @@
             this.notificationDataGridView.AllowUserToAddRows = false;
             this.notificationDataGridView.AllowUserToDeleteRows = false;
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
             this.notificationDataGridView.Location = new System.Drawing.Point(18, 290);
             this.notificationDataGridView.Name = "notificationDataGridView";
             this.notificationDataGridView.ReadOnly = true;
             this.notificationDataGridView.Size = new System.Drawing.Size(956, 336);
+
             this.notificationDataGridView.TabIndex = 0;
             // 
             // findButton
             // 
+
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.findButton.Location = new System.Drawing.Point(101, 224);
+
             this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(160, 60);
+            this.findButton.Size = new System.Drawing.Size(160, 55);
             this.findButton.TabIndex = 1;
             this.findButton.Text = "Find";
             this.findButton.UseVisualStyleBackColor = true;
@@ -62,30 +68,37 @@
             // 
             // firstDateTimePicker
             // 
+
             this.firstDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.firstDateTimePicker.Location = new System.Drawing.Point(265, 117);
             this.firstDateTimePicker.Name = "firstDateTimePicker";
             this.firstDateTimePicker.Size = new System.Drawing.Size(460, 38);
+
             this.firstDateTimePicker.TabIndex = 2;
             // 
             // secondDateTimePicker
             // 
+
             this.secondDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.secondDateTimePicker.Location = new System.Drawing.Point(265, 171);
             this.secondDateTimePicker.Name = "secondDateTimePicker";
             this.secondDateTimePicker.Size = new System.Drawing.Size(460, 38);
+
             this.secondDateTimePicker.TabIndex = 3;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(374, 71);
+
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(242, 31);
             this.label1.TabIndex = 4;
             this.label1.Text = "Select Date Range";
             // 
+
             // label3
             // 
             this.label3.AutoSize = true;
@@ -101,8 +114,9 @@
             // 
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.clearButton.Location = new System.Drawing.Point(724, 224);
+
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(160, 60);
+            this.clearButton.Size = new System.Drawing.Size(160, 55);
             this.clearButton.TabIndex = 7;
             this.clearButton.Text = "Clear";
             this.clearButton.UseVisualStyleBackColor = true;
@@ -110,11 +124,13 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+
             this.ClientSize = new System.Drawing.Size(986, 638);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.label3);
+
             this.Controls.Add(this.label1);
             this.Controls.Add(this.secondDateTimePicker);
             this.Controls.Add(this.firstDateTimePicker);
@@ -122,7 +138,6 @@
             this.Controls.Add(this.notificationDataGridView);
             this.Name = "Form1";
             this.Text = "Notification Review";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.notificationDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -136,7 +151,9 @@
         private System.Windows.Forms.DateTimePicker firstDateTimePicker;
         private System.Windows.Forms.DateTimePicker secondDateTimePicker;
         private System.Windows.Forms.Label label1;
+
         private System.Windows.Forms.Label label3;
+
         private System.Windows.Forms.Button clearButton;
     }
 }

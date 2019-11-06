@@ -1,5 +1,5 @@
 ﻿/*
- * Programmer(s):      Gong-Hao
+ * Programmer(s):      Gong-Hao, Nina Hoang
  * Date:               10/23/2019
  * What the code does: Data access layer of Account.
  */
@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace AccountLibrary
 {
@@ -16,15 +17,19 @@ namespace AccountLibrary
     {
         public static Boolean Add(Account myAccount)
         {
+            string salt = CreateSalt();
+            string hash = CreateHash(myAccount.PasswordHash, salt);
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Accounts(Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
-                " Values(@Name, @Email, 0, @PasswordHash, ' ', @Date)", connect);
+            SqlCommand command = new SqlCommand("Insert into Accounts(Username, Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
+                " Values(@Username, @Name, @Email, 0, @PasswordHash, @PasswordSalt, @Date)", connect);
 
+            command.Parameters.AddWithValue("@Username", myAccount.Username);
             command.Parameters.AddWithValue("@Name", myAccount.Name);
             command.Parameters.AddWithValue("@Email", myAccount.Email);
-            command.Parameters.AddWithValue("@PasswordHash", myAccount.PasswordHash);
+            command.Parameters.AddWithValue("@PasswordHash", hash);
+            command.Parameters.AddWithValue("@PasswordSalt", salt);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
 
             command.ExecuteNonQuery();
@@ -32,12 +37,15 @@ namespace AccountLibrary
             return true;
         }
 
-        public static Account FindAccount(string email)
+        // Look for a user's account info in the DB using username and email (for Register)
+        public static Account FindAccount(string username, string email)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Email, PasswordHash, PasswordSalt from Accounts where Email = @email", connect);
+            SqlCommand command = new SqlCommand("Select Username, Email, PasswordHash, PasswordSalt, Name from Accounts " +
+                "where Username = @username OR Email = @email", connect);
+            command.Parameters.AddWithValue("@username", username);
             command.Parameters.AddWithValue("@email", email);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
@@ -45,9 +53,39 @@ namespace AccountLibrary
             while (reader.Read())
             {
                 myAccount = new Account();
-                myAccount.Email = reader.GetString(0);
-                myAccount.PasswordHash = reader.GetString(1);
-                myAccount.PasswordSalt = reader.GetString(2);
+                myAccount.Username = reader.GetString(0);
+                myAccount.Email = reader.GetString(1);
+                myAccount.PasswordHash = reader.GetString(2);
+                myAccount.PasswordSalt = reader.GetString(3);
+                myAccount.Name = reader.GetString(4);
+            }
+
+            reader.Close();
+            command.ExecuteNonQuery();
+            connect.Close();
+            return myAccount;
+        }
+
+        // Look for a user's account info in the DB using username (for Login)
+        public static Account FindAccount(string username)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand("Select Username, Role, PasswordHash, PasswordSalt, Name from Accounts " +
+                "where Username = @username", connect);
+            command.Parameters.AddWithValue("@username", username);          
+            SqlDataReader reader = command.ExecuteReader();
+            Account myAccount = null;
+
+            while (reader.Read())
+            {
+                myAccount = new Account();
+                myAccount.Username = reader.GetString(0);
+                myAccount.Role = (Role)reader.GetInt32(1);
+                myAccount.PasswordHash = reader.GetString(2);
+                myAccount.PasswordSalt = reader.GetString(3);
+                myAccount.Name = reader.GetString(4);
             }
 
             reader.Close();
@@ -145,6 +183,30 @@ WHERE Role = @Role;";
             }
 
             reader.Close();
+        }
+
+        public const int SALT_SIZE = 24; // size in bytes
+        public const int HASH_SIZE = 24; // size in bytes
+        public const int ITERATIONS = 100000; // number of pbkdf2 iterations
+
+        public static string CreateSalt()
+        {
+            // Generate a salt
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            byte[] saltBuffer = new byte[SALT_SIZE];
+            provider.GetBytes(saltBuffer);
+            string salt = Convert.ToBase64String(saltBuffer);
+            return salt;
+        }
+
+        public static string CreateHash(string password, string salt)
+        {
+            // Generate hash
+            byte[] saltBuffer = Convert.FromBase64String(salt);
+            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, saltBuffer, ITERATIONS);
+            byte[] hashBuffer = pbkdf2.GetBytes(HASH_SIZE);
+            string hash = Convert.ToBase64String(hashBuffer);
+            return hash;
         }
     }
 }

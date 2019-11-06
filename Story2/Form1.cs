@@ -1,6 +1,6 @@
 ﻿/*
  * Programmer(s):      Gong-Hao
- * Date:               10/23/2019
+ * Date:               10/30/2019
  * What the code does: 1. Using a template to from a notification message
  *                     2. Sending the notification to subscribers
  */
@@ -23,11 +23,13 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
+        public static Account LoginedEmployee;
+
+        private const string NoneOption = "None";
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
 
-        private Account employee = new Account();
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
@@ -36,7 +38,7 @@ namespace Story2
         private SmtpClient smtpClient = null;
         private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
-        private int sendEmailIndex = -1;
+        private int sendingEmailCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
@@ -53,20 +55,21 @@ namespace Story2
         /// <param name="e"></param>
         private void Story2_Load(object sender, EventArgs e)
         {
-            LoadLoginedEmployee();
+            InitializeTags();
             InitializeTemplateComboBox();
             InitializeLabels();
             InitializeSmtpClient();
+            subjectTextBox.Focus();
         }
 
         /// <summary>
-        /// Load Logined Employee.
+        /// Load tags.
         /// </summary>
-        private void LoadLoginedEmployee()
+        private void InitializeTags()
         {
-            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
+            if (!TagDB.Load(ref tags))
             {
-                ShowErrorMessageBox(DatabaseError, "Loading Logined Employee failed!");
+                ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
             }
         }
 
@@ -77,7 +80,7 @@ namespace Story2
         {
             // set the default option to be "None"
             templateComboBox.Items.Clear();
-            templateComboBox.Items.Add("None");
+            templateComboBox.Items.Add(NoneOption);
             templateComboBox.SelectedIndex = 0;
 
             // load templates
@@ -99,7 +102,6 @@ namespace Story2
             sendingEmailsLabel.Text = string.Empty;
             succeededEmailsLabel.Text = string.Empty;
             failedEmailsLabel.Text = string.Empty;
-            cancelledEmailsLabel.Text = string.Empty;
         }
 
         /// <summary>
@@ -147,34 +149,66 @@ namespace Story2
         }
 
         /// <summary>
-        /// When changed, applies selected template into messageRichTextBox.
+        /// When drop down closed, applies selected template into messageRichTextBox.
         /// If selected "None", then clears text of messageRichTextBox.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TemplateComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void templateComboBox_DropDownClosed(object sender, EventArgs e)
         {
+            if (templateComboBox.SelectedIndex == -1)
+            {
+                return;
+            }
+            errorProvider.Clear();
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
-                messageRichTextBox.Enabled = true;
-                ReloadTags(null);
+                messageRichTextBox.ReadOnly = false;
+                messageRichTextBox.Text = string.Empty;
                 ReloadBlocks(string.Empty);
                 ReloadTagInputs();
-                messageRichTextBox.Text = string.Empty;
                 subjectTextBox.Text = string.Empty;
                 subjectTextBox.Focus();
             }
             else
             {
                 // using a templat - disable messageRichTextBox and rely on tags
-                Template template = templates[templateComboBox.SelectedIndex - 1];
-                messageRichTextBox.Enabled = false;
-                ReloadTags(template);
+                Template template = templateComboBox.SelectedItem as Template;
+                messageRichTextBox.ReadOnly = true;
                 ReloadBlocks(template.Message);
                 ReloadTagInputs();
                 ColorifyText();
                 subjectTextBox.Text = template.Subject;
+            }
+        }
+
+        /// <summary>
+        /// When press Enter key, checks selected value
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void templateComboBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (templateComboBox.Text == NoneOption)
+                {
+                    templateComboBox.SelectedIndex = 0;
+                    templateComboBox_DropDownClosed(sender, e);
+                }
+                else
+                {
+                    for (int i = 1; i < templateComboBox.Items.Count; i++)
+                    {
+                        Template template = templateComboBox.Items[i] as Template;
+                        if (template.Subject == templateComboBox.Text)
+                        {
+                            templateComboBox.SelectedIndex = i;
+                            templateComboBox_DropDownClosed(sender, e);
+                        }
+                    }
+                }
             }
         }
 
@@ -209,44 +243,43 @@ namespace Story2
             // this is only for testing
             // UseFakeSubscribers(ref subscribers);
 
-            // lock the sendButton until finished
-            sendButton.Enabled = false;
+            // lock controls until finished
+            SetControlsEnabled(false);
 
             SendNextEmail();
         }
 
         // send to myself
-        private void UseFakeSubscribers(ref List<Account> subscribers)
-        {
-            subscribers.Clear();
-            subscribers.Add(new Account
-            {
-                AccountId = 5,
-                Email = "gonghao.wei@pcc.edu",
-                Name = "Gong-Hao Wei"
-            });
-            subscribers.Add(new Account
-            {
-                AccountId = 1,
-                Email = "weig@my.lanecc.edu",
-                Name = "Gong-Hao"
-            });
-        }
+        // private void UseFakeSubscribers(ref List<Account> subscribers)
+        // {
+        //     subscribers.Clear();
+        //     subscribers.Add(new Account
+        //     {
+        //         AccountId = 5,
+        //         Email = "gonghao.wei@pcc.edu",
+        //         Name = "Gong-Hao Wei"
+        //     });
+        //     subscribers.Add(new Account
+        //     {
+        //         AccountId = 1,
+        //         Email = "weig@my.lanecc.edu",
+        //         Name = "Gong-Hao"
+        //     });
+        // }
 
         /// <summary>
         /// Send email to the next subscriber.
         /// </summary>
         private void SendNextEmail()
         {
-            sendEmailIndex++;
-            sendingEmailsLabel.Text = "Sending emails... ( " + sendEmailIndex + " / " + subscribers.Count + " )";
+            sendingEmailCount++;
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
-            cancelledEmailsLabel.Text = "Cancelled: " + cancelledCount;
 
-            if (sendEmailIndex < subscribers.Count)
+            if (sendingEmailCount <= subscribers.Count)
             {
-                Account subscriber = subscribers[sendEmailIndex];
+                sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
+                Account subscriber = subscribers[sendingEmailCount - 1];
                 SendEmail(subscriber);
             }
             else
@@ -295,8 +328,8 @@ namespace Story2
         {
             ShowSuccessMessageBox("Sent Notification Completed", "Notification sent successfully!");
 
-            // unlock the sendButton
-            sendButton.Enabled = true;
+            // unlock controls
+            SetControlsEnabled(true);
 
             // clear labels
             InitializeLabels();
@@ -304,7 +337,7 @@ namespace Story2
             // reset variables
             subscribers.Clear();
             notification = null;
-            sendEmailIndex = -1;
+            sendingEmailCount = 0;
             succeededCount = 0;
             cancelledCount = 0;
             failedCount = 0;
@@ -316,7 +349,7 @@ namespace Story2
             {
                 messageRichTextBox.Focus();
             }
-            else
+            else if (tagsPanel.Controls.Count > 0)
             {
                 TextBox firstTagTextBox = tagsPanel.Controls[1] as TextBox;
                 firstTagTextBox.Focus();
@@ -347,7 +380,7 @@ namespace Story2
             }
 
             // check Message
-            if (string.IsNullOrWhiteSpace(notification.Message))
+            if (string.IsNullOrWhiteSpace(messageRichTextBox.Text))
             {
                 errorProvider.SetError(messageRichTextBox, "Please enter Message");
                 messageRichTextBox.Focus();
@@ -377,12 +410,12 @@ namespace Story2
             {
                 Subject = subjectTextBox.Text,
                 Message = message,
-                SentAccountId = employee.AccountId
+                SentAccountId = LoginedEmployee.AccountId
             };
 
             if (templateComboBox.SelectedIndex != 0)
             {
-                Template template = templates[templateComboBox.SelectedIndex - 1];
+                Template template = templateComboBox.SelectedItem as Template;
                 notification.TemplateId = template.TemplateId;
             }
 
@@ -447,7 +480,7 @@ namespace Story2
                             message = message.Replace("{$Student Name}", subscriber.Name);
                             break;
                         case "Employee Name":
-                            message = message.Replace("{$Employee Name}", employee.Name);
+                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
                             break;
                     }
                 }
@@ -490,26 +523,6 @@ namespace Story2
 
             // reset messageRichTextBox
             ColorifyText();
-        }
-
-        /// <summary>
-        /// Load tags by TemplateId.
-        /// </summary>
-        /// <param name="template">The current template</param>
-        private void ReloadTags(Template template)
-        {
-            if (template != null)
-            {
-                // load tags
-                if (!TagDB.LoadByTemplateId(ref tags, template.TemplateId))
-                {
-                    ShowErrorMessageBox(DatabaseError, "Loading tags failed!");
-                }
-            }
-            else
-            {
-                tags.Clear();
-            }
         }
 
         /// <summary>
@@ -576,7 +589,10 @@ namespace Story2
 
             int index = 0;
             int tabIndex = 0;
-            Font font = new Font("Arial Narrow", 13.875F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            int space = 50;
+            int startX = 0;
+            int startY = 5;
+            Font font = new Font("Arial Narrow", 22.125F, FontStyle.Regular, GraphicsUnit.Point, 0);
 
             // loop tagBlocks and add dynamic labels and textBoxs into tagsPanel
             foreach (MessageBlock tagBlock in tagBlocks)
@@ -589,7 +605,7 @@ namespace Story2
                 {
                     AutoSize = true,
                     Font = font,
-                    Location = new Point(20, 84 + (index * 56)),
+                    Location = new Point(startX, startY + (index * space)),
                     Name = tagBlock.Tag.Name + "Label",
                     Size = new Size(120, 43),
                     TabIndex = tabIndex++,
@@ -599,9 +615,9 @@ namespace Story2
                 TextBox tagTextBox = new TextBox
                 {
                     Font = font,
-                    Location = new Point(230, 80 + (index * 56)),
+                    Location = new Point(startX + 220, startY - 4 + (index * space)),
                     Name = tagBlock.Tag.Name + "TextBox",
-                    Size = new Size(240, 50),
+                    Size = new Size(360, 50),
                     TabIndex = tabIndex++
                 };
                 tagTextBox.TextChanged += TagTextBox_TextChanged;
@@ -702,6 +718,38 @@ namespace Story2
                 MessageBoxDefaultButton.Button2
             );
             return dialogResult;
+        }
+
+        /// <summary>
+        /// Enable or disable all controls
+        /// </summary>
+        /// <param name="enabled">Whether controls are enabled</param>
+        private void SetControlsEnabled(bool enabled)
+        {
+            SetControlsEnabledRecursion(this, enabled);
+        }
+
+        /// <summary>
+        /// Use recursion to enable or disable all controls
+        /// </summary>
+        /// <param name="target">The target control</param>
+        /// <param name="enabled">Whether controls are enabled</param>
+        private void SetControlsEnabledRecursion(Control target, bool enabled)
+        {
+            foreach (Control control in target.Controls)
+            {
+                if (!(control is Label))
+                {
+                    control.Enabled = enabled;
+                }
+                if (control.Controls.Count > 0)
+                {
+                    foreach (Control child in control.Controls)
+                    {
+                        SetControlsEnabledRecursion(child, enabled);
+                    }
+                }
+            }
         }
     }
 }

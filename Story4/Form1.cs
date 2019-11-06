@@ -4,15 +4,11 @@
  * What the code does: Retrieve notifications sent
  */
 
+using AccountLibrary;
 using NotificationLibrary;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Story4
@@ -21,10 +17,14 @@ namespace Story4
     public partial class Form1 : Form
     {
 
+        public static Account LoginedEmployee;
+
+
         public Form1()
         {
             InitializeComponent();
         }
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -33,23 +33,23 @@ namespace Story4
         }
 
 
+
         private void clearButton_Click(object sender, EventArgs e)
         {
             // Clears data grid view
             notificationDataGridView.DataSource = null;
-            notificationDataGridView.Rows.Clear();
-
-
-            
-            
+            notificationDataGridView.Rows.Clear();            
+           
         }
         // Creates the data table add that data to datagridview
         private void findButton_Click(object sender, EventArgs e)
         {
 
+
             DateTime startTime = TimeReset.ResetTimeToStartOfDay(firstDateTimePicker.Value);
             
             DateTime endTime = TimeReset.ResetTimeToEndOfDay(secondDateTimePicker.Value);
+
 
             if (endTime < startTime)
             {
@@ -86,12 +86,6 @@ namespace Story4
                 notificationDataGridView.Columns[4].Width = 50;
 
             }
-
-
-
-
-
-
 
 
         }
