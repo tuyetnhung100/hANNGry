@@ -22,8 +22,14 @@ namespace TemplateLibrary
 
             SqlCommand command = new SqlCommand(@"
 INSERT INTO Templates
-(Subject, Message, CreatedAccountId, CreatedDate)
-  VALUES (@Subject, @Message, @CreatedAccountId, @CreatedDate);", connect);
+(Subject,
+ Message,
+ CreatedAccountId,
+ CreatedDate)
+  VALUES (@Subject,
+          @Message,
+          @CreatedAccountId,
+          @CreatedDate);", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);

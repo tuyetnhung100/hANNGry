@@ -78,12 +78,16 @@ AND SentDate < @end;", connect);
             // set insert sql
             string sql = @"
 INSERT INTO Notifications
-(Subject
-, Message
-, TemplateId
-, SentAccountId
-, SentDate)
-  VALUES (@Subject, @Message, @TemplateId, @SentAccountId, @SentDate);
+(Subject,
+ Message,
+ TemplateId,
+ SentAccountId,
+ SentDate)
+  VALUES (@Subject,
+          @Message,
+          @TemplateId,
+          @SentAccountId,
+          @SentDate);
 SELECT
   SCOPE_IDENTITY();";
             command.CommandText = sql;
@@ -142,8 +146,9 @@ SELECT
             //   (@AccountId_1, @NotificationId),
             //   (@AccountId_2, @NotificationId)
             string sql = @"
-INSERT INTO SubscriberNotification (Subscribers_AccountId
-, ReceivedNotifications_NotificationId)
+INSERT INTO SubscriberNotification
+(Subscribers_AccountId,
+ ReceivedNotifications_NotificationId)
   VALUES " + string.Join("," + Environment.NewLine, values);
 
             command.CommandText = sql;
