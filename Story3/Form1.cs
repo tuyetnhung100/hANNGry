@@ -1,8 +1,13 @@
-﻿using AccountLibrary;
-using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 using TagLibrary;
 using TemplateLibrary;
 using AccountLibrary;
@@ -14,6 +19,11 @@ namespace Story3
     public partial class templateCreator : Form
     {
         public static Account LoginedEmployee;
+
+        private List<Tag> tags = new List<Tag>();
+        private List<Template> templates = new List<Template>();
+        private Account employee = new Account();
+        private const string DatabaseError = "Database Error";
 
         public templateCreator()
         {
@@ -38,11 +48,12 @@ namespace Story3
 
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            
+
             TemplateDB.Load(ref templates);
             TagDB.Load(ref tags);
 
-            foreach (Tag myTag in myTagList)
+
+            foreach (Tag myTag in tags)
             {
                 customTagComboBox.Items.Add(myTag.Name);
             }
@@ -92,7 +103,7 @@ namespace Story3
         // Inserts selected tag into RTB.
         private void customTagComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            templateRichTextBox.SelectedText =  "{$" + customTagComboBox.SelectedItem.ToString() + "}";
+            templateRichTextBox.SelectedText = "{$" + customTagComboBox.SelectedItem.ToString() + "}";
         }
 
         // Saves the template to the database with the subject being the name for the template.

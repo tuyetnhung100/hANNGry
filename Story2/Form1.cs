@@ -23,6 +23,9 @@ namespace Story2
 {
     public partial class Story2 : Form
     {
+        public static Account LoginedEmployee;
+
+        private const string NoneOption = "None";
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
@@ -239,6 +242,7 @@ namespace Story2
 
             // this is only for testing
             // UseFakeSubscribers(ref subscribers);
+
             // lock controls until finished
             SetControlsEnabled(false);
 
@@ -355,8 +359,9 @@ namespace Story2
         /// <summary>
         /// Validate Notification data with errorProvider.
         /// </summary>
-        /// <param name="subscriber">The target subscriber</param>
-        private void SendEmail(Account subscriber)
+        /// <param name="notification">The Notification object that will be validated</param>
+        /// <returns>Whether the notification is valid</returns>
+        private bool ValidateNotification(Notification notification)
         {
             bool isValid = true;
             errorProvider.Clear();
