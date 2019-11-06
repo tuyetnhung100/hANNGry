@@ -21,7 +21,7 @@ using TemplateLibrary;
 
 namespace Story2
 {
-    public partial class Story2 : Form
+    public partial class NotificationSender : Form
     {
         public static Account LoginedEmployee;
 
@@ -43,7 +43,7 @@ namespace Story2
         private int cancelledCount = 0;
         private int failedCount = 0;
 
-        public Story2()
+        public NotificationSender()
         {
             InitializeComponent();
         }
@@ -53,7 +53,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Story2_Load(object sender, EventArgs e)
+        public void Story2_Load(object sender, EventArgs e)
         {
             InitializeTags();
             InitializeTemplateComboBox();

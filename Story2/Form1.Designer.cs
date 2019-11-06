@@ -1,6 +1,6 @@
 ﻿namespace Story2
 {
-    partial class Story2
+    partial class NotificationSender
     {
         /// <summary>
         /// Required designer variable.
