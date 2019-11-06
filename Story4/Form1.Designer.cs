@@ -1,6 +1,6 @@
 ﻿namespace Story4
 {
-    partial class Form1
+    partial class LogViewer
     {
         /// <summary>
         /// Required designer variable.
