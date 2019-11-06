@@ -13,6 +13,7 @@ namespace Management
         public NotificationSender notificationSender;
         public TemplateCreator templateCreator;
         public LogViewer logViewer;
+        private Form defaultForm;
 
         public MainForm(Account account)
         {
@@ -33,6 +34,8 @@ namespace Management
             LogViewer.LoginedEmployee = account;
             logViewer.FormClosed += (sender, e) => Close();
             InitializeButtonList(logViewer);
+
+            defaultForm = notificationSender;
 
             ShowInTaskbar = false;
         }
@@ -118,7 +121,11 @@ namespace Management
 
         private void MainForm_Load(object sender, System.EventArgs e)
         {
-            notificationSender.Show();
+            defaultForm.Show();
+            defaultForm.TopMost = true;
+            defaultForm.Focus();
+            defaultForm.BringToFront();
+            defaultForm.TopMost = false;
         }
     }
 }
