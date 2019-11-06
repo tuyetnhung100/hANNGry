@@ -21,20 +21,22 @@ namespace NotificationLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-                                                    SELECT
-	NotificationId,
-        Name AS 'SenderName',
-        Subject,
-        Message,
-        SentDate,
-		(SELECT Count(Subscribers_AccountId)
+SELECT
+  NotificationId,
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate,
+  (SELECT
+    COUNT(Subscribers_AccountId)
   FROM SubscriberNotification
-  Where ReceivedNotifications_NotificationId = Notifications.NotificationId) AS 'NumberSent'
-    FROM Notifications
-    INNER JOIN Accounts
-        ON Notifications.SentAccountId = Accounts.AccountId
-    WHERE SentDate > @start
-    AND SentDate < @end", connect);
+  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+  AS 'NumberSent'
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE SentDate > @start
+AND SentDate < @end;", connect);
 
             command.Parameters.AddWithValue("@start", start);
             command.Parameters.AddWithValue("@end", end);
@@ -58,7 +60,6 @@ namespace NotificationLibrary
                 myNotification.SentDate = reader.GetDateTime(sentDate);
                 myNotification.NumberSent = reader.GetInt32(numberSent);
                 notifications.Add(myNotification);
-                
             }
 
             reader.Close();
@@ -76,7 +77,8 @@ namespace NotificationLibrary
         {
             // set insert sql
             string sql = @"
-INSERT INTO Notifications (Subject
+INSERT INTO Notifications
+(Subject
 , Message
 , TemplateId
 , SentAccountId

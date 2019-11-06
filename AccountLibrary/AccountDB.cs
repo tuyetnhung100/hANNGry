@@ -8,14 +8,14 @@ using ConnectDB;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Windows.Forms;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace AccountLibrary
 {
     public class AccountDB
     {
-        public static Boolean Add(Account myAccount)
+        public static bool Add(Account myAccount)
         {
             string salt = CreateSalt();
             string hash = CreateHash(myAccount.PasswordHash, salt);
@@ -36,7 +36,7 @@ namespace AccountLibrary
             connect.Close();
             return true;
         }
-      
+
         // Look for a user's account info in the DB using username and email (for Register)
         public static Account FindAccount(string username, string email)
 
@@ -75,7 +75,7 @@ namespace AccountLibrary
 
             SqlCommand command = new SqlCommand("Select Username, Role, PasswordHash, PasswordSalt, Name from Accounts " +
                 "where Username = @username", connect);
-            command.Parameters.AddWithValue("@username", username);          
+            command.Parameters.AddWithValue("@username", username);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
 
