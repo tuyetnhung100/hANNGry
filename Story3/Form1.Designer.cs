@@ -1,6 +1,6 @@
 ﻿namespace Story3
 {
-    partial class templateCreator
+    partial class TemplateCreator
     {
         /// <summary>
         /// Required designer variable.

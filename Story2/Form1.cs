@@ -21,7 +21,7 @@ using TemplateLibrary;
 
 namespace Story2
 {
-    public partial class Story2 : Form
+    public partial class NotificationSender : Form
     {
         public static Account LoginedEmployee;
 
@@ -43,7 +43,7 @@ namespace Story2
         private int cancelledCount = 0;
         private int failedCount = 0;
 
-        public Story2()
+        public NotificationSender()
         {
             InitializeComponent();
         }
@@ -53,7 +53,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Story2_Load(object sender, EventArgs e)
+        public void Story2_Load(object sender, EventArgs e)
         {
             InitializeTags();
             InitializeTemplateComboBox();
@@ -476,11 +476,11 @@ namespace Story2
                 {
                     switch (tag.Name)
                     {
-                        case "Student Name":
-                            message = message.Replace("{$Student Name}", subscriber.Name);
+                        case "student name":
+                            message = message.Replace("{$student name}", subscriber.Name);
                             break;
-                        case "Employee Name":
-                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
+                        case "employee name":
+                            message = message.Replace("{$employee name}", LoginedEmployee.Name);
                             break;
                     }
                 }

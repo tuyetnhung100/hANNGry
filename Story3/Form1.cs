@@ -1,43 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using AccountLibrary;
 using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 using TagLibrary;
 using TemplateLibrary;
-using AccountLibrary;
 
 // This form is for creating templates for the notification sending in Story 2.
 // Author: Nic Zern
 namespace Story3
 {
-    public partial class templateCreator : Form
+    public partial class TemplateCreator : Form
     {
         public static Account LoginedEmployee;
 
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
-        private Account employee = new Account();
         private const string DatabaseError = "Database Error";
 
-        public templateCreator()
+        public TemplateCreator()
         {
             InitializeComponent();
-        }
-
-        // Borrowed this from Story 2 to load in the account id in place of the 1 I had originally set for testing purposes. 
-        // Loads all the employees from the database.
-        private void LoadEmployee()
-        {
-            if (!AccountDB.FakeGetLoginedEmployee(ref employee))
-            {
-                MessageBox.Show(DatabaseError, "Loading Employee failed!");
-            }
         }
 
         // Loads the templateCreator, adds all of the tags to the tag combo box from the db.
@@ -51,7 +35,6 @@ namespace Story3
 
             TemplateDB.Load(ref templates);
             TagDB.Load(ref tags);
-
 
             foreach (Tag myTag in tags)
             {
@@ -123,7 +106,7 @@ namespace Story3
                 Template myTemplate = new Template();
                 myTemplate.Subject = input;
                 myTemplate.Message = templateRichTextBox.Text;
-                myTemplate.CreatedAccountId = 1;
+                myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
                 myTemplate.CreatedDate = DateTime.Now;
                 TemplateDB.Add(myTemplate);
                 templateSelectorComboBox.Items.Add(myTemplate);
@@ -138,7 +121,7 @@ namespace Story3
                     Template myTemplate = new Template();
                     myTemplate.Subject = input;
                     myTemplate.Message = templateRichTextBox.Text;
-                    myTemplate.CreatedAccountId = employee.AccountId;
+                    myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
                     myTemplate.CreatedDate = DateTime.Now;
                     TemplateDB.Update(myTemplate);
                     templateSelectorComboBox.SelectedItem.Equals(myTemplate);
@@ -149,10 +132,6 @@ namespace Story3
                 return;
             }
 
-            foreach (Template template in templates)
-            {
-                templateSelectorComboBox.Items.Add(template);
-            }
             templateSelectorComboBox.Items.Clear();
             TemplateDB.Load(ref templates);
             foreach (Template template in templates)
