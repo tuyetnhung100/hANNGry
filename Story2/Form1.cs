@@ -240,32 +240,11 @@ namespace Story2
                 return;
             }
 
-            // this is only for testing
-            // UseFakeSubscribers(ref subscribers);
-
             // lock controls until finished
             SetControlsEnabled(false);
 
             SendNextEmail();
         }
-
-        // send to myself
-        // private void UseFakeSubscribers(ref List<Account> subscribers)
-        // {
-        //     subscribers.Clear();
-        //     subscribers.Add(new Account
-        //     {
-        //         AccountId = 5,
-        //         Email = "gonghao.wei@pcc.edu",
-        //         Name = "Gong-Hao Wei"
-        //     });
-        //     subscribers.Add(new Account
-        //     {
-        //         AccountId = 1,
-        //         Email = "weig@my.lanecc.edu",
-        //         Name = "Gong-Hao"
-        //     });
-        // }
 
         /// <summary>
         /// Send email to the next subscriber.
@@ -447,7 +426,7 @@ namespace Story2
                             message += "{$" + messageBlock.Tag.Name + "}";
                             break;
                         case TagType.UserInput:
-                            message += messageBlock.Input;
+                            message += messageBlock.Input.Text;
                             break;
                     }
                 }
