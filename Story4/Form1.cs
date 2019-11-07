@@ -64,7 +64,7 @@ namespace Story4
                 notificationDataGridView.DataSource = datatable;
 
                 notificationDataGridView.Columns[0].Width = 75;
-                notificationDataGridView.Columns[1].Width = 85;
+                notificationDataGridView.Columns[1].Width = 105;
                 notificationDataGridView.Columns[2].Width = 585;
                 notificationDataGridView.Columns[3].Width = 100;
                 notificationDataGridView.Columns[4].Width = 50;
