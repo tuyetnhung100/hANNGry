@@ -4,6 +4,7 @@
  * What the code does: DataModel for blocks in template.
  */
 
+using System.Windows.Forms;
 using TagLibrary;
 
 namespace Story2
@@ -13,6 +14,6 @@ namespace Story2
         public Tag Tag { get; set; }
         public bool IsTag { get; set; }
         public string Message { get; set; }
-        public string Input { get; set; }
+        public TextBox Input { get; set; }
     }
 }

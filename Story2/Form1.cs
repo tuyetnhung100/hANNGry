@@ -370,11 +370,10 @@ namespace Story2
             for (int i = tagBlocks.Count - 1; i >= 0; i--)
             {
                 MessageBlock tagBlock = tagBlocks[i];
-                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
+                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input.Text))
                 {
-                    TextBox tagTextBox = tagsPanel.Controls.Find(tagBlock.Tag.Name + "TextBox", false)[0] as TextBox;
-                    errorProvider.SetError(tagTextBox, "Please enter Tag " + tagBlock.Tag.Name);
-                    tagTextBox.Focus();
+                    errorProvider.SetError(tagBlock.Input, "Please enter Tag " + tagBlock.Tag.Name);
+                    tagBlock.Input.Focus();
                     isValid = false;
                 }
             }
@@ -559,7 +558,7 @@ namespace Story2
                         Tag = tag,
                         IsTag = true,
                         Message = tagName,
-                        Input = string.Empty
+                        Input = null
                     };
                     messageBlocks.Add(messageBlock);
                     tagBlocks.Add(messageBlock);
@@ -621,6 +620,7 @@ namespace Story2
                     TabIndex = tabIndex++
                 };
                 tagTextBox.TextChanged += TagTextBox_TextChanged;
+                tagBlock.Input = tagTextBox;
                 tagsPanel.Controls.Add(tagTextBox);
                 if (index == 0)
                 {
@@ -637,10 +637,6 @@ namespace Story2
         /// <param name="e"></param>
         private void TagTextBox_TextChanged(object sender, EventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            string tagName = textBox.Name.Replace("TextBox", string.Empty);
-            MessageBlock tagBlock = tagBlocks.Find(x => x.Tag.Name == tagName);
-            tagBlock.Input = textBox.Text;
             ColorifyText();
         }
 
@@ -673,9 +669,9 @@ namespace Story2
                         case TagType.UserInput:
                             // if TagType is UserInput, set tag text to be red
                             // if there has user input, set tag text to be green
-                            bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input);
+                            bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input.Text);
                             messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
-                            messageRichTextBox.AppendText(hasInput ? messageBlock.Input : messageBlock.Message);
+                            messageRichTextBox.AppendText(hasInput ? messageBlock.Input.Text : messageBlock.Message);
                             break;
                     }
                 }
