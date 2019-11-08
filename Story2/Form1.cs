@@ -29,6 +29,8 @@ namespace Story2
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
+        private const string StudentNameTag = "student name";
+        private const string EmployeeNameTag = "employee name";
 
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
@@ -57,7 +59,7 @@ namespace Story2
         {
             InitializeTags();
             InitializeTemplateComboBox();
-            InitializeLabels();
+            InitializeSendingLabels();
             InitializeSmtpClient();
             subjectTextBox.Focus();
         }
@@ -95,9 +97,9 @@ namespace Story2
         }
 
         /// <summary>
-        /// Remove texts of labels
+        /// Remove texts of sending labels
         /// </summary>
-        private void InitializeLabels()
+        private void InitializeSendingLabels()
         {
             sendingEmailsLabel.Text = string.Empty;
             succeededEmailsLabel.Text = string.Empty;
@@ -109,7 +111,16 @@ namespace Story2
         /// </summary>
         private void InitializeSmtpClient()
         {
-            NetworkCredential credentials = new NetworkCredential("hANNGry2019@gmail.com", "RUSerious?");
+            // make sure only create once
+            if (smtpClient != null)
+            {
+                return;
+            }
+
+            NetworkCredential credentials = new NetworkCredential(
+                "hANNGry2019@gmail.com",
+                "RUSerious?"
+            );
             smtpClient = new SmtpClient
             {
                 Port = 587,
@@ -132,17 +143,35 @@ namespace Story2
             int accountId = (int)e.UserState;
             if (e.Cancelled)
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, true, null);
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: false,
+                    cancelled: true,
+                    errorMessage: null
+                );
                 cancelledCount++;
             }
             else if (e.Error != null)
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, false, e.Error.ToString());
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: false,
+                    cancelled: false,
+                    errorMessage: e.Error.ToString()
+                );
                 failedCount++;
             }
             else
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, true, false, null);
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: true,
+                    cancelled: false,
+                    errorMessage: null
+                );
                 succeededCount++;
             }
             SendNextEmail();
@@ -160,7 +189,9 @@ namespace Story2
             {
                 return;
             }
+
             errorProvider.Clear();
+
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
@@ -227,7 +258,10 @@ namespace Story2
             }
 
             // make a confirmation to prevent the accidentally button click
-            DialogResult dialogResult = ShowConfirmMessageBox("Send Notification Confirmation", "Do you want to send the notification?");
+            DialogResult dialogResult = ShowConfirmMessageBox(
+                "Send Notification Confirmation",
+                "Do you want to send the notification?"
+            );
             if (dialogResult != DialogResult.OK)
             {
                 return;
@@ -255,6 +289,7 @@ namespace Story2
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
 
+            // check whether has the next email
             if (sendingEmailCount <= subscribers.Count)
             {
                 sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
@@ -311,7 +346,7 @@ namespace Story2
             SetControlsEnabled(true);
 
             // clear labels
-            InitializeLabels();
+            InitializeSendingLabels();
 
             // reset variables
             subscribers.Clear();
@@ -412,7 +447,7 @@ namespace Story2
                 return messageRichTextBox.Text;
             }
 
-            string message = string.Empty;
+            StringBuilder message = new StringBuilder();
 
             // concatenate messageBlocks to be filled message
             // only left DatabaseField as original tag format for later use
@@ -423,20 +458,20 @@ namespace Story2
                     switch (messageBlock.Tag.Type)
                     {
                         case TagType.DatabaseField:
-                            message += "{$" + messageBlock.Tag.Name + "}";
+                            message.Append(messageBlock.Tag.Syntax);
                             break;
                         case TagType.UserInput:
-                            message += messageBlock.Input.Text;
+                            message.Append(messageBlock.Input.Text);
                             break;
                     }
                 }
                 else
                 {
-                    message += messageBlock.Message;
+                    message.Append(messageBlock.Message);
                 }
             }
 
-            return message;
+            return message.ToString();
         }
 
         /// <summary>
@@ -454,11 +489,11 @@ namespace Story2
                 {
                     switch (tag.Name)
                     {
-                        case "student name":
-                            message = message.Replace("{$student name}", subscriber.Name);
+                        case StudentNameTag:
+                            message = message.Replace(tag.Syntax, subscriber.Name);
                             break;
-                        case "employee name":
-                            message = message.Replace("{$employee name}", LoginedEmployee.Name);
+                        case EmployeeNameTag:
+                            message = message.Replace(tag.Syntax, LoginedEmployee.Name);
                             break;
                     }
                 }
@@ -474,7 +509,10 @@ namespace Story2
         private void clearButton_Click(object sender, EventArgs e)
         {
             // make a confirmation to prevent the accidentally button click
-            DialogResult dialogResult = ShowConfirmMessageBox("Clear Inputs Confirmation", "Do you want to clear everything?");
+            DialogResult dialogResult = ShowConfirmMessageBox(
+                "Clear Inputs Confirmation",
+                "Do you want to clear everything?"
+            );
             if (dialogResult != DialogResult.OK)
             {
                 return;
@@ -561,6 +599,9 @@ namespace Story2
         /// </summary>
         private void ReloadTagInputs()
         {
+            // use a dictionary to solve duplicated tags
+            Dictionary<string, TextBox> textboxDictionary = new Dictionary<string, TextBox>();
+
             // reset tag inputs area
             tagsPanel.Controls.Clear();
             tagsPanel.Width = 800;
@@ -575,37 +616,48 @@ namespace Story2
             // loop tagBlocks and add dynamic labels and textBoxs into tagsPanel
             foreach (MessageBlock tagBlock in tagBlocks)
             {
+                // skip the DatabaseField
                 if (tagBlock.Tag.Type == TagType.DatabaseField)
                 {
                     continue;
                 }
-                Label tagLabel = new Label
+
+                TextBox tagTextBox;
+                if (textboxDictionary.ContainsKey(tagBlock.Tag.Name))
                 {
-                    AutoSize = true,
-                    Font = font,
-                    Location = new Point(startX, startY + (index * space)),
-                    Name = tagBlock.Tag.Name + "Label",
-                    Size = new Size(120, 43),
-                    TabIndex = tabIndex++,
-                    Text = "&" + (index + 1) + ". " + tagBlock.Tag.Name
-                };
-                tagsPanel.Controls.Add(tagLabel);
-                TextBox tagTextBox = new TextBox
-                {
-                    Font = font,
-                    Location = new Point(startX + 220, startY - 4 + (index * space)),
-                    Name = tagBlock.Tag.Name + "TextBox",
-                    Size = new Size(360, 50),
-                    TabIndex = tabIndex++
-                };
-                tagTextBox.TextChanged += TagTextBox_TextChanged;
-                tagBlock.Input = tagTextBox;
-                tagsPanel.Controls.Add(tagTextBox);
-                if (index == 0)
-                {
-                    tagTextBox.Focus();
+                    tagTextBox = textboxDictionary[tagBlock.Tag.Name];
                 }
-                index++;
+                else
+                {
+                    Label tagLabel = new Label
+                    {
+                        AutoSize = true,
+                        Font = font,
+                        Location = new Point(startX, startY + (index * space)),
+                        Name = tagBlock.Tag.Name + "Label",
+                        Size = new Size(120, 43),
+                        TabIndex = tabIndex++,
+                        Text = "&" + (index + 1) + ". " + tagBlock.Tag.Name
+                    };
+                    tagsPanel.Controls.Add(tagLabel);
+                    tagTextBox = new TextBox
+                    {
+                        Font = font,
+                        Location = new Point(startX + 220, startY - 4 + (index * space)),
+                        Name = tagBlock.Tag.Name + "TextBox",
+                        Size = new Size(360, 50),
+                        TabIndex = tabIndex++
+                    };
+                    tagTextBox.TextChanged += TagTextBox_TextChanged;
+                    textboxDictionary.Add(tagBlock.Tag.Name, tagTextBox);
+                    tagsPanel.Controls.Add(tagTextBox);
+                    if (index == 0)
+                    {
+                        tagTextBox.Focus();
+                    }
+                    index++;
+                }
+                tagBlock.Input = tagTextBox;
             }
         }
 
