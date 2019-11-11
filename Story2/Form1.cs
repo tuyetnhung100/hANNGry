@@ -34,12 +34,13 @@ namespace Story2
 
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
+        private List<Account> subscribers = new List<Account>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
 
-        private SmtpClient smtpClient = null;
-        private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
+        private SmtpClient smtpClient = null;
+
         private int sendingEmailCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
@@ -221,23 +222,25 @@ namespace Story2
         /// <param name="e"></param>
         private void templateComboBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                if (templateComboBox.Text == NoneOption)
+                return;
+            }
+
+            if (templateComboBox.Text == NoneOption)
+            {
+                templateComboBox.SelectedIndex = 0;
+                templateComboBox_DropDownClosed(sender, e);
+            }
+            else
+            {
+                for (int i = 1; i < templateComboBox.Items.Count; i++)
                 {
-                    templateComboBox.SelectedIndex = 0;
-                    templateComboBox_DropDownClosed(sender, e);
-                }
-                else
-                {
-                    for (int i = 1; i < templateComboBox.Items.Count; i++)
+                    Template template = templateComboBox.Items[i] as Template;
+                    if (template.Subject == templateComboBox.Text)
                     {
-                        Template template = templateComboBox.Items[i] as Template;
-                        if (template.Subject == templateComboBox.Text)
-                        {
-                            templateComboBox.SelectedIndex = i;
-                            templateComboBox_DropDownClosed(sender, e);
-                        }
+                        templateComboBox.SelectedIndex = i;
+                        templateComboBox_DropDownClosed(sender, e);
                     }
                 }
             }
@@ -453,21 +456,20 @@ namespace Story2
             // only left DatabaseField as original tag format for later use
             foreach (MessageBlock messageBlock in messageBlocks)
             {
-                if (messageBlock.IsTag)
-                {
-                    switch (messageBlock.Tag.Type)
-                    {
-                        case TagType.DatabaseField:
-                            message.Append(messageBlock.Tag.Syntax);
-                            break;
-                        case TagType.UserInput:
-                            message.Append(messageBlock.Input.Text);
-                            break;
-                    }
-                }
-                else
+                if (!messageBlock.IsTag)
                 {
                     message.Append(messageBlock.Message);
+                    continue;
+                }
+
+                switch (messageBlock.Tag.Type)
+                {
+                    case TagType.DatabaseField:
+                        message.Append(messageBlock.Tag.Syntax);
+                        break;
+                    case TagType.UserInput:
+                        message.Append(messageBlock.Input.Text);
+                        break;
                 }
             }
 
@@ -574,7 +576,7 @@ namespace Story2
                     {
                         Tag = tag,
                         IsTag = true,
-                        Message = tagName,
+                        Message = null,
                         Input = null
                     };
                     messageBlocks.Add(messageBlock);
@@ -648,9 +650,9 @@ namespace Story2
                         Size = new Size(360, 50),
                         TabIndex = tabIndex++
                     };
-                    tagTextBox.TextChanged += TagTextBox_TextChanged;
-                    textboxDictionary.Add(tagBlock.Tag.Name, tagTextBox);
+                    tagTextBox.TextChanged += (s, e) => ColorifyText();
                     tagsPanel.Controls.Add(tagTextBox);
+                    textboxDictionary.Add(tagBlock.Tag.Name, tagTextBox);
                     if (index == 0)
                     {
                         tagTextBox.Focus();
@@ -659,16 +661,6 @@ namespace Story2
                 }
                 tagBlock.Input = tagTextBox;
             }
-        }
-
-        /// <summary>
-        /// When tagInput's text changed, update messageRichTextBox.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TagTextBox_TextChanged(object sender, EventArgs e)
-        {
-            ColorifyText();
         }
 
         /// <summary>
@@ -687,24 +679,23 @@ namespace Story2
                     // set normal text color to be black
                     messageRichTextBox.SelectionColor = Color.Black;
                     messageRichTextBox.AppendText(messageBlock.Message);
+                    continue;
                 }
-                else
+
+                switch (messageBlock.Tag.Type)
                 {
-                    switch (messageBlock.Tag.Type)
-                    {
-                        case TagType.DatabaseField:
-                            // if TagType is DatabaseField, set tag text to be blue
-                            messageRichTextBox.SelectionColor = Color.Blue;
-                            messageRichTextBox.AppendText(messageBlock.Message);
-                            break;
-                        case TagType.UserInput:
-                            // if TagType is UserInput, set tag text to be red
-                            // if there has user input, set tag text to be green
-                            bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input.Text);
-                            messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
-                            messageRichTextBox.AppendText(hasInput ? messageBlock.Input.Text : messageBlock.Message);
-                            break;
-                    }
+                    case TagType.DatabaseField:
+                        // if TagType is DatabaseField, set tag text to be blue
+                        messageRichTextBox.SelectionColor = Color.Blue;
+                        messageRichTextBox.AppendText(messageBlock.Tag.Name);
+                        break;
+                    case TagType.UserInput:
+                        // if TagType is UserInput, set tag text to be red
+                        // if there has user input, set tag text to be green
+                        bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input.Text);
+                        messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
+                        messageRichTextBox.AppendText(hasInput ? messageBlock.Input.Text : messageBlock.Tag.Name);
+                        break;
                 }
             }
         }
