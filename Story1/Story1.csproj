@@ -195,9 +195,9 @@
       <Project>{b69d10ca-d8dd-4168-901b-ef1b37b6e800}</Project>
       <Name>ConnectDB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Story2\Story2.csproj">
-      <Project>{c82fbf91-34e5-47bd-9686-5378ee931825}</Project>
-      <Name>Story2</Name>
+    <ProjectReference Include="..\Management\Management.csproj">
+      <Project>{e1cd8504-9b00-4b5d-aebf-ef5149271cc1}</Project>
+      <Name>Management</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -21,7 +21,7 @@ using TemplateLibrary;
 
 namespace Story2
 {
-    public partial class Story2 : Form
+    public partial class NotificationSender : Form
     {
         public static Account LoginedEmployee;
 
@@ -29,21 +29,24 @@ namespace Story2
         private const string DatabaseError = "Database Error";
         private const string SMTPError = "SMTP Error";
         private const string DataError = "Data Error";
+        private const string StudentNameTag = "student name";
+        private const string EmployeeNameTag = "employee name";
 
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
+        private List<Account> subscribers = new List<Account>();
         private List<MessageBlock> messageBlocks = new List<MessageBlock>();
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
 
-        private SmtpClient smtpClient = null;
-        private List<Account> subscribers = new List<Account>();
         private Notification notification = null;
+        private SmtpClient smtpClient = null;
+
         private int sendingEmailCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
 
-        public Story2()
+        public NotificationSender()
         {
             InitializeComponent();
         }
@@ -53,11 +56,11 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Story2_Load(object sender, EventArgs e)
+        public void Story2_Load(object sender, EventArgs e)
         {
             InitializeTags();
             InitializeTemplateComboBox();
-            InitializeLabels();
+            InitializeSendingLabels();
             InitializeSmtpClient();
             subjectTextBox.Focus();
         }
@@ -95,9 +98,9 @@ namespace Story2
         }
 
         /// <summary>
-        /// Remove texts of labels
+        /// Remove texts of sending labels
         /// </summary>
-        private void InitializeLabels()
+        private void InitializeSendingLabels()
         {
             sendingEmailsLabel.Text = string.Empty;
             succeededEmailsLabel.Text = string.Empty;
@@ -109,7 +112,16 @@ namespace Story2
         /// </summary>
         private void InitializeSmtpClient()
         {
-            NetworkCredential credentials = new NetworkCredential("hANNGry2019@gmail.com", "RUSerious?");
+            // make sure only create once
+            if (smtpClient != null)
+            {
+                return;
+            }
+
+            NetworkCredential credentials = new NetworkCredential(
+                "hANNGry2019@gmail.com",
+                "RUSerious?"
+            );
             smtpClient = new SmtpClient
             {
                 Port = 587,
@@ -132,17 +144,35 @@ namespace Story2
             int accountId = (int)e.UserState;
             if (e.Cancelled)
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, true, null);
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: false,
+                    cancelled: true,
+                    errorMessage: null
+                );
                 cancelledCount++;
             }
             else if (e.Error != null)
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, false, false, e.Error.ToString());
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: false,
+                    cancelled: false,
+                    errorMessage: e.Error.ToString()
+                );
                 failedCount++;
             }
             else
             {
-                NotificationDB.UpdateSubscriberNotification(notification.NotificationId, accountId, true, false, null);
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    accountId,
+                    succeeded: true,
+                    cancelled: false,
+                    errorMessage: null
+                );
                 succeededCount++;
             }
             SendNextEmail();
@@ -160,7 +190,9 @@ namespace Story2
             {
                 return;
             }
+
             errorProvider.Clear();
+
             if (templateComboBox.SelectedIndex == 0)
             {
                 // not using a templat - enable messageRichTextBox and rely on only text
@@ -190,23 +222,25 @@ namespace Story2
         /// <param name="e"></param>
         private void templateComboBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode != Keys.Enter)
             {
-                if (templateComboBox.Text == NoneOption)
+                return;
+            }
+
+            if (templateComboBox.Text == NoneOption)
+            {
+                templateComboBox.SelectedIndex = 0;
+                templateComboBox_DropDownClosed(sender, e);
+            }
+            else
+            {
+                for (int i = 1; i < templateComboBox.Items.Count; i++)
                 {
-                    templateComboBox.SelectedIndex = 0;
-                    templateComboBox_DropDownClosed(sender, e);
-                }
-                else
-                {
-                    for (int i = 1; i < templateComboBox.Items.Count; i++)
+                    Template template = templateComboBox.Items[i] as Template;
+                    if (template.Subject == templateComboBox.Text)
                     {
-                        Template template = templateComboBox.Items[i] as Template;
-                        if (template.Subject == templateComboBox.Text)
-                        {
-                            templateComboBox.SelectedIndex = i;
-                            templateComboBox_DropDownClosed(sender, e);
-                        }
+                        templateComboBox.SelectedIndex = i;
+                        templateComboBox_DropDownClosed(sender, e);
                     }
                 }
             }
@@ -227,7 +261,10 @@ namespace Story2
             }
 
             // make a confirmation to prevent the accidentally button click
-            DialogResult dialogResult = ShowConfirmMessageBox("Send Notification Confirmation", "Do you want to send the notification?");
+            DialogResult dialogResult = ShowConfirmMessageBox(
+                "Send Notification Confirmation",
+                "Do you want to send the notification?"
+            );
             if (dialogResult != DialogResult.OK)
             {
                 return;
@@ -240,32 +277,11 @@ namespace Story2
                 return;
             }
 
-            // this is only for testing
-            // UseFakeSubscribers(ref subscribers);
-
             // lock controls until finished
             SetControlsEnabled(false);
 
             SendNextEmail();
         }
-
-        // send to myself
-        // private void UseFakeSubscribers(ref List<Account> subscribers)
-        // {
-        //     subscribers.Clear();
-        //     subscribers.Add(new Account
-        //     {
-        //         AccountId = 5,
-        //         Email = "gonghao.wei@pcc.edu",
-        //         Name = "Gong-Hao Wei"
-        //     });
-        //     subscribers.Add(new Account
-        //     {
-        //         AccountId = 1,
-        //         Email = "weig@my.lanecc.edu",
-        //         Name = "Gong-Hao"
-        //     });
-        // }
 
         /// <summary>
         /// Send email to the next subscriber.
@@ -276,6 +292,7 @@ namespace Story2
             succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
             failedEmailsLabel.Text = "Failed: " + failedCount;
 
+            // check whether has the next email
             if (sendingEmailCount <= subscribers.Count)
             {
                 sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
@@ -332,7 +349,7 @@ namespace Story2
             SetControlsEnabled(true);
 
             // clear labels
-            InitializeLabels();
+            InitializeSendingLabels();
 
             // reset variables
             subscribers.Clear();
@@ -370,11 +387,10 @@ namespace Story2
             for (int i = tagBlocks.Count - 1; i >= 0; i--)
             {
                 MessageBlock tagBlock = tagBlocks[i];
-                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input))
+                if (tagBlock.Tag.Type == TagType.UserInput && string.IsNullOrWhiteSpace(tagBlock.Input.Text))
                 {
-                    TextBox tagTextBox = tagsPanel.Controls.Find(tagBlock.Tag.Name + "TextBox", false)[0] as TextBox;
-                    errorProvider.SetError(tagTextBox, "Please enter Tag " + tagBlock.Tag.Name);
-                    tagTextBox.Focus();
+                    errorProvider.SetError(tagBlock.Input, "Please enter Tag " + tagBlock.Tag.Name);
+                    tagBlock.Input.Focus();
                     isValid = false;
                 }
             }
@@ -434,31 +450,30 @@ namespace Story2
                 return messageRichTextBox.Text;
             }
 
-            string message = string.Empty;
+            StringBuilder message = new StringBuilder();
 
             // concatenate messageBlocks to be filled message
             // only left DatabaseField as original tag format for later use
             foreach (MessageBlock messageBlock in messageBlocks)
             {
-                if (messageBlock.IsTag)
+                if (!messageBlock.IsTag)
                 {
-                    switch (messageBlock.Tag.Type)
-                    {
-                        case TagType.DatabaseField:
-                            message += "{$" + messageBlock.Tag.Name + "}";
-                            break;
-                        case TagType.UserInput:
-                            message += messageBlock.Input;
-                            break;
-                    }
+                    message.Append(messageBlock.Message);
+                    continue;
                 }
-                else
+
+                switch (messageBlock.Tag.Type)
                 {
-                    message += messageBlock.Message;
+                    case TagType.DatabaseField:
+                        message.Append(messageBlock.Tag.Syntax);
+                        break;
+                    case TagType.UserInput:
+                        message.Append(messageBlock.Input.Text);
+                        break;
                 }
             }
 
-            return message;
+            return message.ToString();
         }
 
         /// <summary>
@@ -476,11 +491,11 @@ namespace Story2
                 {
                     switch (tag.Name)
                     {
-                        case "Student Name":
-                            message = message.Replace("{$Student Name}", subscriber.Name);
+                        case StudentNameTag:
+                            message = message.Replace(tag.Syntax, subscriber.Name);
                             break;
-                        case "Employee Name":
-                            message = message.Replace("{$Employee Name}", LoginedEmployee.Name);
+                        case EmployeeNameTag:
+                            message = message.Replace(tag.Syntax, LoginedEmployee.Name);
                             break;
                     }
                 }
@@ -496,7 +511,10 @@ namespace Story2
         private void clearButton_Click(object sender, EventArgs e)
         {
             // make a confirmation to prevent the accidentally button click
-            DialogResult dialogResult = ShowConfirmMessageBox("Clear Inputs Confirmation", "Do you want to clear everything?");
+            DialogResult dialogResult = ShowConfirmMessageBox(
+                "Clear Inputs Confirmation",
+                "Do you want to clear everything?"
+            );
             if (dialogResult != DialogResult.OK)
             {
                 return;
@@ -558,8 +576,8 @@ namespace Story2
                     {
                         Tag = tag,
                         IsTag = true,
-                        Message = tagName,
-                        Input = string.Empty
+                        Message = null,
+                        Input = null
                     };
                     messageBlocks.Add(messageBlock);
                     tagBlocks.Add(messageBlock);
@@ -583,6 +601,9 @@ namespace Story2
         /// </summary>
         private void ReloadTagInputs()
         {
+            // use a dictionary to solve duplicated tags
+            Dictionary<string, TextBox> textboxDictionary = new Dictionary<string, TextBox>();
+
             // reset tag inputs area
             tagsPanel.Controls.Clear();
             tagsPanel.Width = 800;
@@ -597,51 +618,49 @@ namespace Story2
             // loop tagBlocks and add dynamic labels and textBoxs into tagsPanel
             foreach (MessageBlock tagBlock in tagBlocks)
             {
+                // skip the DatabaseField
                 if (tagBlock.Tag.Type == TagType.DatabaseField)
                 {
                     continue;
                 }
-                Label tagLabel = new Label
-                {
-                    AutoSize = true,
-                    Font = font,
-                    Location = new Point(startX, startY + (index * space)),
-                    Name = tagBlock.Tag.Name + "Label",
-                    Size = new Size(120, 43),
-                    TabIndex = tabIndex++,
-                    Text = "&" + (index + 1) + ". " + tagBlock.Tag.Name
-                };
-                tagsPanel.Controls.Add(tagLabel);
-                TextBox tagTextBox = new TextBox
-                {
-                    Font = font,
-                    Location = new Point(startX + 220, startY - 4 + (index * space)),
-                    Name = tagBlock.Tag.Name + "TextBox",
-                    Size = new Size(360, 50),
-                    TabIndex = tabIndex++
-                };
-                tagTextBox.TextChanged += TagTextBox_TextChanged;
-                tagsPanel.Controls.Add(tagTextBox);
-                if (index == 0)
-                {
-                    tagTextBox.Focus();
-                }
-                index++;
-            }
-        }
 
-        /// <summary>
-        /// When tagInput's text changed, update messageRichTextBox.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TagTextBox_TextChanged(object sender, EventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            string tagName = textBox.Name.Replace("TextBox", string.Empty);
-            MessageBlock tagBlock = tagBlocks.Find(x => x.Tag.Name == tagName);
-            tagBlock.Input = textBox.Text;
-            ColorifyText();
+                TextBox tagTextBox;
+                if (textboxDictionary.ContainsKey(tagBlock.Tag.Name))
+                {
+                    tagTextBox = textboxDictionary[tagBlock.Tag.Name];
+                }
+                else
+                {
+                    Label tagLabel = new Label
+                    {
+                        AutoSize = true,
+                        Font = font,
+                        Location = new Point(startX, startY + (index * space)),
+                        Name = tagBlock.Tag.Name + "Label",
+                        Size = new Size(120, 43),
+                        TabIndex = tabIndex++,
+                        Text = "&" + (index + 1) + ". " + tagBlock.Tag.Name
+                    };
+                    tagsPanel.Controls.Add(tagLabel);
+                    tagTextBox = new TextBox
+                    {
+                        Font = font,
+                        Location = new Point(startX + 220, startY - 4 + (index * space)),
+                        Name = tagBlock.Tag.Name + "TextBox",
+                        Size = new Size(360, 50),
+                        TabIndex = tabIndex++
+                    };
+                    tagTextBox.TextChanged += (s, e) => ColorifyText();
+                    tagsPanel.Controls.Add(tagTextBox);
+                    textboxDictionary.Add(tagBlock.Tag.Name, tagTextBox);
+                    if (index == 0)
+                    {
+                        tagTextBox.Focus();
+                    }
+                    index++;
+                }
+                tagBlock.Input = tagTextBox;
+            }
         }
 
         /// <summary>
@@ -660,24 +679,23 @@ namespace Story2
                     // set normal text color to be black
                     messageRichTextBox.SelectionColor = Color.Black;
                     messageRichTextBox.AppendText(messageBlock.Message);
+                    continue;
                 }
-                else
+
+                switch (messageBlock.Tag.Type)
                 {
-                    switch (messageBlock.Tag.Type)
-                    {
-                        case TagType.DatabaseField:
-                            // if TagType is DatabaseField, set tag text to be blue
-                            messageRichTextBox.SelectionColor = Color.Blue;
-                            messageRichTextBox.AppendText(messageBlock.Message);
-                            break;
-                        case TagType.UserInput:
-                            // if TagType is UserInput, set tag text to be red
-                            // if there has user input, set tag text to be green
-                            bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input);
-                            messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
-                            messageRichTextBox.AppendText(hasInput ? messageBlock.Input : messageBlock.Message);
-                            break;
-                    }
+                    case TagType.DatabaseField:
+                        // if TagType is DatabaseField, set tag text to be blue
+                        messageRichTextBox.SelectionColor = Color.Blue;
+                        messageRichTextBox.AppendText(messageBlock.Tag.Name);
+                        break;
+                    case TagType.UserInput:
+                        // if TagType is UserInput, set tag text to be red
+                        // if there has user input, set tag text to be green
+                        bool hasInput = !string.IsNullOrWhiteSpace(messageBlock.Input.Text);
+                        messageRichTextBox.SelectionColor = hasInput ? Color.Green : Color.Red;
+                        messageRichTextBox.AppendText(hasInput ? messageBlock.Input.Text : messageBlock.Tag.Name);
+                        break;
                 }
             }
         }

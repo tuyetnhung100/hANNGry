@@ -8,26 +8,41 @@ using ConnectDB;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Windows.Forms;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace AccountLibrary
 {
     public class AccountDB
     {
-        public static Boolean Add(Account myAccount)
+        public static bool Add(Account myAccount)
         {
             string salt = CreateSalt();
             string hash = CreateHash(myAccount.PasswordHash, salt);
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Accounts(Username, Name, Email, Role, PasswordHash, PasswordSalt, CreatedDate)" +
-                " Values(@Username, @Name, @Email, 0, @PasswordHash, @PasswordSalt, @Date)", connect);
+            SqlCommand command = new SqlCommand(@"
+INSERT INTO Accounts
+(Username,
+ Name,
+ Email,
+ Role,
+ PasswordHash,
+ PasswordSalt,
+ CreatedDate)
+  VALUES (@Username,
+          @Name,
+          @Email,
+          @Role,
+          @PasswordHash,
+          @PasswordSalt,
+          @Date);", connect);
 
             command.Parameters.AddWithValue("@Username", myAccount.Username);
             command.Parameters.AddWithValue("@Name", myAccount.Name);
             command.Parameters.AddWithValue("@Email", myAccount.Email);
+            command.Parameters.AddWithValue("@Role", Role.Subscriber);
             command.Parameters.AddWithValue("@PasswordHash", hash);
             command.Parameters.AddWithValue("@PasswordSalt", salt);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
@@ -36,29 +51,48 @@ namespace AccountLibrary
             connect.Close();
             return true;
         }
-      
+
         // Look for a user's account info in the DB using username and email (for Register)
         public static Account FindAccount(string username, string email)
-
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Username, Email, PasswordHash, PasswordSalt, Name from Accounts " +
-                "where Username = @username OR Email = @email", connect);
-            command.Parameters.AddWithValue("@username", username);
-            command.Parameters.AddWithValue("@email", email);
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  AccountId,
+  Username,
+  Role,
+  Email,
+  PasswordHash,
+  PasswordSalt,
+  Name
+FROM Accounts
+WHERE Username = @Username
+OR Email = @Email;", connect);
+            command.Parameters.AddWithValue("@Username", username);
+            command.Parameters.AddWithValue("@Email", email);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
+
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int usernameIndex = reader.GetOrdinal("Username");
+            int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
+            int passwordHashIndex = reader.GetOrdinal("PasswordHash");
+            int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
+            int nameIndex = reader.GetOrdinal("Name");
 
             while (reader.Read())
             {
                 myAccount = new Account();
-                myAccount.Username = reader.GetString(0);
-                myAccount.Email = reader.GetString(1);
-                myAccount.PasswordHash = reader.GetString(2);
-                myAccount.PasswordSalt = reader.GetString(3);
-                myAccount.Name = reader.GetString(4);
+                myAccount.AccountId = reader.GetInt32(accountIdIndex);
+                myAccount.Username = reader.GetString(usernameIndex);
+                myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
+                myAccount.PasswordHash = reader.GetString(passwordHashIndex);
+                myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
+                myAccount.Name = reader.GetString(nameIndex);
             }
 
             reader.Close();
@@ -73,20 +107,39 @@ namespace AccountLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Select Username, Role, PasswordHash, PasswordSalt, Name from Accounts " +
-                "where Username = @username", connect);
-            command.Parameters.AddWithValue("@username", username);          
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  AccountId,
+  Username,
+  Role,
+  Email,
+  PasswordHash,
+  PasswordSalt,
+  Name
+FROM Accounts
+WHERE Username = @Username;", connect);
+            command.Parameters.AddWithValue("@Username", username);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
+
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int usernameIndex = reader.GetOrdinal("Username");
+            int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
+            int passwordHashIndex = reader.GetOrdinal("PasswordHash");
+            int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
+            int nameIndex = reader.GetOrdinal("Name");
 
             while (reader.Read())
             {
                 myAccount = new Account();
-                myAccount.Username = reader.GetString(0);
-                myAccount.Role = (Role)reader.GetInt32(1);
-                myAccount.PasswordHash = reader.GetString(2);
-                myAccount.PasswordSalt = reader.GetString(3);
-                myAccount.Name = reader.GetString(4);
+                myAccount.AccountId = reader.GetInt32(accountIdIndex);
+                myAccount.Username = reader.GetString(usernameIndex);
+                myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
+                myAccount.PasswordHash = reader.GetString(passwordHashIndex);
+                myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
+                myAccount.Name = reader.GetString(nameIndex);
             }
 
             reader.Close();

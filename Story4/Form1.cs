@@ -13,43 +13,27 @@ using System.Windows.Forms;
 
 namespace Story4
 {
-    
-    public partial class Form1 : Form
+    public partial class LogViewer : Form
     {
-
         public static Account LoginedEmployee;
 
-
-        public Form1()
+        public LogViewer()
         {
             InitializeComponent();
         }
-
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-
-        }
-
-
 
         private void clearButton_Click(object sender, EventArgs e)
         {
             // Clears data grid view
             notificationDataGridView.DataSource = null;
-            notificationDataGridView.Rows.Clear();            
-           
+            notificationDataGridView.Rows.Clear();
         }
+
         // Creates the data table add that data to datagridview
         private void findButton_Click(object sender, EventArgs e)
         {
-
-
             DateTime startTime = TimeReset.ResetTimeToStartOfDay(firstDateTimePicker.Value);
-            
             DateTime endTime = TimeReset.ResetTimeToEndOfDay(secondDateTimePicker.Value);
-
 
             if (endTime < startTime)
             {
@@ -80,19 +64,11 @@ namespace Story4
                 notificationDataGridView.DataSource = datatable;
 
                 notificationDataGridView.Columns[0].Width = 75;
-                notificationDataGridView.Columns[1].Width = 85;
+                notificationDataGridView.Columns[1].Width = 105;
                 notificationDataGridView.Columns[2].Width = 585;
                 notificationDataGridView.Columns[3].Width = 100;
                 notificationDataGridView.Columns[4].Width = 50;
-
             }
-
-
         }
-
-
     }
-
-
-    
 }

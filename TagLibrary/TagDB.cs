@@ -20,10 +20,12 @@ namespace TagLibrary
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
-            SqlCommand command = new SqlCommand("Insert into Tags(Type, Name)" +
-                " Values(1, @Name)", connect);
+            SqlCommand command = new SqlCommand(@"
+INSERT INTO Tags
+(Type, Name)
+  VALUES (@Type, @Name);", connect);
 
-            command.Parameters.AddWithValue("@Type", myTag.Type);
+            command.Parameters.AddWithValue("@Type", TagType.UserInput);
             command.Parameters.AddWithValue("@Name", myTag.Name);
 
             command.ExecuteNonQuery();
