@@ -59,6 +59,18 @@ namespace Story3
             }
         }
 
+        // Reloads the templates and sets the index to the first item.
+        private void reloadTemplateList()
+        {
+            templateSelectorComboBox.Items.Clear();
+            TemplateDB.Load(ref templates);
+            foreach (Template template in templates)
+            {
+                templateSelectorComboBox.Items.Add(template);
+            }
+            templateSelectorComboBox.SelectedIndex = 0;
+        }
+
         // Clears the rich text box.
         private void clearAllButton_Click(object sender, EventArgs e)
         {
@@ -136,19 +148,14 @@ namespace Story3
                     myTemplate.CreatedDate = DateTime.Now;
                     TemplateDB.Update(myTemplate);
                     templateSelectorComboBox.SelectedItem.Equals(myTemplate);
+                    MessageBox.Show("The template was successfully updated.", "Success!");
                 }
             }
             else
             {
                 return;
             }
-
-            templateSelectorComboBox.Items.Clear();
-            TemplateDB.Load(ref templates);
-            foreach (Template template in templates)
-            {
-                templateSelectorComboBox.Items.Add(template);
-            }
+            reloadTemplateList();
         }
 
         // Loads a template from the DB when selected, and inserts the message column into the RTB.
