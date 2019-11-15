@@ -7,11 +7,10 @@
 
 using AccountLibrary;
 using NotificationLibrary;
+using Notifier;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -39,9 +38,8 @@ namespace Story2
         private List<MessageBlock> tagBlocks = new List<MessageBlock>();
 
         private Notification notification = null;
-        private SmtpClient smtpClient = null;
 
-        private int sendingEmailCount = 0;
+        private int sendingNotificationCount = 0;
         private int succeededCount = 0;
         private int cancelledCount = 0;
         private int failedCount = 0;
@@ -61,7 +59,7 @@ namespace Story2
             InitializeTags();
             InitializeTemplateComboBox();
             InitializeSendingLabels();
-            InitializeSmtpClient();
+            InitializeNotifier();
             subjectTextBox.Focus();
         }
 
@@ -103,43 +101,21 @@ namespace Story2
         private void InitializeSendingLabels()
         {
             sendingEmailsLabel.Text = string.Empty;
-            succeededEmailsLabel.Text = string.Empty;
-            failedEmailsLabel.Text = string.Empty;
+            succeededNotificationsLabel.Text = string.Empty;
+            failedNotificationsLabel.Text = string.Empty;
         }
 
-        /// <summary>
-        /// Initialize SmtpClient
-        /// </summary>
-        private void InitializeSmtpClient()
+        private void InitializeNotifier()
         {
-            // make sure only create once
-            if (smtpClient != null)
-            {
-                return;
-            }
-
-            NetworkCredential credentials = new NetworkCredential(
-                "hANNGry2019@gmail.com",
-                "RUSerious?"
-            );
-            smtpClient = new SmtpClient
-            {
-                Port = 587,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Host = "smtp.gmail.com",
-                EnableSsl = true,
-                Credentials = credentials
-            };
-            smtpClient.SendCompleted += SmtpClient_SendCompleted;
+            EmailNotifier.NotifyCompleted += NotifyCompleted;
+            SMSNotifier.NotifyCompleted += NotifyCompleted;
         }
 
         /// <summary>
-        /// The SendCompleted callback.
+        /// The NotifyCompleted callback.
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SmtpClient_SendCompleted(object sender, AsyncCompletedEventArgs e)
+        private void NotifyCompleted(NotifyCompletedEventArgs e)
         {
             int accountId = (int)e.UserState;
             if (e.Cancelled)
@@ -175,7 +151,7 @@ namespace Story2
                 );
                 succeededCount++;
             }
-            SendNextEmail();
+            SendNextNotification();
         }
 
         /// <summary>
@@ -280,24 +256,31 @@ namespace Story2
             // lock controls until finished
             SetControlsEnabled(false);
 
-            SendNextEmail();
+            SendNextNotification();
         }
 
         /// <summary>
-        /// Send email to the next subscriber.
+        /// Send email or sms to the next subscriber.
         /// </summary>
-        private void SendNextEmail()
+        private void SendNextNotification()
         {
-            sendingEmailCount++;
-            succeededEmailsLabel.Text = "Succeeded: " + succeededCount;
-            failedEmailsLabel.Text = "Failed: " + failedCount;
+            sendingNotificationCount++;
+            succeededNotificationsLabel.Text = "Succeeded: " + succeededCount;
+            failedNotificationsLabel.Text = "Failed: " + failedCount;
 
             // check whether has the next email
-            if (sendingEmailCount <= subscribers.Count)
+            if (sendingNotificationCount <= subscribers.Count)
             {
-                sendingEmailsLabel.Text = "Sending emails... ( " + sendingEmailCount + " / " + subscribers.Count + " )";
-                Account subscriber = subscribers[sendingEmailCount - 1];
-                SendEmail(subscriber);
+                sendingEmailsLabel.Text = "Sending notifications... ( " + sendingNotificationCount + " / " + subscribers.Count + " )";
+                Account subscriber = subscribers[sendingNotificationCount - 1];
+                if (subscriber.NotificationType.HasFlag(NotificationType.Email))
+                {
+                    SendEmail(subscriber);
+                }
+                if (subscriber.NotificationType.HasFlag(NotificationType.SMS))
+                {
+                    SendSMS(subscriber);
+                }
             }
             else
             {
@@ -314,8 +297,18 @@ namespace Story2
             string email = subscriber.Email;
             string subject = notification.Subject;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-            MailMessage mailMessage = GetMailMessage(smtpClient, email, subject, body);
-            smtpClient.SendAsync(mailMessage, subscriber.AccountId);
+            EmailNotifier.SendEmailAsync(email, subject, body, subscriber.AccountId);
+        }
+
+        /// <summary>
+        /// Send SMS asynchronously.
+        /// </summary>
+        /// <param name="subscriber">The target subscriber</param>
+        private void SendSMS(Account subscriber)
+        {
+            string phoneNumber = subscriber.PhoneNumber;
+            string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
+            SMSNotifier.SendSMSAsync(phoneNumber, body, subscriber.AccountId);
         }
 
         /// <summary>
@@ -354,7 +347,7 @@ namespace Story2
             // reset variables
             subscribers.Clear();
             notification = null;
-            sendingEmailCount = 0;
+            sendingNotificationCount = 0;
             succeededCount = 0;
             cancelledCount = 0;
             failedCount = 0;
