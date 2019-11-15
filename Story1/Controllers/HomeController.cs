@@ -118,5 +118,13 @@ namespace Story1.Controllers
             }
             return View(model);
         }
+
+        [HttpGet]
+        public ActionResult UserAccount()
+        {
+            ViewBag.Title = "UserAccount";
+            return View();
+        }
+
     }
 }

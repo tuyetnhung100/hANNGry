@@ -1,0 +1,123 @@
+﻿@*
+    Programmer: Nina Hoang
+    Class: CIS234A
+    Date: 11/14/2019
+    Purpose: To create a gui for user account settings.
+*@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Add padding to containers */
+        .container {
+            padding: 16px;
+            background-color: #80ced6;
+        }
+
+        /* Full-width input fields */
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            display: inline-block;
+            border: none;
+            background: #f1f1f1;
+        }
+
+            input[type=text]:focus, input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+
+        /* Overwrite default styles of hr */
+        hr {
+            border: 1px solid #f1f1f1;
+            margin-bottom: 25px;
+        }
+
+        /* Create two equal columns that floats next to each other */
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+            height: 300px; /* column height */
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .savebtn {
+            background-color: #50394c;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+            .savebtn:hover {
+                opacity: 0.8;
+            }
+
+        /* Add a blue text color to links */
+        a {
+            color: #191970;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <form action="/Home/UserAccount" method="post">
+        <div class="container">
+            <h1>Account Settings</h1>
+            <hr>
+            <div class="row">
+                <div class="column">
+                    <label for="name"><b>Name</b></label>
+                    <input type="text" placeholder="Enter Name" name="uname" required>
+
+                    <label for="uname"><b>Username</b></label>
+                    <input type="password" placeholder="Enter Username" name="uname" required>
+
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" required>
+
+                    <a href="#">Change Password</a>
+                </div>
+                <div class="column">
+                    <label for="notifications"><b>Please select alert type:</b></label><br><br>
+                    <input type="checkbox" name="notiType" value="email"> Email<br>
+                    <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
+                    <input type="checkbox" name="notiType" value="both"> Both<br><br>
+
+                    <label for="locations"><b>Please select desired locations:</b></label><br><br>
+                    <input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
+                    <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
+                    <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
+                    <input type="checkbox" name="location" value="SE"> Southeast Campus<br>
+                </div>
+            </div>
+            <hr>
+            <button type="button" class="savebtn">Save Changes</button>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+        </div>
+    </form>
+</body>
+</html>
