@@ -49,7 +49,7 @@ namespace Management
                 Font = font,
                 Location = new Point(10, 12),
                 Name = "sendNotificationsButton",
-                Size = new Size(210, 42),
+                Size = new Size(220, 42),
                 Text = "Send &Notifications",
                 UseVisualStyleBackColor = true
             };
@@ -70,7 +70,7 @@ namespace Management
                 Font = font,
                 Location = new Point(235, 12),
                 Name = "viewLogsButton",
-                Size = new Size(210, 42),
+                Size = new Size(220, 42),
                 Text = "&View Logs",
                 UseVisualStyleBackColor = true
             };
@@ -92,7 +92,7 @@ namespace Management
                     Font = font,
                     Location = new Point(460, 12),
                     Name = "generateTemplateButton",
-                    Size = new Size(210, 42),
+                    Size = new Size(220, 42),
                     Text = "&Generate Template",
                     UseVisualStyleBackColor = true
                 };
@@ -111,7 +111,7 @@ namespace Management
             Label nameLabel = new Label
             {
                 Font = font,
-                Location = account.Role == Role.Manager ? new Point(685, 16) : new Point(460, 16),
+                Location = account.Role == Role.Manager ? new Point(700, 16) : new Point(460, 16),
                 Name = "nameLabel",
                 Size = new Size(400, 42),
                 Text = account.Role.ToString() + ", " + account.Name

@@ -11,5 +11,16 @@ namespace TagLibrary
         public int TagId { get; set; }
         public TagType Type { get; set; }
         public string Name { get; set; }
+        public string Syntax
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Name))
+                {
+                    return null;
+                }
+                return "{$" + Name + "}";
+            }
+        }
     }
 }

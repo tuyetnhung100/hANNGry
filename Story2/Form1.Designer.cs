@@ -40,8 +40,8 @@
             this.tagsPanel = new System.Windows.Forms.Panel();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.sendingEmailsLabel = new System.Windows.Forms.Label();
-            this.succeededEmailsLabel = new System.Windows.Forms.Label();
-            this.failedEmailsLabel = new System.Windows.Forms.Label();
+            this.succeededNotificationsLabel = new System.Windows.Forms.Label();
+            this.failedNotificationsLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -169,25 +169,25 @@
             // 
             // succeededEmailsLabel
             // 
-            this.succeededEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.succeededEmailsLabel.ForeColor = System.Drawing.Color.ForestGreen;
-            this.succeededEmailsLabel.Location = new System.Drawing.Point(517, 92);
-            this.succeededEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
-            this.succeededEmailsLabel.Name = "succeededEmailsLabel";
-            this.succeededEmailsLabel.Size = new System.Drawing.Size(417, 35);
-            this.succeededEmailsLabel.TabIndex = 10;
-            this.succeededEmailsLabel.Text = "succeededEmailsLabel";
+            this.succeededNotificationsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.succeededNotificationsLabel.ForeColor = System.Drawing.Color.ForestGreen;
+            this.succeededNotificationsLabel.Location = new System.Drawing.Point(517, 92);
+            this.succeededNotificationsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.succeededNotificationsLabel.Name = "succeededEmailsLabel";
+            this.succeededNotificationsLabel.Size = new System.Drawing.Size(417, 35);
+            this.succeededNotificationsLabel.TabIndex = 10;
+            this.succeededNotificationsLabel.Text = "succeededEmailsLabel";
             // 
             // failedEmailsLabel
             // 
-            this.failedEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.failedEmailsLabel.ForeColor = System.Drawing.Color.OrangeRed;
-            this.failedEmailsLabel.Location = new System.Drawing.Point(517, 127);
-            this.failedEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
-            this.failedEmailsLabel.Name = "failedEmailsLabel";
-            this.failedEmailsLabel.Size = new System.Drawing.Size(417, 35);
-            this.failedEmailsLabel.TabIndex = 11;
-            this.failedEmailsLabel.Text = "failedEmailsLabel";
+            this.failedNotificationsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.failedNotificationsLabel.ForeColor = System.Drawing.Color.OrangeRed;
+            this.failedNotificationsLabel.Location = new System.Drawing.Point(517, 127);
+            this.failedNotificationsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.failedNotificationsLabel.Name = "failedEmailsLabel";
+            this.failedNotificationsLabel.Size = new System.Drawing.Size(417, 35);
+            this.failedNotificationsLabel.TabIndex = 11;
+            this.failedNotificationsLabel.Text = "failedEmailsLabel";
             // 
             // NotificationSender
             // 
@@ -195,8 +195,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 631);
             this.Controls.Add(this.messageRichTextBox);
-            this.Controls.Add(this.failedEmailsLabel);
-            this.Controls.Add(this.succeededEmailsLabel);
+            this.Controls.Add(this.failedNotificationsLabel);
+            this.Controls.Add(this.succeededNotificationsLabel);
             this.Controls.Add(this.sendingEmailsLabel);
             this.Controls.Add(this.tagsPanel);
             this.Controls.Add(this.clearButton);
@@ -229,8 +229,8 @@
         private System.Windows.Forms.Panel tagsPanel;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.Label sendingEmailsLabel;
-        private System.Windows.Forms.Label failedEmailsLabel;
-        private System.Windows.Forms.Label succeededEmailsLabel;
+        private System.Windows.Forms.Label failedNotificationsLabel;
+        private System.Windows.Forms.Label succeededNotificationsLabel;
     }
 }
 
