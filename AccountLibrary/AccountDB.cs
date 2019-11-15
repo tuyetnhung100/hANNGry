@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
-using System.Windows.Forms;
 
 namespace AccountLibrary
 {
@@ -148,54 +147,6 @@ WHERE Username = @Username;", connect);
             return myAccount;
         }
 
-        // Return first data just for test right now
-        // todo: load real logined employee
-        public static bool FakeGetLoginedEmployee(ref Account account)
-        {
-            try
-            {
-                SqlConnection connection = DBConnect.GetConnection();
-                connection.Open();
-
-                string sql = @"
-SELECT TOP 1
-  AccountId,
-  Name,
-  Email
-FROM Accounts
-WHERE Role = @Role;";
-                SqlCommand command = new SqlCommand(sql, connection);
-
-                // set Parameters
-                command.Parameters.Clear();
-                command.Parameters.AddWithValue("@Role", Role.Employee);
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                int accountId = reader.GetOrdinal("AccountId");
-                int name = reader.GetOrdinal("Name");
-                int email = reader.GetOrdinal("Email");
-
-                while (reader.Read())
-                {
-                    account.AccountId = reader.GetInt32(accountId);
-                    account.Name = reader.GetString(name);
-                    account.Email = reader.GetString(email);
-                }
-
-                reader.Close();
-
-                connection.Close();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return false;
-            }
-        }
-
         /// <summary>
         /// SELECT all Subscribers.
         /// </summary>
@@ -210,9 +161,13 @@ WHERE Role = @Role;";
 SELECT
   AccountId,
   Name,
-  Email
+  Email,
+  PhoneNumber,
+  NotificationType,
+  Location
 FROM Accounts
-WHERE Role = @Role;";
+WHERE Activated = 1
+AND Role = @Role;";
             command.CommandText = sql;
 
             // set Parameters
@@ -224,6 +179,9 @@ WHERE Role = @Role;";
             int accountId = reader.GetOrdinal("AccountId");
             int name = reader.GetOrdinal("Name");
             int email = reader.GetOrdinal("Email");
+            int phoneNumber = reader.GetOrdinal("PhoneNumber");
+            int notificationType = reader.GetOrdinal("NotificationType");
+            int location = reader.GetOrdinal("Location");
 
             while (reader.Read())
             {
@@ -231,7 +189,10 @@ WHERE Role = @Role;";
                 {
                     AccountId = reader.GetInt32(accountId),
                     Name = reader.GetString(name),
-                    Email = reader.GetString(email)
+                    Email = reader.GetString(email),
+                    PhoneNumber = reader.GetString(phoneNumber),
+                    NotificationType = (NotificationType)reader.GetInt32(notificationType),
+                    Location = (Location)reader.GetInt32(location)
                 };
                 subscribers.Add(account);
             }
