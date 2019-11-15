@@ -138,7 +138,7 @@ namespace Story3
             else if (currentItem == input)
             {
                 DialogResult save = MessageBox.Show("Template already exists under that subject! " +
-                    "Are you sure you want to overwrite the previous template?", "Warning!", MessageBoxButtons.YesNo);
+                    "Are you sure you want to overwrite the previous template?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
                 if (save == DialogResult.Yes)
                 {
                     Template myTemplate = new Template();
@@ -147,7 +147,6 @@ namespace Story3
                     myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
                     myTemplate.CreatedDate = DateTime.Now;
                     TemplateDB.Update(myTemplate);
-                    templateSelectorComboBox.SelectedItem.Equals(myTemplate);
                     MessageBox.Show("The template was successfully updated.", "Success!");
                 }
             }
@@ -163,6 +162,30 @@ namespace Story3
         {
             Template template = (Template)templateSelectorComboBox.SelectedItem;
             templateRichTextBox.Text = template.Message;
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            String currentItem = templateSelectorComboBox.SelectedItem.ToString();
+            Template template = (Template)templateSelectorComboBox.SelectedItem;
+            if (template.Subject == currentItem)
+            {
+                DialogResult delete = MessageBox.Show("The selected template is about to be deleted! " +
+                    "Are you sure you want to delete the template? THE TEMPLATE CANNOT BE RECOVERED.", 
+                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
+                if (delete == DialogResult.Yes)
+                {
+                    TemplateDB.Delete(template);
+                    reloadTemplateList();
+                    templateSelectorComboBox.SelectedIndex = 0;
+                    MessageBox.Show("The template was successfully deleted.", "Success!");
+                }
+                else
+                {
+                    return;
+                }
+                reloadTemplateList();
+            }
         }
     }
 }

@@ -21,15 +21,15 @@ namespace TemplateLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-INSERT INTO Templates
-(Subject,
- Message,
- CreatedAccountId,
- CreatedDate)
-  VALUES (@Subject,
-          @Message,
-          @CreatedAccountId,
-          @CreatedDate);", connect);
+            INSERT INTO Templates
+            (Subject,
+            Message,
+            CreatedAccountId,
+            CreatedDate)
+            VALUES (@Subject,
+            @Message,
+            @CreatedAccountId,
+            @CreatedDate);", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);
@@ -49,16 +49,34 @@ INSERT INTO Templates
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-UPDATE Templates
-SET Message = @Message,
-    CreatedAccountId = @CreatedAccountId,
-    CreatedDate = @CreatedDate
-WHERE Subject = @Subject;", connect);
+            UPDATE Templates
+            SET Message = @Message,
+            CreatedAccountId = @CreatedAccountId,
+            CreatedDate = @CreatedDate
+            WHERE Subject = @Subject;", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);
             command.Parameters.AddWithValue("@CreatedAccountId", myTemplate.CreatedAccountId);
             command.Parameters.AddWithValue("@CreatedDate", myTemplate.CreatedDate);
+
+            command.ExecuteNonQuery();
+
+            connect.Close();
+            return true;
+        }
+
+        // Deletes values in Template table.
+        public static bool Delete(Template myTemplate)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+            DELETE FROM Templates
+            WHERE Subject = @Subject;", connect);
+
+            command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
 
             command.ExecuteNonQuery();
 
@@ -80,15 +98,16 @@ WHERE Subject = @Subject;", connect);
                 SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
-SELECT
-  Templates.TemplateId,
-  Templates.Subject,
-  Templates.Message,
-  Accounts.Name AS CreatedEmployeeName,
-  Templates.CreatedDate
-FROM Templates
-INNER JOIN Accounts
-  ON Accounts.AccountId = Templates.CreatedAccountId;";
+                SELECT
+                Templates.TemplateId,
+                Templates.Subject,
+                Templates.Message,
+                Accounts.Name AS CreatedEmployeeName,
+                Templates.CreatedDate
+                FROM Templates
+                INNER JOIN Accounts
+                ON Accounts.AccountId = Templates.CreatedAccountId;";
+
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 

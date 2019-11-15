@@ -38,6 +38,7 @@
             this.customTagComboBox = new System.Windows.Forms.ComboBox();
             this.tagSelectorLabel = new System.Windows.Forms.Label();
             this.templateErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.deleteButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.templateErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -144,6 +145,19 @@
             // 
             this.templateErrorProvider.ContainerControl = this;
             // 
+            // deleteButton
+            // 
+            this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.deleteButton.Location = new System.Drawing.Point(218, 492);
+            this.deleteButton.Margin = new System.Windows.Forms.Padding(2);
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(167, 77);
+            this.deleteButton.TabIndex = 9;
+            this.deleteButton.Text = "&Delete";
+            this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
+            // 
             // TemplateCreator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -151,6 +165,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(856, 581);
+            this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.tagSelectorLabel);
             this.Controls.Add(this.customTagComboBox);
             this.Controls.Add(this.templateSelectionLabel);
@@ -180,6 +195,7 @@
         private System.Windows.Forms.ComboBox customTagComboBox;
         private System.Windows.Forms.Label tagSelectorLabel;
         private System.Windows.Forms.ErrorProvider templateErrorProvider;
+        private System.Windows.Forms.Button deleteButton;
     }
 }
 
