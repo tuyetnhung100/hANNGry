@@ -42,18 +42,19 @@
             this.notificationDataGridView.AllowUserToAddRows = false;
             this.notificationDataGridView.AllowUserToDeleteRows = false;
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.notificationDataGridView.Location = new System.Drawing.Point(18, 290);
+            this.notificationDataGridView.Location = new System.Drawing.Point(18, 314);
             this.notificationDataGridView.Name = "notificationDataGridView";
             this.notificationDataGridView.ReadOnly = true;
-            this.notificationDataGridView.Size = new System.Drawing.Size(956, 336);
+            this.notificationDataGridView.Size = new System.Drawing.Size(956, 364);
             this.notificationDataGridView.TabIndex = 5;
+            this.notificationDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.notificationDataGridView_CellClick);
             // 
             // findButton
             // 
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findButton.Location = new System.Drawing.Point(101, 224);
+            this.findButton.Location = new System.Drawing.Point(101, 243);
             this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(160, 55);
+            this.findButton.Size = new System.Drawing.Size(160, 60);
             this.findButton.TabIndex = 3;
             this.findButton.Text = "&Find";
             this.findButton.UseVisualStyleBackColor = true;
@@ -62,7 +63,7 @@
             // firstDateTimePicker
             // 
             this.firstDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.firstDateTimePicker.Location = new System.Drawing.Point(265, 117);
+            this.firstDateTimePicker.Location = new System.Drawing.Point(265, 127);
             this.firstDateTimePicker.Name = "firstDateTimePicker";
             this.firstDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.firstDateTimePicker.TabIndex = 1;
@@ -70,7 +71,7 @@
             // secondDateTimePicker
             // 
             this.secondDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.secondDateTimePicker.Location = new System.Drawing.Point(265, 171);
+            this.secondDateTimePicker.Location = new System.Drawing.Point(265, 185);
             this.secondDateTimePicker.Name = "secondDateTimePicker";
             this.secondDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.secondDateTimePicker.TabIndex = 2;
@@ -79,7 +80,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(374, 71);
+            this.label1.Location = new System.Drawing.Point(374, 77);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(242, 31);
             this.label1.TabIndex = 0;
@@ -88,9 +89,9 @@
             // clearButton
             // 
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(724, 224);
+            this.clearButton.Location = new System.Drawing.Point(724, 243);
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(160, 55);
+            this.clearButton.Size = new System.Drawing.Size(160, 60);
             this.clearButton.TabIndex = 4;
             this.clearButton.Text = "&Clear";
             this.clearButton.UseVisualStyleBackColor = true;
@@ -98,9 +99,9 @@
             // 
             // LogViewer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(986, 638);
+            this.ClientSize = new System.Drawing.Size(986, 691);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.secondDateTimePicker);
