@@ -114,7 +114,9 @@ SELECT
   Email,
   PasswordHash,
   PasswordSalt,
-  Name
+  Name,
+  NotificationType,
+  Location
 FROM Accounts
 WHERE Username = @Username;", connect);
             command.Parameters.AddWithValue("@Username", username);
@@ -128,6 +130,8 @@ WHERE Username = @Username;", connect);
             int passwordHashIndex = reader.GetOrdinal("PasswordHash");
             int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
             int nameIndex = reader.GetOrdinal("Name");
+            int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+            int locationIndex = reader.GetOrdinal("Location");
 
             while (reader.Read())
             {
@@ -139,6 +143,8 @@ WHERE Username = @Username;", connect);
                 myAccount.PasswordHash = reader.GetString(passwordHashIndex);
                 myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
                 myAccount.Name = reader.GetString(nameIndex);
+                myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
+                myAccount.Location = (Location)reader.GetInt32(locationIndex);
             }
 
             reader.Close();
@@ -222,6 +228,33 @@ AND Role = @Role;";
             byte[] hashBuffer = pbkdf2.GetBytes(HASH_SIZE);
             string hash = Convert.ToBase64String(hashBuffer);
             return hash;
+        }
+
+        public static bool Update(Account updatedAccount)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+UPDATE Accounts
+SET 
+ Username = @Username,
+ Name = @Name,
+ Email = @Email,
+ NotificationType = @NotificationType,
+ Location = @Location
+WHERE AccountId = @AccountId;", connect);
+
+            command.Parameters.AddWithValue("@Username", updatedAccount.Username);
+            command.Parameters.AddWithValue("@Name", updatedAccount.Name);
+            command.Parameters.AddWithValue("@Email", updatedAccount.Email);
+            command.Parameters.AddWithValue("@NotificationType", updatedAccount.NotificationType);
+            command.Parameters.AddWithValue("@Location", updatedAccount.Location);
+            command.Parameters.AddWithValue("@AccountId", updatedAccount.AccountId);
+
+            command.ExecuteNonQuery();
+            connect.Close();
+            return true;
         }
     }
 }

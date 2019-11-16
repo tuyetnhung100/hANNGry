@@ -1,4 +1,4 @@
-﻿@model Story1.Models.ViewModels.MyViewModel
+﻿@model Story1.Models.ViewModels.UserAccountViewModel
 
 @*
     Programmer: Nina Hoang
@@ -90,36 +90,54 @@
             <hr>
             <div class="row">
                 <div class="column">
-                    <label for="acctName"><b>@Html.LabelFor(model => model.U.acctName)</b></label>
-                    @Html.EditorFor(model => model.U.acctName, new { htmlAttributes = new { placeholder = Model.L.name, autofocus = "" } })
+                    <label for="acctName"><b>@Html.LabelFor(model => model.acctName)</b></label>
+                    @Html.EditorFor(model => model.acctName, new { htmlAttributes = new { placeholder = "User's name", autofocus = "" } })
 
-                    <label for="acctUname"><b>@Html.LabelFor(model => model.U.acctUname)</b></label>
-                    @Html.EditorFor(model => model.U.acctUname, new { htmlAttributes = new { placeholder = "User's Username" } })
+                    <label for="acctUname"><b>@Html.LabelFor(model => model.acctUname)</b></label>
+                    @Html.EditorFor(model => model.acctUname, new { htmlAttributes = new { placeholder = "User's Username" } })
 
-                    <label for="acctEmail"><b>@Html.LabelFor(model => model.U.acctEmail)</b></label>
-                    @Html.EditorFor(model => model.U.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
+                    <label for="acctEmail"><b>@Html.LabelFor(model => model.acctEmail)</b></label>
+                    @Html.EditorFor(model => model.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
 
                     <a href="#">Change Password</a>
                 </div>
                 <div class="column">
                     <label for="notifications"><b>Please select alert type:</b></label><br><br>
-                    <input type="checkbox" name="notiType" value="email"> Email<br>
-                    <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
-                    <input type="checkbox" name="notiType" value="both"> Both<br><br>
+                    @Html.CheckBoxFor(model => model.isEmailNotiType) Email<br>
+                    @Html.CheckBoxFor(model => model.isTextNotiType) Txt Msg<br>
+                    @*<input type="checkbox" name="notiType" value="email"> Email<br>
+        <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
+        <input type="checkbox" name="notiType" value="both"> Both<br><br>*@
 
                     <label for="locations"><b>Please select desired locations:</b></label><br><br>
-                    <input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
-                    <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
-                    <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
-                    <input type="checkbox" name="location" value="SE"> Southeast Campus<br>
+                    @Html.CheckBoxFor(model => model.isSYLocation) Sylvania Campus<br>
+                    @Html.CheckBoxFor(model => model.isRCLocation) Rock Creek Campus<br>
+                    @Html.CheckBoxFor(model => model.isCASLocation) Cascade Campus<br>
+                    @Html.CheckBoxFor(model => model.isSELocation) Southeast Campus<br>
+                    @*<input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
+        <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
+        <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
+        <input type="checkbox" name="location" value="SE"> Southeast Campus<br>*@
+
+                    @*public bool isEmailNotiType { get; set; }
+        public bool isTextNotiType { get; set; }
+        public bool isBothNotiType { get; set; }
+
+        public bool isSYLocation { get; set; }
+        public bool isRCLocation { get; set; }
+        public bool isCASLocation { get; set; }
+        public bool isSELocation { get; set; }*@
+
                 </div>
             </div>
             <hr>
-            <button type="button" class="savebtn">Save Changes</button>
+            <button type="submit" class="savebtn">Save Changes</button>
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
         </div>
     </form>
+
+    @Html.ActionLink("Logout", "Logout")
 </body>
 </html>

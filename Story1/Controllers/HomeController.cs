@@ -19,6 +19,10 @@ namespace Story1.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            if (IsLoggedIn())
+            {
+                return RedirectToAction("UserAccount");
+            }
             ViewBag.Title = "Login";
             return View();
         }
@@ -63,6 +67,7 @@ namespace Story1.Controllers
                 }
                 else if (myAccount.Role == Role.Subscriber) // Validate Roles, if subscriber then promts a success login message.
                 {
+                    Session["account"] = myAccount; // Stores login user
                     model.message = "Login successfully";
                 }
             }
@@ -80,6 +85,10 @@ namespace Story1.Controllers
         [HttpGet]
         public ActionResult Register()
         {
+            if (IsLoggedIn())
+            {
+                return RedirectToAction("UserAccount");
+            }
             ViewBag.Title = "Register";
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
@@ -119,36 +128,101 @@ namespace Story1.Controllers
             return View(model);
         }
 
-        //[HttpGet]
-        //public ActionResult UserAccount()
-        //{          
-        //    ViewBag.Title = "UserAccount";
-        //    UserAccountViewModel model = new UserAccountViewModel();
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //public ActionResult UserAccount(UserAccountViewModel model)
-        //{        
-        //    return View(model);
-        //}
-
         [HttpGet]
         public ActionResult UserAccount()
         {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login");
+            }
             ViewBag.Title = "UserAccount";
-            MyViewModel model = new MyViewModel();
+            Account account = Session["account"] as Account;
+            UserAccountViewModel model = new UserAccountViewModel();
+            model.acctUname = account.Username;
+            model.acctName = account.Name;
+            model.acctEmail = account.Email;
 
-            Account myAccount = AccountDB.FindAccount(model.L.uname);
-            //model.U.acctUname = model.L.uname;
-            model.U.acctName = model.L.name;
-            return View();
+            if (account.NotificationType.HasFlag(NotificationType.Email))
+            {
+                model.isEmailNotiType = true;
+            }
+            if (account.NotificationType.HasFlag(NotificationType.SMS))
+            {
+                model.isTextNotiType = true;
+            }
+
+            if (account.Location.HasFlag(Location.Sylvania))
+            {
+                model.isSYLocation = true;
+            }
+            if (account.Location.HasFlag(Location.RockCreek))
+            {
+                model.isRCLocation = true;
+            }
+            if (account.Location.HasFlag(Location.Cascade))
+            {
+                model.isCASLocation = true;
+            }
+            if (account.Location.HasFlag(Location.Southeast))
+            {
+                model.isSELocation = true;
+            }
+            
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult UserAccount(MyViewModel model)
+        public ActionResult UserAccount(UserAccountViewModel model)
         {
+            Account account = Session["account"] as Account;
+            Account updatedAccount = new Account
+            {
+                Username = model.acctUname,
+                Name = model.acctName,
+                Email = model.acctEmail,
+                AccountId = account.AccountId
+            };
+            
+            if (model.isEmailNotiType)
+            {
+                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
+            }
+            if (model.isTextNotiType)
+            {
+                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
+            }
+            if (model.isSYLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
+            }
+            if (model.isRCLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
+            }
+            if (model.isCASLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Cascade;
+            }
+            if (model.isSELocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Southeast;
+            }
+            AccountDB.Update(updatedAccount);
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            Session["account"] = null;
+            return View();
+        }
+
+        private bool IsLoggedIn()
+        {
+            Account account = Session["account"] as Account;
+            bool isLoggedIn = account != null;
+            return isLoggedIn;
         }
     }
 }
