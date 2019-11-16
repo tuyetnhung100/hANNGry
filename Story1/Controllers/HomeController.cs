@@ -119,12 +119,36 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        //[HttpGet]
+        //public ActionResult UserAccount()
+        //{          
+        //    ViewBag.Title = "UserAccount";
+        //    UserAccountViewModel model = new UserAccountViewModel();
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public ActionResult UserAccount(UserAccountViewModel model)
+        //{        
+        //    return View(model);
+        //}
+
         [HttpGet]
         public ActionResult UserAccount()
         {
             ViewBag.Title = "UserAccount";
+            MyViewModel model = new MyViewModel();
+
+            Account myAccount = AccountDB.FindAccount(model.L.uname);
+            //model.U.acctUname = model.L.uname;
+            model.U.acctName = model.L.name;
             return View();
         }
 
+        [HttpPost]
+        public ActionResult UserAccount(MyViewModel model)
+        {
+            return View(model);
+        }
     }
 }

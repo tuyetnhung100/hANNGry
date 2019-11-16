@@ -1,4 +1,6 @@
-﻿@*
+﻿@model Story1.Models.ViewModels.MyViewModel
+
+@*
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 11/14/2019
@@ -88,14 +90,14 @@
             <hr>
             <div class="row">
                 <div class="column">
-                    <label for="name"><b>Name</b></label>
-                    <input type="text" placeholder="Enter Name" name="uname" required>
+                    <label for="acctName"><b>@Html.LabelFor(model => model.U.acctName)</b></label>
+                    @Html.EditorFor(model => model.U.acctName, new { htmlAttributes = new { placeholder = Model.L.name, autofocus = "" } })
 
-                    <label for="uname"><b>Username</b></label>
-                    <input type="password" placeholder="Enter Username" name="uname" required>
+                    <label for="acctUname"><b>@Html.LabelFor(model => model.U.acctUname)</b></label>
+                    @Html.EditorFor(model => model.U.acctUname, new { htmlAttributes = new { placeholder = "User's Username" } })
 
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" required>
+                    <label for="acctEmail"><b>@Html.LabelFor(model => model.U.acctEmail)</b></label>
+                    @Html.EditorFor(model => model.U.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
 
                     <a href="#">Change Password</a>
                 </div>
