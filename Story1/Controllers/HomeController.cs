@@ -125,6 +125,7 @@ namespace Story1.Controllers
                     myAccount.Name = model.name;
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
+                    myAccount.PhoneNumber = "";
 
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
@@ -160,6 +161,7 @@ namespace Story1.Controllers
             model.acctUname = account.Username;
             model.acctName = account.Name;
             model.acctEmail = account.Email;
+            model.acctPhoneNumber = account.PhoneNumber;
 
             if (account.NotificationType.HasFlag(NotificationType.Email))
             {
@@ -199,6 +201,7 @@ namespace Story1.Controllers
                 Username = model.acctUname,
                 Name = model.acctName,
                 Email = model.acctEmail,
+                PhoneNumber = model.acctPhoneNumber,
                 AccountId = account.AccountId
             };
             

@@ -105,6 +105,9 @@
                     <label for="notifications"><b>Please select alert type:</b></label><br><br>
                     @Html.CheckBoxFor(model => model.isEmailNotiType) Email<br>
                     @Html.CheckBoxFor(model => model.isTextNotiType) Txt Msg<br>
+
+                    <label for="acctPhoneNumber"><b>@Html.LabelFor(model => model.acctPhoneNumber)</b></label>
+                    @Html.EditorFor(model => model.acctPhoneNumber, new { htmlAttributes = new { placeholder = "Enter Phone Number" } })
                     @*<input type="checkbox" name="notiType" value="email"> Email<br>
         <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
         <input type="checkbox" name="notiType" value="both"> Both<br><br>*@

@@ -30,14 +30,22 @@ INSERT INTO Accounts
  Role,
  PasswordHash,
  PasswordSalt,
- CreatedDate)
+ PhoneNumber,
+ CreatedDate,
+ Activated,
+ Location,
+ NotificationType)
   VALUES (@Username,
           @Name,
           @Email,
           @Role,
           @PasswordHash,
           @PasswordSalt,
-          @Date);", connect);
+          @PhoneNumber,
+          @Date,
+          @Activated,
+          @Location,
+          @NotificationType);", connect);
 
             command.Parameters.AddWithValue("@Username", myAccount.Username);
             command.Parameters.AddWithValue("@Name", myAccount.Name);
@@ -45,7 +53,11 @@ INSERT INTO Accounts
             command.Parameters.AddWithValue("@Role", Role.Subscriber);
             command.Parameters.AddWithValue("@PasswordHash", hash);
             command.Parameters.AddWithValue("@PasswordSalt", salt);
+            command.Parameters.AddWithValue("@PhoneNumber", myAccount.PhoneNumber);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
+            command.Parameters.AddWithValue("@Activated", false);
+            command.Parameters.AddWithValue("@Location", Location.None);
+            command.Parameters.AddWithValue("@NotificationType", NotificationType.None);
 
             command.ExecuteNonQuery();
             connect.Close();
@@ -117,7 +129,8 @@ SELECT
   PasswordSalt,
   Name,
   NotificationType,
-  Location
+  Location,
+  PhoneNumber
 FROM Accounts
 WHERE Username = @Username;", connect);
             command.Parameters.AddWithValue("@Username", username);
@@ -133,6 +146,7 @@ WHERE Username = @Username;", connect);
             int nameIndex = reader.GetOrdinal("Name");
             int notificationTypeIndex = reader.GetOrdinal("NotificationType");
             int locationIndex = reader.GetOrdinal("Location");
+            int PhoneNumberIndex = reader.GetOrdinal("PhoneNumber");
 
             while (reader.Read())
             {
@@ -146,6 +160,7 @@ WHERE Username = @Username;", connect);
                 myAccount.Name = reader.GetString(nameIndex);
                 myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
                 myAccount.Location = (Location)reader.GetInt32(locationIndex);
+                myAccount.PhoneNumber = reader.GetString(PhoneNumberIndex);
             }
 
             reader.Close();
@@ -243,7 +258,8 @@ SET
  Name = @Name,
  Email = @Email,
  NotificationType = @NotificationType,
- Location = @Location
+ Location = @Location,
+ PhoneNumber = @PhoneNumber
 WHERE AccountId = @AccountId;", connect);
 
             command.Parameters.AddWithValue("@Username", updatedAccount.Username);
@@ -251,6 +267,7 @@ WHERE AccountId = @AccountId;", connect);
             command.Parameters.AddWithValue("@Email", updatedAccount.Email);
             command.Parameters.AddWithValue("@NotificationType", updatedAccount.NotificationType);
             command.Parameters.AddWithValue("@Location", updatedAccount.Location);
+            command.Parameters.AddWithValue("@PhoneNumber", updatedAccount.PhoneNumber);
             command.Parameters.AddWithValue("@AccountId", updatedAccount.AccountId);
 
             command.ExecuteNonQuery();
@@ -269,9 +286,9 @@ DELETE FROM SubscriberNotification
 WHERE Subscribers_AccountId = @AccountId;
 DELETE FROM Accounts 
 WHERE AccountId = @AccountId;", connect);
-
+            command.Parameters.Clear();
             command.Parameters.AddWithValue("@AccountId", myAccount.AccountId);
-
+            
             command.ExecuteNonQuery();
             connect.Close();
         }

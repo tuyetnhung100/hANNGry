@@ -27,6 +27,9 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Email")]
         public string acctEmail { get; set; }
 
+        [Display(Name = "Phone Number")]
+        public string acctPhoneNumber { get; set; }
+
         public bool isEmailNotiType { get; set; }
         public bool isTextNotiType { get; set; }
         public bool isBothNotiType { get; set; }
