@@ -19,6 +19,7 @@ namespace Story1.Controllers
         [HttpGet]
         public ActionResult Login()
         {
+            // If user login successfully then redirect user to Account Settings page
             if (IsLoggedIn())
             {
                 return RedirectToAction("UserAccount");
@@ -34,14 +35,16 @@ namespace Story1.Controllers
             model.message = "";
             model.errMessage = "";
 
-            if (model.uname == null || model.psw == null) // If username and password are blank, display an error msg.
+            // If username and password are blank, display an error msg.
+            if (model.uname == null || model.psw == null) 
             {
                 model.errMessage = "Please enter a valid username and password.";
                 return View(model);
             }
 
             Account myAccount = AccountDB.FindAccount(model.uname);
-            if (myAccount == null) // If account not found, displays an error msg.
+            // If account not found, displays an error msg.
+            if (myAccount == null) 
             {
                 model.errMessage = "Please enter a valid username and password.";
                 return View(model);
@@ -51,11 +54,14 @@ namespace Story1.Controllers
                 model.name = myAccount.Name;
             }
 
-            string userHash = AccountDB.CreateHash(model.psw, myAccount.PasswordSalt); // Create a string to store entered passwordHash from user.
+            // Create a string to store entered passwordHash from user.
+            string userHash = AccountDB.CreateHash(model.psw, myAccount.PasswordSalt); 
             model.role = myAccount.Role;
-            if (myAccount.Username == model.uname && userHash == myAccount.PasswordHash) // Compare entered on screen username + passsword with the ones stored in DB.
+            // Compare entered on screen username + passsword with the ones stored in DB.
+            if (model.uname == myAccount.Username && userHash == myAccount.PasswordHash) 
             {
-                if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) // Validate Roles, if staff then goes to Story2.
+                // Validate Roles, if staff then goes to Story2.
+                if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) 
                 {
                     model.message = "Hi staff!";
                     Thread thread = new Thread(() =>
@@ -65,19 +71,28 @@ namespace Story1.Controllers
                     });
                     thread.Start();
                 }
-                else if (myAccount.Role == Role.Subscriber) // Validate Roles, if subscriber then promts a success login message.
+                // Validate Roles, if subscriber then promts a success login message.
+                else if (myAccount.Role == Role.Subscriber) 
                 {
-                    Session["account"] = myAccount; // Stores login user
+                    // Enum to store login user in session
+                    Session["account"] = myAccount; 
                     model.message = "Login successfully";
                 }
             }
-            else if (userHash != myAccount.PasswordHash) // Validate entered password in login.
+            // Validate entered username in login.
+            else if (model.uname != myAccount.Username)
+            {
+                model.errMessage = "Incorrect username. Please enter a valid username and password.";
+            }
+            // Validate entered password in login.
+            else if (userHash != myAccount.PasswordHash) 
             {
                 model.errMessage = "Incorrect password. Please enter a valid username and password.";
             }
             else
             {
-                model.errMessage = "Please enter a valid username and password."; // display an error message if username and password not found in DB.
+                // display an error message if username and password not found in DB.
+                model.errMessage = "Please enter a valid username and password."; 
             }
             return View(model);
         }
@@ -100,8 +115,10 @@ namespace Story1.Controllers
         {
             if (ModelState.IsValid)
             {
-                Account existingAccount = AccountDB.FindAccount(model.username, model.email); // Validate whether account already exists.
-                if (existingAccount == null) // If no match, then create a new account.
+                // Validate whether account already exists.
+                Account existingAccount = AccountDB.FindAccount(model.username, model.email);
+                // If no match, then create a new account.
+                if (existingAccount == null) 
                 {
                     Account myAccount = new Account();
                     myAccount.Username = model.username;
@@ -112,11 +129,13 @@ namespace Story1.Controllers
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
                 }
-                else if (model.email == existingAccount.Email) // Validate for an existing email.
+                // Validate for an existing email.
+                else if (model.email == existingAccount.Email) 
                 {
                     model.errMessage = "Email already exists. Please re-enter a new one.";
                 }
-                else if (model.username == existingAccount.Username) // Validate for an existing username.
+                // Validate for an existing username.
+                else if (model.username == existingAccount.Username) 
                 {
                     model.errMessage = "Username already exists. Please re-enter a new one.";
                 }
@@ -216,6 +235,34 @@ namespace Story1.Controllers
         {
             Session["account"] = null;
             return View();
+        }
+
+        [HttpGet]
+        public ActionResult Unsubscribe()
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Title = "Unsubscribe";
+            Account account = Session["account"] as Account;
+            UnsubscribeViewModel model = new UnsubscribeViewModel();
+            model.uname = account.Username;
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Unsubscribe(UnsubscribeViewModel model)
+        {
+            Account account = Session["account"] as Account;
+            Account myAccount = new Account
+            {
+                Username = model.uname,
+                AccountId =  account.AccountId
+            };
+            AccountDB.Delete(myAccount);
+            account = null;
+            return View(model);
         }
 
         private bool IsLoggedIn()

@@ -117,7 +117,7 @@
                     @*<input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
         <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
         <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
-        <input type="checkbox" name="location" value="SE"> Southeast Campus<br>*@
+
 
                     @*public bool isEmailNotiType { get; set; }
         public bool isTextNotiType { get; set; }
@@ -135,6 +135,7 @@
         </div>
 
         <div class="container" style="background-color:#f1f1f1">
+            @Html.ActionLink("Unsubscribe", "Unsubscribe")
         </div>
     </form>
 

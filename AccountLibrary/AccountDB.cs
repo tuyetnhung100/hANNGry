@@ -14,6 +14,7 @@ namespace AccountLibrary
 {
     public class AccountDB
     {
+        // Add new account to DB.
         public static bool Add(Account myAccount)
         {
             string salt = CreateSalt();
@@ -51,7 +52,7 @@ INSERT INTO Accounts
             return true;
         }
 
-        // Look for a user's account info in the DB using username and email (for Register)
+        // Look for a user's account info in the DB using username and email (for Register).
         public static Account FindAccount(string username, string email)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -100,7 +101,7 @@ OR Email = @Email;", connect);
             return myAccount;
         }
 
-        // Look for a user's account info in the DB using username (for Login)
+        // Look for a user's account info in the DB using username (for Login).
         public static Account FindAccount(string username)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -176,11 +177,11 @@ WHERE Activated = 1
 AND Role = @Role;";
             command.CommandText = sql;
 
-            // set Parameters
+            // set Parameters.
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@Role", Role.Subscriber);
 
-            // read data into a int list
+            // read data into a int list.
             SqlDataReader reader = command.ExecuteReader();
             int accountId = reader.GetOrdinal("AccountId");
             int name = reader.GetOrdinal("Name");
@@ -212,7 +213,7 @@ AND Role = @Role;";
 
         public static string CreateSalt()
         {
-            // Generate a salt
+            // Generate a salt.
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
             byte[] saltBuffer = new byte[SALT_SIZE];
             provider.GetBytes(saltBuffer);
@@ -222,14 +223,14 @@ AND Role = @Role;";
 
         public static string CreateHash(string password, string salt)
         {
-            // Generate hash
+            // Generate hash.
             byte[] saltBuffer = Convert.FromBase64String(salt);
             Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, saltBuffer, ITERATIONS);
             byte[] hashBuffer = pbkdf2.GetBytes(HASH_SIZE);
             string hash = Convert.ToBase64String(hashBuffer);
             return hash;
         }
-
+        // Update account's name, username, email, notification type, location.
         public static bool Update(Account updatedAccount)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -255,6 +256,24 @@ WHERE AccountId = @AccountId;", connect);
             command.ExecuteNonQuery();
             connect.Close();
             return true;
+        }
+
+        // Delete an account in DB.
+        public static void Delete(Account myAccount)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+DELETE FROM SubscriberNotification 
+WHERE Subscribers_AccountId = @AccountId;
+DELETE FROM Accounts 
+WHERE AccountId = @AccountId;", connect);
+
+            command.Parameters.AddWithValue("@AccountId", myAccount.AccountId);
+
+            command.ExecuteNonQuery();
+            connect.Close();
         }
     }
 }

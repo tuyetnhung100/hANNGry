@@ -130,6 +130,7 @@
     </Compile>
     <Compile Include="Models\Services\AccountServices.cs" />
     <Compile Include="Models\ViewModels\MyViewModel.cs" />
+    <Compile Include="Models\ViewModels\UnsubscribeViewModel.cs" />
     <Compile Include="Models\ViewModels\UserAccountViewModel.cs" />
     <Compile Include="Models\ViewModels\LoginViewModel.cs" />
     <Compile Include="Models\ViewModels\RegisterViewModel.cs" />
@@ -172,6 +173,7 @@
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\UserAccount.cshtml" />
     <Content Include="Views\Home\Logout.cshtml" />
+    <Content Include="Views\Home\Unsubscribe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
