@@ -1,23 +1,50 @@
 ﻿@model Story1.Models.ViewModels.UnsubscribeViewModel
 <html>
 <head>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<form action="/Home/Unsubscribe" method="post">
-<h1>Delete an Account</h1>
-@Html.ValidationSummary()
-<p><a href="/Home/UserAccount">Return to Account Settings</a></p><br />
+    <form action="/Home/Unsubscribe" method="post">
+        <h1>Delete an Account</h1>
+        <p><a href="/Home/UserAccount">Return to Account Settings</a></p><br />
 
-<fieldset>
-    <legend>Account Information</legend>
-    <p>
-        <span>Account Username:</span>
-        <span>@Model.uname</span>
-    </p>
-    <p><button type="submit" class="deletebtn">Delete Account</button></p>
-</fieldset>
-</form>
+        <fieldset>
+            <legend>Account Information</legend>
+            <p>
+                <span>Account Username:</span>
+                <span>@Model.uname</span>
+            </p>
+            <p><button type="submit" class="deletebtn">Delete Account</button></p>
+        </fieldset>
+    </form>
+
+
+    @Html.ValidationSummary(true, "")
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+    @{
+        // Prompt a confirm message for success attempt to unsubscribe and redirect to login page
+        if (Model != null)
+        {
+            if (!string.IsNullOrWhiteSpace(Model.message))
+            {
+                <script>
+                    Swal.fire({
+                        title: '@Model.message',
+                        text:  'You have successfully unsubscribed from the program.',
+                        type:  'success',
+                        onClose: function () {
+                            location.href = '/Home/Login';
+                        }
+                    });
+                </script>
+            }
+        }
+    }
 </body>
 </html>
 

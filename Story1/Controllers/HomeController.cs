@@ -16,6 +16,7 @@ namespace Story1.Controllers
 {
     public class HomeController : Controller
     {
+        // Allows Login gui (view) to display in web page
         [HttpGet]
         public ActionResult Login()
         {
@@ -230,6 +231,7 @@ namespace Story1.Controllers
                 updatedAccount.Location = updatedAccount.Location | Location.Southeast;
             }
             AccountDB.Update(updatedAccount);
+            model.message = "Saved successfully";
             return View(model);
         }
 
@@ -257,14 +259,55 @@ namespace Story1.Controllers
         [HttpPost]
         public ActionResult Unsubscribe(UnsubscribeViewModel model)
         {
+            model.message = "";
+
             Account account = Session["account"] as Account;
             Account myAccount = new Account
             {
                 Username = model.uname,
-                AccountId =  account.AccountId
+                AccountId = account.AccountId
             };
             AccountDB.Delete(myAccount);
-            account = null;
+            model.message = "Account deleted";
+            Logout();
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            if (!IsLoggedIn())
+            {
+                return RedirectToAction("Login");
+            }
+            ViewBag.Title = "ChangePassword";
+            Account account = Session["account"] as Account;
+            ChangePasswordViewModel model = new ChangePasswordViewModel();
+            model.name = account.Name;
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            model.message = "";
+            model.errMessage = "";
+
+
+            // If password and repeat password are blank, display an error msg.
+            if (model.psw == null || model.pswRepeat == null)
+            {
+                model.errMessage = "Please enter something before reset.";
+                return View(model);
+            }
+            Account account = Session["account"] as Account;
+            Account myAccount = new Account
+            {
+                PasswordHash = model.psw,
+                AccountId = account.AccountId
+            };
+            AccountDB.UpdatePassword(myAccount);
+            model.message = "Reset successfully";
             return View(model);
         }
 

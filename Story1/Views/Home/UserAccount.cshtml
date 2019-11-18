@@ -99,7 +99,7 @@
                     <label for="acctEmail"><b>@Html.LabelFor(model => model.acctEmail)</b></label>
                     @Html.EditorFor(model => model.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
 
-                    <a href="#">Change Password</a>
+                    @Html.ActionLink("Change Password", "ChangePassword")
                 </div>
                 <div class="column">
                     <label for="notifications"><b>Please select alert type:</b></label><br><br>
@@ -109,8 +109,8 @@
                     <label for="acctPhoneNumber"><b>@Html.LabelFor(model => model.acctPhoneNumber)</b></label>
                     @Html.EditorFor(model => model.acctPhoneNumber, new { htmlAttributes = new { placeholder = "Enter Phone Number" } })
                     @*<input type="checkbox" name="notiType" value="email"> Email<br>
-        <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
-        <input type="checkbox" name="notiType" value="both"> Both<br><br>*@
+                        <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
+                        <input type="checkbox" name="notiType" value="both"> Both<br><br>*@
 
                     <label for="locations"><b>Please select desired locations:</b></label><br><br>
                     @Html.CheckBoxFor(model => model.isSYLocation) Sylvania Campus<br>
@@ -118,18 +118,18 @@
                     @Html.CheckBoxFor(model => model.isCASLocation) Cascade Campus<br>
                     @Html.CheckBoxFor(model => model.isSELocation) Southeast Campus<br>
                     @*<input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
-        <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
-        <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
+                        <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
+                        <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
 
 
-                    @*public bool isEmailNotiType { get; set; }
-        public bool isTextNotiType { get; set; }
-        public bool isBothNotiType { get; set; }
+                                    @*public bool isEmailNotiType { get; set; }
+                        public bool isTextNotiType { get; set; }
+                        public bool isBothNotiType { get; set; }
 
-        public bool isSYLocation { get; set; }
-        public bool isRCLocation { get; set; }
-        public bool isCASLocation { get; set; }
-        public bool isSELocation { get; set; }*@
+                        public bool isSYLocation { get; set; }
+                        public bool isRCLocation { get; set; }
+                        public bool isCASLocation { get; set; }
+                        public bool isSELocation { get; set; }*@
 
                 </div>
             </div>
@@ -143,5 +143,41 @@
     </form>
 
     @Html.ActionLink("Logout", "Logout")
+
+
+
+    @Html.ValidationSummary(true, "")
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+
+    @{
+        // Prompts a message to confirm if changes were saved
+        if (Model != null)
+        {
+            if (!string.IsNullOrWhiteSpace(Model.message))
+            {
+                <script>
+                    Swal.fire({
+                        title: '@Model.message',
+                        text:  'Your changes are saved, @Model.acctName!',
+                        type:  'success'
+                    });
+                </script>
+            }
+            if (!string.IsNullOrWhiteSpace(Model.errMessage))
+            {
+                <script>
+                    Swal.fire({
+                        title: 'Changes failed',
+                        text:  '@Model.errMessage',
+                        type:  'error'
+                    });
+                </script>
+            }
+        }
+    }
 </body>
 </html>

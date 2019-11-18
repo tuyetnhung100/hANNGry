@@ -275,8 +275,32 @@ WHERE AccountId = @AccountId;", connect);
             return true;
         }
 
+        // Reset Password.
+        public static bool UpdatePassword(Account myAccount)
+        {
+            string salt = CreateSalt();
+            string hash = CreateHash(myAccount.PasswordHash, salt);
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+UPDATE Accounts
+SET 
+ PasswordHash = @PasswordHash,
+ PasswordSalt = @PasswordSalt
+WHERE AccountId = @AccountId;", connect);
+
+            command.Parameters.AddWithValue("@PasswordHash", hash);
+            command.Parameters.AddWithValue("@PasswordSalt", salt);
+            command.Parameters.AddWithValue("@AccountId", myAccount.AccountId);
+
+            command.ExecuteNonQuery();
+            connect.Close();
+            return true;
+        }
+
         // Delete an account in DB.
-        public static void Delete(Account myAccount)
+        public static bool Delete(Account myAccount)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -291,6 +315,7 @@ WHERE AccountId = @AccountId;", connect);
             
             command.ExecuteNonQuery();
             connect.Close();
+            return true;
         }
     }
 }

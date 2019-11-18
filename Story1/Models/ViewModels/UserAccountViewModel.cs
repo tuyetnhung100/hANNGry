@@ -38,5 +38,8 @@ namespace Story1.Models.ViewModels
         public bool isRCLocation { get; set; }
         public bool isCASLocation { get; set; }
         public bool isSELocation { get; set; }
+
+        public string message { get; set; }
+        public string errMessage { get; set; }
     }
 }

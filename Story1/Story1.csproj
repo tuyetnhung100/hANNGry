@@ -129,6 +129,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Services\AccountServices.cs" />
+    <Compile Include="Models\ViewModels\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModels\MyViewModel.cs" />
     <Compile Include="Models\ViewModels\UnsubscribeViewModel.cs" />
     <Compile Include="Models\ViewModels\UserAccountViewModel.cs" />
@@ -174,6 +175,7 @@
     <Content Include="Views\Home\UserAccount.cshtml" />
     <Content Include="Views\Home\Logout.cshtml" />
     <Content Include="Views\Home\Unsubscribe.cshtml" />
+    <Content Include="Views\Home\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
