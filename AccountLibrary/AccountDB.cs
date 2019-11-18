@@ -245,7 +245,7 @@ AND Role = @Role;";
             string hash = Convert.ToBase64String(hashBuffer);
             return hash;
         }
-        // Update account's name, username, email, notification type, location.
+        // Update account's name, username, email, notification type, location in DB.
         public static bool Update(Account updatedAccount)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -275,7 +275,7 @@ WHERE AccountId = @AccountId;", connect);
             return true;
         }
 
-        // Reset Password.
+        // Reset Password in DB.
         public static bool UpdatePassword(Account myAccount)
         {
             string salt = CreateSalt();

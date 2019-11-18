@@ -2,7 +2,7 @@
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 10/20/2019
-    Purpose: To maintain the data of the Register form.
+    Purpose: To maintain the data of the Register webpage.
 */
 
 using System;

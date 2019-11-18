@@ -16,7 +16,7 @@ namespace Story1.Controllers
 {
     public class HomeController : Controller
     {
-        // Allows Login gui (view) to display in web page
+        // Display Login webpage.
         [HttpGet]
         public ActionResult Login()
         {
@@ -29,7 +29,7 @@ namespace Story1.Controllers
             return View();
         }
 
-        // Validate user's login (username and password)
+        // Validate user's login (username and password).
         [HttpPost]
         public ActionResult Login(LoginViewModel model)
         {
@@ -98,6 +98,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Display Register webpage.
         [HttpGet]
         public ActionResult Register()
         {
@@ -110,7 +111,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
-        // Validate inputs and create an account
+        // Validate inputs and create an account.
         [HttpPost]
         public ActionResult Register(RegisterViewModel model)
         {
@@ -149,6 +150,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Display subscriber's information on Account Settings webpage.
         [HttpGet]
         public ActionResult UserAccount()
         {
@@ -193,6 +195,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Update account settings.
         [HttpPost]
         public ActionResult UserAccount(UserAccountViewModel model)
         {
@@ -235,13 +238,16 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Logout from Account Settings and Display a logout webpage.
         [HttpGet]
         public ActionResult Logout()
         {
+            ViewBag.Title = "Logout";
             Session["account"] = null;
             return View();
         }
 
+        // Display Cancel Account webpage.
         [HttpGet]
         public ActionResult Unsubscribe()
         {
@@ -256,6 +262,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Delete unsubscribe account.
         [HttpPost]
         public ActionResult Unsubscribe(UnsubscribeViewModel model)
         {
@@ -273,6 +280,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Display Change Password webpage.
         [HttpGet]
         public ActionResult ChangePassword()
         {
@@ -287,20 +295,14 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Update password.
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordViewModel model)
         {
             model.message = "";
             model.errMessage = "";
 
-
-            // If password and repeat password are blank, display an error msg.
-            if (model.psw == null || model.pswRepeat == null)
-            {
-                model.errMessage = "Please enter something before reset.";
-                return View(model);
-            }
-            Account account = Session["account"] as Account;
+            Account account = Session["account"] as Account;           
             Account myAccount = new Account
             {
                 PasswordHash = model.psw,
@@ -311,6 +313,7 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        // Check for logged in account (account in session)
         private bool IsLoggedIn()
         {
             Account account = Session["account"] as Account;

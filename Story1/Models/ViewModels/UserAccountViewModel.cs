@@ -2,7 +2,7 @@
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 11/15/2019
-    Purpose: To maintain the data of the UserAccount form.
+    Purpose: To maintain the data of the UserAccount (Account Settings) webpage.
 */
 
 using AccountLibrary;
