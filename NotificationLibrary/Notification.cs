@@ -4,6 +4,7 @@
  * What the code does: Data model of Notification.
  */
 
+using AccountLibrary;
 using System;
 
 namespace NotificationLibrary
@@ -18,5 +19,6 @@ namespace NotificationLibrary
         public DateTime SentDate { get; set; }
         public string SenderName { get; set; }
         public int NumberSent { get; set; }
+        public Location Location { get; set; }
     }
 }

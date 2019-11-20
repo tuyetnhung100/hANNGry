@@ -82,12 +82,14 @@ INSERT INTO Notifications
  Message,
  TemplateId,
  SentAccountId,
- SentDate)
+ SentDate,
+ Location)
   VALUES (@Subject,
           @Message,
           @TemplateId,
           @SentAccountId,
-          @SentDate);
+          @SentDate,
+          @Location);
 SELECT
   SCOPE_IDENTITY();";
             command.CommandText = sql;
@@ -96,16 +98,10 @@ SELECT
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@Subject", notification.Subject);
             command.Parameters.AddWithValue("@Message", notification.Message);
-            if (notification.TemplateId == null)
-            {
-                command.Parameters.AddWithValue("@TemplateId", DBNull.Value);
-            }
-            else
-            {
-                command.Parameters.AddWithValue("@TemplateId", notification.TemplateId);
-            }
+            command.Parameters.AddWithValue("@TemplateId", ParameterHelper.GetNullableValue(notification.TemplateId));
             command.Parameters.AddWithValue("@SentAccountId", notification.SentAccountId);
             command.Parameters.AddWithValue("@SentDate", DateTime.Now);
+            command.Parameters.AddWithValue("@Location", notification.Location);
 
             // retuen notificationId by SCOPE_IDENTITY
             int notificationId = Convert.ToInt32(command.ExecuteScalar());
@@ -161,7 +157,7 @@ INSERT INTO SubscriberNotification
         /// <param name="notification">The Notification data</param>
         /// <param name="subscribers">The Subscribers</param>
         /// <returns>Whether the command is succeeded</returns>
-        public static bool SendNotification(Notification notification, ref List<Account> subscribers)
+        public static SendNotificationResult SendNotification(Notification notification, ref List<Account> subscribers)
         {
             subscribers.Clear();
 
@@ -173,11 +169,19 @@ INSERT INTO SubscriberNotification
                 SqlCommand command = new SqlCommand();
                 command.Connection = connection;
 
+                // select all subscribers that role is Role.Subscriber
+                AccountDB.GetSubscribers(command, notification.Location, ref subscribers);
+                if (subscribers.Count == 0)
+                {
+                    connection.Close();
+                    connection.Dispose();
+                    command.Dispose();
+
+                    return SendNotificationResult.NoSubscribers;
+                }
                 // insert Notification and get the new notificationId
                 int notificationId = InsertNotification(command, notification);
                 notification.NotificationId = notificationId;
-                // select all subscribers that role is Role.Subscriber
-                AccountDB.GetSubscribers(command, ref subscribers);
                 // insert SubscriberNotification map table
                 InsertSubscriberNotification(command, notificationId, ref subscribers);
 
@@ -185,12 +189,12 @@ INSERT INTO SubscriberNotification
                 connection.Dispose();
                 command.Dispose();
 
-                return true;
+                return SendNotificationResult.Succeeded;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return false;
+                return SendNotificationResult.DatabaseError;
             }
         }
 
@@ -227,14 +231,7 @@ INSERT INTO SubscriberNotification
                 command.Parameters.AddWithValue("@Succeeded", succeeded);
                 command.Parameters.AddWithValue("@Cancelled", cancelled);
                 command.Parameters.AddWithValue("@Failed", failed);
-                if (failed)
-                {
-                    command.Parameters.AddWithValue("@ErrorMessage", errorMessage);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@ErrorMessage", DBNull.Value);
-                }
+                command.Parameters.AddWithValue("@ErrorMessage", ParameterHelper.GetNullableValue(errorMessage));
 
                 string sql = @"
 UPDATE SubscriberNotification
