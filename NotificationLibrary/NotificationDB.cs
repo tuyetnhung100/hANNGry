@@ -15,6 +15,111 @@ namespace NotificationLibrary
 {
     public class NotificationDB
     {
+        public static bool SearchTimeMessage(String input, DateTime start, DateTime end, ref List<Notification> notifications)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+                                                SELECT
+                                                  NotificationId,
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate,
+                                                  (SELECT
+                                                    COUNT(Subscribers_AccountId)
+                                                  FROM SubscriberNotification
+                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+                                                  AS 'NumberSent'
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE SentDate > @start
+                                                AND SentDate < @end
+                                                AND Message LIKE '%' + @message + '%'", connect);
+
+            command.Parameters.AddWithValue("@message", input);
+            command.Parameters.AddWithValue("@start", start);
+            command.Parameters.AddWithValue("@end", end);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+            int numberSent = reader.GetOrdinal("NumberSent");
+
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.SenderName = reader.GetString(senderName);
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
+                myNotification.NumberSent = reader.GetInt32(numberSent);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+            connect.Close();
+            return true;
+        }
+
+            public static bool Search(String input, ref List<Notification> notifications)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+                                                SELECT
+                                                  NotificationId,
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate,
+                                                  (SELECT
+                                                    COUNT(Subscribers_AccountId)
+                                                  FROM SubscriberNotification
+                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+                                                  AS 'NumberSent'
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE Message LIKE '%' + @message + '%'",
+                                                 connect);
+
+            command.Parameters.AddWithValue("@message", input);
+            
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+            int numberSent = reader.GetOrdinal("NumberSent");
+
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.SenderName = reader.GetString(senderName);
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
+                myNotification.NumberSent = reader.GetInt32(numberSent);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+            connect.Close();
+            return true;
+        }
         public static bool Load(DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
