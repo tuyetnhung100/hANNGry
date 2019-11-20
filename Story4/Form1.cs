@@ -82,9 +82,9 @@ namespace Story4
             if(notificationDataGridView.CurrentCell.Value != null)
             {
                 Form2 frm2 = new Form2(notificationDataGridView.CurrentCell.Value.ToString());
-                
 
-                frm2.Show();
+
+                frm2.ShowDialog();
                 
             }
             else
