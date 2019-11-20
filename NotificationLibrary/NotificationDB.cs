@@ -15,6 +15,7 @@ namespace NotificationLibrary
 {
     public class NotificationDB
     {
+        // Search database by time and message
         public static bool SearchTimeMessage(String input, DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -69,7 +70,8 @@ namespace NotificationLibrary
             return true;
         }
 
-            public static bool Search(String input, ref List<Notification> notifications)
+        //Search database by message content
+        public static bool Search(String input, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -120,6 +122,8 @@ namespace NotificationLibrary
             connect.Close();
             return true;
         }
+
+        //Search database by time
         public static bool Load(DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
