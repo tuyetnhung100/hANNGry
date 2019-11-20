@@ -165,6 +165,7 @@ namespace Story3
             templateRichTextBox.Text = template.Message;
         }
 
+        // Determines whether or not the user wants to delete the selected template, and does so if they click yes.
         private void deleteButton_Click(object sender, EventArgs e)
         {
             String currentItem = templateSelectorComboBox.SelectedItem.ToString();
