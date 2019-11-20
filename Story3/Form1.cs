@@ -110,6 +110,7 @@ namespace Story3
         private void customTagComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             templateRichTextBox.SelectedText = "{$" + customTagComboBox.SelectedItem.ToString() + "}";
+            templateRichTextBox.Focus();
         }
 
         // Saves the template to the database with the subject being the name for the template.
