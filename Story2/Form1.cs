@@ -247,10 +247,15 @@ namespace Story2
             }
 
             // insert and get subscribers
-            if (!NotificationDB.SendNotification(notification, ref subscribers))
+            SendNotificationResult result = NotificationDB.SendNotification(notification, ref subscribers);
+            switch (result)
             {
-                ShowErrorMessageBox(DatabaseError, "Insert notification failed!");
-                return;
+                case SendNotificationResult.NoSubscribers:
+                    ShowInfoMessageBox("Sent Notification Terminated", "No any subscriber");
+                    return;
+                case SendNotificationResult.DatabaseError:
+                    ShowErrorMessageBox(DatabaseError, "Insert notification failed!");
+                    return;
             }
 
             // lock controls until finished
@@ -306,9 +311,8 @@ namespace Story2
         /// <param name="subscriber">The target subscriber</param>
         private void SendSMS(Account subscriber)
         {
-            string phoneNumber = subscriber.PhoneNumber;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-            SMSNotifier.SendSMSAsync(phoneNumber, body, subscriber.AccountId);
+            SMSNotifier.SendSMSAsync(subscriber.PhoneNumber, body, subscriber.AccountId);
         }
 
         /// <summary>
@@ -336,7 +340,7 @@ namespace Story2
         /// </summary>
         private void FinishSendingEmails()
         {
-            ShowSuccessMessageBox("Sent Notification Completed", "Notification sent successfully!");
+            ShowInfoMessageBox("Sent Notification Completed", "Notification sent successfully!");
 
             // unlock controls
             SetControlsEnabled(true);
@@ -421,6 +425,23 @@ namespace Story2
                 Message = message,
                 SentAccountId = LoginedEmployee.AccountId
             };
+
+            if (sylvaniaCheckBox.Checked)
+            {
+                notification.Location = notification.Location | AccountLibrary.Location.Sylvania;
+            }
+            if (rockCreekCheckBox.Checked)
+            {
+                notification.Location = notification.Location | AccountLibrary.Location.RockCreek;
+            }
+            if (southeastCheckBox.Checked)
+            {
+                notification.Location = notification.Location | AccountLibrary.Location.Southeast;
+            }
+            if (cascadeCheckBox.Checked)
+            {
+                notification.Location = notification.Location | AccountLibrary.Location.Cascade;
+            }
 
             if (templateComboBox.SelectedIndex != 0)
             {
@@ -704,11 +725,11 @@ namespace Story2
         }
 
         /// <summary>
-        /// Show the success message.
+        /// Show the info message.
         /// </summary>
         /// <param name="title">The title of the action</param>
         /// <param name="message">The message needs to show</param>
-        private void ShowSuccessMessageBox(string title, string message)
+        private void ShowInfoMessageBox(string title, string message)
         {
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

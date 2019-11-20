@@ -148,13 +148,54 @@ WHERE Username = @Username;", connect);
         }
 
         /// <summary>
+        /// Get all combinations from location
+        /// </summary>
+        /// <param name="location">The location</param>
+        /// <returns></returns>
+        private static List<int> GetLocationList(Location location)
+        {
+            bool hasSylvania = location.HasFlag(Location.Sylvania);
+            bool hasRockCreek = location.HasFlag(Location.RockCreek);
+            bool hasCascade = location.HasFlag(Location.Cascade);
+            bool hasSoutheast = location.HasFlag(Location.Southeast);
+            List<int> locationList = new List<int>();
+            // there 16 combinations
+            for (int i = 0; i < 16; i++)
+            {
+                Location current = (Location)i;
+                if (hasSylvania && current.HasFlag(Location.Sylvania))
+                {
+                    locationList.Add(i);
+                }
+                if (hasRockCreek && current.HasFlag(Location.RockCreek))
+                {
+                    locationList.Add(i);
+                }
+                if (hasCascade && current.HasFlag(Location.Cascade))
+                {
+                    locationList.Add(i);
+                }
+                if (hasSoutheast && current.HasFlag(Location.Southeast))
+                {
+                    locationList.Add(i);
+                }
+            }
+            return locationList;
+        }
+
+        /// <summary>
         /// SELECT all Subscribers.
         /// </summary>
         /// <param name="command">The SqlCommand</param>
+        /// <param name="location">The location</param>
         /// <param name="subscribers">The all subscribers</param>
-        public static void GetSubscribers(SqlCommand command, ref List<Account> subscribers)
+        public static void GetSubscribers(SqlCommand command, Location location, ref List<Account> subscribers)
         {
             subscribers.Clear();
+
+            List<int> locationList = GetLocationList(location);
+            bool isAllLocations = (int)location == 15;
+            string locationCondition = isAllLocations ? "" : "AND Location IN (" + string.Join(",", locationList) + ")";
 
             // set select sql
             string sql = @"
@@ -167,7 +208,10 @@ SELECT
   Location
 FROM Accounts
 WHERE Activated = 1
-AND Role = @Role;";
+AND Role = @Role
+AND NotificationType <> 0
+" + locationCondition + @"
+;";
             command.CommandText = sql;
 
             // set Parameters
@@ -176,23 +220,23 @@ AND Role = @Role;";
 
             // read data into a int list
             SqlDataReader reader = command.ExecuteReader();
-            int accountId = reader.GetOrdinal("AccountId");
-            int name = reader.GetOrdinal("Name");
-            int email = reader.GetOrdinal("Email");
-            int phoneNumber = reader.GetOrdinal("PhoneNumber");
-            int notificationType = reader.GetOrdinal("NotificationType");
-            int location = reader.GetOrdinal("Location");
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int nameIndex = reader.GetOrdinal("Name");
+            int emailIndex = reader.GetOrdinal("Email");
+            int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+            int locationIndex = reader.GetOrdinal("Location");
 
             while (reader.Read())
             {
                 Account account = new Account
                 {
-                    AccountId = reader.GetInt32(accountId),
-                    Name = reader.GetString(name),
-                    Email = reader.GetString(email),
-                    PhoneNumber = reader.GetString(phoneNumber),
-                    NotificationType = (NotificationType)reader.GetInt32(notificationType),
-                    Location = (Location)reader.GetInt32(location)
+                    AccountId = reader.GetInt32(accountIdIndex),
+                    Name = reader.GetString(nameIndex),
+                    Email = reader.GetString(emailIndex),
+                    PhoneNumber = reader.GetString(phoneNumberIndex),
+                    NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex),
+                    Location = (Location)reader.GetInt32(locationIndex)
                 };
                 subscribers.Add(account);
             }

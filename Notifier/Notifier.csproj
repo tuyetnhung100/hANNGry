@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="EmailNotifier.cs" />
     <Compile Include="NotifyCompletedEvent.cs" />
+    <Compile Include="PhoneValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SMSNotifier.cs" />
   </ItemGroup>
