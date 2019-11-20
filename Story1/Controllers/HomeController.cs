@@ -75,9 +75,9 @@ namespace Story1.Controllers
                 // Validate Roles, if subscriber then promts a success login message.
                 else if (myAccount.Role == Role.Subscriber) 
                 {
-                    // Enum to store login user in session
-                    Session["account"] = myAccount; 
-                    model.message = "Login successfully";
+                    // Special object to store login user in session
+                    Session["account"] = myAccount;
+                    return RedirectToAction("UserAccount");
                 }
             }
             // Validate entered username in login.
@@ -127,7 +127,7 @@ namespace Story1.Controllers
                     myAccount.Name = model.name;
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
-                    myAccount.PhoneNumber = "";
+                    myAccount.PhoneNumber = model.phoneNbr;
 
                     AccountDB.Add(myAccount);
                     model.message = "Register successfully";
@@ -135,12 +135,17 @@ namespace Story1.Controllers
                 // Validate for an existing email.
                 else if (model.email == existingAccount.Email) 
                 {
-                    model.errMessage = "Email already exists. Please re-enter a new one.";
+                    model.errMessage = "Email already exists. Please enter a new one.";
                 }
                 // Validate for an existing username.
                 else if (model.username == existingAccount.Username) 
                 {
-                    model.errMessage = "Username already exists. Please re-enter a new one.";
+                    model.errMessage = "Username already exists. Please enter a new one.";
+                }
+                // Validate for an existing phone number.
+                else if (model.phoneNbr == existingAccount.PhoneNumber)
+                {
+                    model.errMessage = "Phone number already exists. Please enter a new one.";
                 }
             }
             else
@@ -159,9 +164,10 @@ namespace Story1.Controllers
                 return RedirectToAction("Login");
             }
             ViewBag.Title = "UserAccount";
-            Account account = Session["account"] as Account;
+            // Account account = Session["account"] as Account;
+            string username = (Session["account"] as Account).Username;
+            Account account = AccountDB.FindAccount(username);
             UserAccountViewModel model = new UserAccountViewModel();
-            model.acctUname = account.Username;
             model.acctName = account.Name;
             model.acctEmail = account.Email;
             model.acctPhoneNumber = account.PhoneNumber;
@@ -198,43 +204,64 @@ namespace Story1.Controllers
         // Update account settings.
         [HttpPost]
         public ActionResult UserAccount(UserAccountViewModel model)
-        {
-            Account account = Session["account"] as Account;
-            Account updatedAccount = new Account
+        {          
+            if (ModelState.IsValid)
             {
-                Username = model.acctUname,
-                Name = model.acctName,
-                Email = model.acctEmail,
-                PhoneNumber = model.acctPhoneNumber,
-                AccountId = account.AccountId
-            };
-            
-            if (model.isEmailNotiType)
-            {
-                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
+                Account account = Session["account"] as Account;
+                string username = (Session["account"] as Account).Username;
+                Account existingAccount = AccountDB.FindAccount(username);
+                // Validate for an existing email.
+                if (model.acctEmail == existingAccount.Email)
+                {
+                    model.errMessage = "Email already exists. Please enter a new one.";
+                }
+                // Validate for an existing phone number.
+                else if (model.acctPhoneNumber == existingAccount.PhoneNumber)
+                {
+                    model.errMessage = "Phone number already exists. Please enter a new one.";
+                }
+                else if (account != null)
+                {
+                    Account updatedAccount = new Account
+                    {
+                        Name = model.acctName,
+                        Email = model.acctEmail,
+                        PhoneNumber = model.acctPhoneNumber,
+                        AccountId = account.AccountId
+                    };
+
+                    if (model.isEmailNotiType)
+                    {
+                        updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
+                    }
+                    if (model.isTextNotiType)
+                    {
+                        updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
+                    }
+                    if (model.isSYLocation)
+                    {
+                        updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
+                    }
+                    if (model.isRCLocation)
+                    {
+                        updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
+                    }
+                    if (model.isCASLocation)
+                    {
+                        updatedAccount.Location = updatedAccount.Location | Location.Cascade;
+                    }
+                    if (model.isSELocation)
+                    {
+                        updatedAccount.Location = updatedAccount.Location | Location.Southeast;
+                    }
+                    AccountDB.Update(updatedAccount);
+                    model.message = "Saved successfully";
+                }
             }
-            if (model.isTextNotiType)
+            else
             {
-                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
+                model.errMessage = ":(((((";
             }
-            if (model.isSYLocation)
-            {
-                updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
-            }
-            if (model.isRCLocation)
-            {
-                updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
-            }
-            if (model.isCASLocation)
-            {
-                updatedAccount.Location = updatedAccount.Location | Location.Cascade;
-            }
-            if (model.isSELocation)
-            {
-                updatedAccount.Location = updatedAccount.Location | Location.Southeast;
-            }
-            AccountDB.Update(updatedAccount);
-            model.message = "Saved successfully";
             return View(model);
         }
 

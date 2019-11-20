@@ -18,15 +18,23 @@ namespace Story1.Models.ViewModels
     // Retrieve and store model state in the DB, set validations for user input
     public class UserAccountViewModel
     {
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
         [Display(Name = "Name")]
         public string acctName { get; set; }
 
-        [Display(Name = "Username")]
-        public string acctUname { get; set; }
+        //[Display(Name = "Username")]
+        //public string acctUname { get; set; }
 
+        [Required]
+        [EmailAddress(ErrorMessage = "Please enter a valid email.")]
         [Display(Name = "Email")]
         public string acctEmail { get; set; }
 
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
+                   ErrorMessage = "Entered phone format is not valid.")]
         [Display(Name = "Phone Number")]
         public string acctPhoneNumber { get; set; }
 

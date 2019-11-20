@@ -27,7 +27,7 @@
         }
 
         /* Full-width input fields */
-        input[type=text], input[type=password], input[type=email] {
+        input[type=text], input[type=password], input[type=email], input[type=tel] {
             width: 100%;
             padding: 15px;
             margin: 5px 0 22px 0;
@@ -74,6 +74,7 @@
             text-align: center;
         }
 
+        /* Set a red color and float the text of the "errMsg" class to the right */
         span.errMsg {
             float: right;
             color: red;
@@ -93,7 +94,11 @@
 
             <label for="email"><b>@Html.LabelFor(model => model.email)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.email, "")</span>
-            @Html.EditorFor(model => model.email, new { htmlAttributes = new { placeholder = "Enter Email" } })
+            @Html.EditorFor(model => model.email, new { htmlAttributes = new { placeholder = "Enter Email", type = "email" } })
+
+            <label for="phone"><b>@Html.LabelFor(model => model.phoneNbr)</b></label>
+            <span class="errMsg">@Html.ValidationMessageFor(model => model.phoneNbr, "")</span>
+            @Html.EditorFor(model => model.phoneNbr, new { htmlAttributes = new { placeholder = "Enter Phone Number", type = "tel" } })
 
             <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>

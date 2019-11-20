@@ -14,6 +14,11 @@
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
+            background-image: url('../../Content/HTML/clover.PNG');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            margin: auto;
         }
 
         * {
@@ -23,11 +28,11 @@
         /* Add padding to containers */
         .container {
             padding: 16px;
-            background-color: #80ced6;
+            /*background-color: #80ced6;*/
         }
 
         /* Full-width input fields */
-        input[type=text], input[type=password] {
+        input[type=text], input[type=email], input[type=tel] {
             width: 100%;
             padding: 15px;
             margin: 5px 0 22px 0;
@@ -36,7 +41,7 @@
             background: #f1f1f1;
         }
 
-            input[type=text]:focus, input[type=password]:focus {
+            input[type=text]:focus, input[type=email], input[type=tel] {
                 background-color: #ddd;
                 outline: none;
             }
@@ -81,6 +86,12 @@
             color: #191970;
             font-weight: bold;
         }
+
+        /* Set a purple color and float the text of the "errMsg" class to the right */
+        span.errMsg {
+            float: right;
+            color: #3733FF;
+        }
     </style>
 </head>
 <body>
@@ -90,24 +101,25 @@
             <hr>
             <div class="row">
                 <div class="column">
-                    <label for="acctName"><b>@Html.LabelFor(model => model.acctName)</b></label>
-                    @Html.EditorFor(model => model.acctName, new { htmlAttributes = new { placeholder = "User's name", autofocus = "" } })
-
-                    <label for="acctUname"><b>@Html.LabelFor(model => model.acctUname)</b></label>
-                    @Html.EditorFor(model => model.acctUname, new { htmlAttributes = new { placeholder = "User's Username" } })
-
                     <label for="acctEmail"><b>@Html.LabelFor(model => model.acctEmail)</b></label>
+                    <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctEmail, "")</b></span>
                     @Html.EditorFor(model => model.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
+
+                    <label for="acctPhoneNumber"><b>@Html.LabelFor(model => model.acctPhoneNumber)</b></label>
+                    <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctPhoneNumber, "")</b></span>
+                    @Html.EditorFor(model => model.acctPhoneNumber, new { htmlAttributes = new { placeholder = "Enter Phone Number" } })
+
+                    <label for="acctName"><b>@Html.LabelFor(model => model.acctName)</b></label>
+                    <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctName, "")</b></span>
+                    @Html.EditorFor(model => model.acctName, new { htmlAttributes = new { placeholder = "User's name", autofocus = "" } })
 
                     @Html.ActionLink("Change Password", "ChangePassword")
                 </div>
                 <div class="column">
                     <label for="notifications"><b>Please select alert type:</b></label><br><br>
                     @Html.CheckBoxFor(model => model.isEmailNotiType) Email<br>
-                    @Html.CheckBoxFor(model => model.isTextNotiType) Txt Msg<br>
+                    @Html.CheckBoxFor(model => model.isTextNotiType) SMS<br><br />
 
-                    <label for="acctPhoneNumber"><b>@Html.LabelFor(model => model.acctPhoneNumber)</b></label>
-                    @Html.EditorFor(model => model.acctPhoneNumber, new { htmlAttributes = new { placeholder = "Enter Phone Number" } })
                     @*<input type="checkbox" name="notiType" value="email"> Email<br>
                         <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
                         <input type="checkbox" name="notiType" value="both"> Both<br><br>*@

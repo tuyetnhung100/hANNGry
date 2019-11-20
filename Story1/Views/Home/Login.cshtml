@@ -113,22 +113,9 @@
         // Prompts a message box for when user enters valid or invalid login info
         if (Model != null)
         {
-            if (!string.IsNullOrWhiteSpace(Model.message))
-            {
-                @*<script>alert("@Model.message");</script>*@
-                <script>
-                    Swal.fire({
-                        title: '@Model.message',
-                        text:  'Welcome @Model.name!',
-                        type:  'success',
-                        onClose: function () {
-                            location.href = '/Home/UserAccount';
-                        }
-                    });
-                </script>
-            }
             if (!string.IsNullOrWhiteSpace(Model.errMessage))
             {
+                @*<script>alert("@Model.errMessage");</script>*@
                 <script>
                     Swal.fire({
                         title: 'Login failed',

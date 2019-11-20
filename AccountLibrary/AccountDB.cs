@@ -254,7 +254,6 @@ AND Role = @Role;";
             SqlCommand command = new SqlCommand(@"
 UPDATE Accounts
 SET 
- Username = @Username,
  Name = @Name,
  Email = @Email,
  NotificationType = @NotificationType,
@@ -262,7 +261,6 @@ SET
  PhoneNumber = @PhoneNumber
 WHERE AccountId = @AccountId;", connect);
 
-            command.Parameters.AddWithValue("@Username", updatedAccount.Username);
             command.Parameters.AddWithValue("@Name", updatedAccount.Name);
             command.Parameters.AddWithValue("@Email", updatedAccount.Email);
             command.Parameters.AddWithValue("@NotificationType", updatedAccount.NotificationType);
@@ -306,8 +304,6 @@ WHERE AccountId = @AccountId;", connect);
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-DELETE FROM SubscriberNotification 
-WHERE Subscribers_AccountId = @AccountId;
 DELETE FROM Accounts 
 WHERE AccountId = @AccountId;", connect);
             command.Parameters.Clear();
