@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NotificationSender));
             this.sendButton = new System.Windows.Forms.Button();
             this.messageRichTextBox = new System.Windows.Forms.RichTextBox();
             this.templateComboBox = new System.Windows.Forms.ComboBox();
@@ -283,6 +284,7 @@
             this.Controls.Add(this.messageLabel);
             this.Controls.Add(this.subjectLabel);
             this.Controls.Add(this.subjectTextBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1024, 670);
             this.Name = "NotificationSender";
             this.Text = "Send Notifications";

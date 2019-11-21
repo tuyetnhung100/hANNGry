@@ -11,7 +11,6 @@ using Notifier;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -105,6 +104,9 @@ namespace Story2
             failedNotificationsLabel.Text = string.Empty;
         }
 
+        /// <summary>
+        /// Initialize Notifier events
+        /// </summary>
         private void InitializeNotifier()
         {
             EmailNotifier.NotifyCompleted += NotifyCompleted;
@@ -210,6 +212,7 @@ namespace Story2
             }
             else
             {
+                // skip the None option
                 for (int i = 1; i < templateComboBox.Items.Count; i++)
                 {
                     Template template = templateComboBox.Items[i] as Template;
@@ -229,7 +232,7 @@ namespace Story2
         /// <param name="e"></param>
         private void SendButton_Click(object sender, EventArgs e)
         {
-            // get Notification data from controls
+            // get and validate Notification data from controls
             notification = GetNotification();
             if (!ValidateNotification(notification))
             {
@@ -273,8 +276,8 @@ namespace Story2
             succeededNotificationsLabel.Text = "Succeeded: " + succeededCount;
             failedNotificationsLabel.Text = "Failed: " + failedCount;
 
-            // check whether has the next email
-            if (sendingNotificationCount <= subscribers.Count)
+            bool hasNextsubscriber = sendingNotificationCount <= subscribers.Count;
+            if (hasNextsubscriber)
             {
                 sendingEmailsLabel.Text = "Sending notifications... ( " + sendingNotificationCount + " / " + subscribers.Count + " )";
                 Account subscriber = subscribers[sendingNotificationCount - 1];
@@ -296,43 +299,22 @@ namespace Story2
         /// <summary>
         /// Send email asynchronously.
         /// </summary>
-        /// <param name="subscriber">The target subscriber</param>
         private void SendEmail(Account subscriber)
         {
             string email = subscriber.Email;
             string subject = notification.Subject;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-            EmailNotifier.SendEmailAsync(email, subject, body, subscriber.AccountId);
+            object userToken = subscriber.AccountId;
+            EmailNotifier.SendEmailAsync(email, subject, body, userToken);
         }
 
         /// <summary>
         /// Send SMS asynchronously.
         /// </summary>
-        /// <param name="subscriber">The target subscriber</param>
         private void SendSMS(Account subscriber)
         {
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
             SMSNotifier.SendSMSAsync(subscriber.PhoneNumber, body, subscriber.AccountId);
-        }
-
-        /// <summary>
-        /// Set and return MailMessage object.
-        /// </summary>
-        /// <param name="client">The SmtpClient</param>
-        /// <param name="email">The receiver's email address</param>
-        /// <param name="subject">The email subject</param>
-        /// <param name="body">The email body</param>
-        /// <returns>The MailMessage object</returns>
-        private MailMessage GetMailMessage(SmtpClient client, string email, string subject, string body)
-        {
-            MailAddress from = new MailAddress("hANNGry2019@gmail.com");
-            MailAddress to = new MailAddress(email);
-            MailMessage message = new MailMessage(from, to);
-            message.Body = body;
-            message.BodyEncoding = Encoding.UTF8;
-            message.Subject = subject;
-            message.SubjectEncoding = Encoding.UTF8;
-            return message;
         }
 
         /// <summary>
@@ -359,15 +341,7 @@ namespace Story2
             // clear data to prevent submitting again
             ClearData();
 
-            if (templateComboBox.SelectedIndex == 0)
-            {
-                messageRichTextBox.Focus();
-            }
-            else if (tagsPanel.Controls.Count > 0)
-            {
-                TextBox firstTagTextBox = tagsPanel.Controls[1] as TextBox;
-                firstTagTextBox.Focus();
-            }
+            subjectTextBox.Focus();
         }
 
         /// <summary>
@@ -377,10 +351,11 @@ namespace Story2
         /// <returns>Whether the notification is valid</returns>
         private bool ValidateNotification(Notification notification)
         {
+            // using bottom-up to validate
             bool isValid = true;
             errorProvider.Clear();
 
-            // check Tags bottom-up
+            // check Tags
             for (int i = tagBlocks.Count - 1; i >= 0; i--)
             {
                 MessageBlock tagBlock = tagBlocks[i];
@@ -405,6 +380,19 @@ namespace Story2
             {
                 errorProvider.SetError(subjectTextBox, "Please enter Subject");
                 subjectTextBox.Focus();
+                isValid = false;
+            }
+
+            // check Location
+            if (
+                !sylvaniaCheckBox.Checked &&
+                !rockCreekCheckBox.Checked &&
+                !southeastCheckBox.Checked &&
+                !cascadeCheckBox.Checked
+            )
+            {
+                errorProvider.SetError(cascadeCheckBox, "Please select at least one Location");
+                sylvaniaCheckBox.Focus();
                 isValid = false;
             }
 
@@ -443,7 +431,8 @@ namespace Story2
                 notification.Location = notification.Location | AccountLibrary.Location.Cascade;
             }
 
-            if (templateComboBox.SelectedIndex != 0)
+            bool isUsingTemplate = templateComboBox.SelectedIndex != 0;
+            if (isUsingTemplate)
             {
                 Template template = templateComboBox.SelectedItem as Template;
                 notification.TemplateId = template.TemplateId;
@@ -459,7 +448,8 @@ namespace Story2
         private string GetInputFilledMessage()
         {
             // when the template is None, just return the text of the messageRichTextBox
-            if (templateComboBox.SelectedIndex == 0)
+            bool isNone = templateComboBox.SelectedIndex == 0;
+            if (isNone)
             {
                 return messageRichTextBox.Text;
             }
@@ -501,17 +491,19 @@ namespace Story2
         {
             foreach (Tag tag in tags)
             {
-                if (tag.Type == TagType.DatabaseField)
+                if (tag.Type != TagType.DatabaseField)
                 {
-                    switch (tag.Name)
-                    {
-                        case StudentNameTag:
-                            message = message.Replace(tag.Syntax, subscriber.Name);
-                            break;
-                        case EmployeeNameTag:
-                            message = message.Replace(tag.Syntax, LoginedEmployee.Name);
-                            break;
-                    }
+                    continue;
+                }
+
+                switch (tag.Name)
+                {
+                    case StudentNameTag:
+                        message = message.Replace(tag.Syntax, subscriber.Name);
+                        break;
+                    case EmployeeNameTag:
+                        message = message.Replace(tag.Syntax, LoginedEmployee.Name);
+                        break;
                 }
             }
             return message;
@@ -581,7 +573,7 @@ namespace Story2
                     // tag should never be null unless data in the DB is missing
                     if (tag == null)
                     {
-                        ShowErrorMessageBox(DataError, "Tag " + tagName + " is missing from DB");
+                        ShowErrorMessageBox(DataError, "Tag " + tagName + " is missing in DB");
                         messageBlocks.Clear();
                         tagBlocks.Clear();
                         return;
