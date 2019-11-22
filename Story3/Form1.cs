@@ -57,12 +57,20 @@ namespace Story3
             {
                 templateSelectorComboBox.SelectedIndex = 0;
             }
+            reloadTemplateList();
         }
 
         // Reloads the templates and sets the index to the first item.
         private void reloadTemplateList()
         {
             templateSelectorComboBox.Items.Clear();
+
+            Template blank = new Template();
+            blank.Subject = "";
+            blank.Message = "";
+
+            templateSelectorComboBox.Items.Add(blank);
+
             TemplateDB.Load(ref templates);
             foreach (Template template in templates)
             {
@@ -135,6 +143,7 @@ namespace Story3
                 TemplateDB.Add(myTemplate);
                 templateSelectorComboBox.Items.Add(myTemplate);
                 templateSelectorComboBox.SelectedItem.Equals(myTemplate);
+                MessageBox.Show("The template was successfully saved to the database.", "Success!");
             }
             else if (currentItem == input)
             {
