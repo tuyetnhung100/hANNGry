@@ -89,7 +89,7 @@ namespace Story3
             }
         }
 
-        // Promts the user for a tag name, then inserts the tag into the RTB.
+        // Prompts the user for a tag name, then inserts the tag into the RTB.
         // If the tag is blank, it closes out.
         // If the tag already exists, warns user to select from the drop down.
         private void customTagButton_Click(object sender, EventArgs e)
@@ -144,6 +144,7 @@ namespace Story3
                 templateSelectorComboBox.Items.Add(myTemplate);
                 templateSelectorComboBox.SelectedItem.Equals(myTemplate);
                 MessageBox.Show("The template was successfully saved to the database.", "Success!");
+
             }
             else if (currentItem == input)
             {
