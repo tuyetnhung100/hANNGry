@@ -44,19 +44,23 @@ namespace Story3
                 customTagComboBox.Items.Add(myTag.Name);
             }
 
-            foreach (Template template in templates)
-            {
-                templateSelectorComboBox.Items.Add(template);
-            }
+            reloadTemplateList();
+
             if (!TemplateDB.Load(ref templates))
             {
                 MessageBox.Show("Unable to retrieve templates from the database. Now closing program.", "Error!");
                 this.Close();
             }
-            else
-            {
-                templateSelectorComboBox.SelectedIndex = 0;
-            }
+        }
+
+        private void updateTemplate()
+        {
+            Template myTemplate = new Template();
+            myTemplate.Subject = templateSelectorComboBox.SelectedItem.ToString();
+            myTemplate.Message = templateRichTextBox.Text;
+            myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
+            myTemplate.CreatedDate = DateTime.Now;
+            TemplateDB.Update(myTemplate);
             reloadTemplateList();
         }
 
@@ -76,6 +80,7 @@ namespace Story3
             {
                 templateSelectorComboBox.Items.Add(template);
             }
+
             templateSelectorComboBox.SelectedIndex = 0;
         }
 
@@ -85,7 +90,7 @@ namespace Story3
             DialogResult clear = MessageBox.Show("You are about to clear the template text box. Are you sure?", "Warning!", MessageBoxButtons.YesNo);
             if (clear == DialogResult.Yes)
             {
-                templateRichTextBox.Text = null;
+                reloadTemplateList();
             }
         }
 
@@ -124,16 +129,27 @@ namespace Story3
         // Saves the template to the database with the subject being the name for the template.
         // If the template has the same subject as one already in the DB, prompts user to make sure they want to overwrite.
         // Then, updates the template in the database.
-        private void saveButton_Click(object sender, EventArgs e)
+        private void saveAsButton_Click(object sender, EventArgs e)
         {
-            string currentItem = templateSelectorComboBox.SelectedItem.ToString();
             string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
+            int index = templateSelectorComboBox.FindStringExact(input);
             if (templateRichTextBox.Text == "")
             {
                 templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
                 return;
             }
-            else if (currentItem != input && input != "")
+            else if (index != -1)
+            {
+                templateRichTextBox.SelectAll();
+                templateRichTextBox.Cut();
+                templateSelectorComboBox.SelectedIndex = index;
+                templateRichTextBox.SelectAll();
+                templateRichTextBox.Paste();
+                Clipboard.Clear();
+                updateTemplate();
+                return;
+            }
+            else if (input != "")
             {
                 Template myTemplate = new Template();
                 myTemplate.Subject = input;
@@ -141,31 +157,13 @@ namespace Story3
                 myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
                 myTemplate.CreatedDate = DateTime.Now;
                 TemplateDB.Add(myTemplate);
-                templateSelectorComboBox.Items.Add(myTemplate);
-                templateSelectorComboBox.SelectedItem.Equals(myTemplate);
-                MessageBox.Show("The template was successfully saved to the database.", "Success!");
-
-            }
-            else if (currentItem == input)
-            {
-                DialogResult save = MessageBox.Show("Template already exists under that subject! " +
-                    "Are you sure you want to overwrite the previous template?", "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
-                if (save == DialogResult.Yes)
-                {
-                    Template myTemplate = new Template();
-                    myTemplate.Subject = input;
-                    myTemplate.Message = templateRichTextBox.Text;
-                    myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
-                    myTemplate.CreatedDate = DateTime.Now;
-                    TemplateDB.Update(myTemplate);
-                    MessageBox.Show("The template was successfully updated.", "Success!");
-                }
+                reloadTemplateList();
             }
             else
             {
                 return;
             }
-            reloadTemplateList();
+            templateErrorProvider.Clear();
         }
 
         // Loads a template from the DB when selected, and inserts the message column into the RTB.
@@ -182,20 +180,31 @@ namespace Story3
             Template template = (Template)templateSelectorComboBox.SelectedItem;
             if (template.Subject == currentItem)
             {
-                DialogResult delete = MessageBox.Show("The selected template is about to be deleted! " +
-                    "Are you sure you want to delete the template? THE TEMPLATE CANNOT BE RECOVERED.", 
+                DialogResult delete = MessageBox.Show("The selected template is about to be deleted!\n" +
+                    "Are you sure you want to delete the template?\nTHE TEMPLATE CANNOT BE RECOVERED.", 
                     "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
                 if (delete == DialogResult.Yes)
                 {
                     TemplateDB.Delete(template);
                     reloadTemplateList();
-                    templateSelectorComboBox.SelectedIndex = 0;
-                    MessageBox.Show("The template was successfully deleted.", "Success!");
                 }
                 else
                 {
                     return;
                 }
+                reloadTemplateList();
+            }
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            if (templateSelectorComboBox.SelectedItem == null || templateSelectorComboBox.SelectedItem.ToString() == "")
+            {
+                saveAsButton.PerformClick();
+            }
+            else
+            {
+                updateTemplate();
                 reloadTemplateList();
             }
         }
