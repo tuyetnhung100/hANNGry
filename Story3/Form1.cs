@@ -53,6 +53,7 @@ namespace Story3
             }
         }
 
+        // Updates the currently selected template with whatever is in the RTB.
         private void updateTemplate()
         {
             Template myTemplate = new Template();
@@ -84,7 +85,7 @@ namespace Story3
             templateSelectorComboBox.SelectedIndex = 0;
         }
 
-        // Clears the rich text box.
+        // Clears the rich text box and reloads the template list.
         private void clearAllButton_Click(object sender, EventArgs e)
         {
             DialogResult clear = MessageBox.Show("You are about to clear the template text box. Are you sure?", "Warning!", MessageBoxButtons.YesNo);
@@ -100,6 +101,8 @@ namespace Story3
         private void customTagButton_Click(object sender, EventArgs e)
         {
             string input = Interaction.InputBox("Please enter the name of the tag you would like to create: ", "New Tag", "");
+
+            // If the custom tag box doesn't contain the tag and the input isn't blank, it will create a new tag and insert it into the DB.
             if (!customTagComboBox.Items.Contains(input.ToLower()) && input != "")
             {
                 Tag myTag = new Tag();
@@ -108,9 +111,11 @@ namespace Story3
                 customTagComboBox.Items.Add(input.ToLower());
                 templateRichTextBox.SelectedText = "{$" + input.ToLower() + "}";
             }
+
+            // If the combo box contains the tag, it will alert the user and insert the tag into the text box.
             else if (customTagComboBox.Items.Contains(input.ToLower()))
             {
-                MessageBox.Show("Custom Tag already exists, inserting into the RichTexttention");
+                MessageBox.Show("Custom Tag already exists, inserting into the RichTextBox.", "attention");
                 templateRichTextBox.SelectedText = "{$" + input.ToLower() + "}";
             }
             else
@@ -133,11 +138,15 @@ namespace Story3
         {
             string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
             int index = templateSelectorComboBox.FindStringExact(input);
+            
+            // If the template RTB is blank, it will not save the template.
             if (templateRichTextBox.Text == "")
             {
                 templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
                 return;
             }
+
+            // if index is anything but -1 (that means it's found a template with that name), then it selects that template and saves over the current text.
             else if (index != -1)
             {
                 templateRichTextBox.SelectAll();
@@ -149,6 +158,8 @@ namespace Story3
                 updateTemplate();
                 return;
             }
+
+            // If the previous statements return false, then it saves the template as a new template.
             else if (input != "")
             {
                 Template myTemplate = new Template();
@@ -178,6 +189,8 @@ namespace Story3
         {
             String currentItem = templateSelectorComboBox.SelectedItem.ToString();
             Template template = (Template)templateSelectorComboBox.SelectedItem;
+
+            // If the subject of the template is equal to the currently selected item, then it will delete the template from the DB if the user clicks yes.
             if (template.Subject == currentItem)
             {
                 DialogResult delete = MessageBox.Show("The selected template is about to be deleted!\n" +
@@ -196,12 +209,24 @@ namespace Story3
             }
         }
 
+        // Saves the template as the currently selected template in the combo box. If there's no template selected (if blank is selected, for instance)
+        // then it clicks the save as button and runs through that process.
         private void saveButton_Click(object sender, EventArgs e)
         {
+            // If the text for the box either doesn't exist, or is blank, it will click the saveAs button.
             if (templateSelectorComboBox.SelectedItem == null || templateSelectorComboBox.SelectedItem.ToString() == "")
             {
                 saveAsButton.PerformClick();
             }
+
+            // If the template RTB is blank, it will not allow the user to save.
+            else if (templateRichTextBox.Text == "")
+            {
+                templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
+                return;
+            }
+
+            // If the two previous statements are false, it will update the selected template.
             else
             {
                 updateTemplate();
