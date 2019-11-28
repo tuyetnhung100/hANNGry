@@ -7,7 +7,9 @@
 
 using AccountLibrary;
 using Management;
+using Notifier;
 using Story1.Models.ViewModels;
+using System;
 using System.Threading;
 using System.Web.Mvc;
 using System.Windows.Forms;
@@ -26,7 +28,13 @@ namespace Story1.Controllers
                 return RedirectToAction("UserAccount");
             }
             ViewBag.Title = "Login";
-            return View();
+
+            LoginViewModel model = new LoginViewModel
+            {
+                uname = "gonghao",
+                psw = "Test123!"
+            };
+            return View(model);
         }
 
         // Validate user's login (username and password).
@@ -37,64 +45,64 @@ namespace Story1.Controllers
             model.errMessage = "";
 
             // If username and password are blank, display an error msg.
-            if (model.uname == null || model.psw == null) 
+            if (model.uname == null || model.psw == null)
             {
-                model.errMessage = "Please enter a valid username and password.";
+                model.errMessage = "Please enter valid username and password.";
                 return View(model);
             }
 
-            Account myAccount = AccountDB.FindAccount(model.uname);
+            Account activatedAccount = AccountDB.FindActivatedAccount(model.uname);
             // If account not found, displays an error msg.
-            if (myAccount == null) 
+            if (activatedAccount == null)
             {
-                model.errMessage = "Please enter a valid username and password.";
+                model.errMessage = "Please enter valid username and password.";
                 return View(model);
             }
             else
             {
-                model.name = myAccount.Name;
+                model.name = activatedAccount.Name;
             }
 
             // Create a string to store entered passwordHash from user.
-            string userHash = AccountDB.CreateHash(model.psw, myAccount.PasswordSalt); 
-            model.role = myAccount.Role;
+            string userHash = AccountDB.CreateHash(model.psw, activatedAccount.PasswordSalt);
+            model.role = activatedAccount.Role;
             // Compare entered on screen username + passsword with the ones stored in DB.
-            if (model.uname == myAccount.Username && userHash == myAccount.PasswordHash) 
+            if (model.uname == activatedAccount.Username && userHash == activatedAccount.PasswordHash)
             {
                 // Validate Roles, if staff then goes to Story2.
-                if (myAccount.Role == Role.Employee || myAccount.Role == Role.Manager) 
+                if (activatedAccount.Role == Role.Employee || activatedAccount.Role == Role.Manager)
                 {
                     model.message = "Hi staff!";
                     Thread thread = new Thread(() =>
                     {
-                        Form mainForm = new MainForm(myAccount);
+                        Form mainForm = new MainForm(activatedAccount);
                         mainForm.ShowDialog();
                     });
                     thread.Start();
                 }
                 // Validate Roles, if subscriber then promts a success login message.
-                else if (myAccount.Role == Role.Subscriber) 
+                else if (activatedAccount.Role == Role.Subscriber)
                 {
                     // Special object to store login user in session
-                    Session["account"] = myAccount;
+                    Session["account"] = activatedAccount;
                     return RedirectToAction("UserAccount");
                 }
             }
             // Validate entered username in login.
-            else if (model.uname != myAccount.Username)
+            else if (model.uname != activatedAccount.Username)
             {
-                model.errMessage = "Incorrect username. Please enter a valid username and password.";
+                model.errMessage = "Please enter valid username and password.";
             }
             // Validate entered password in login.
-            else if (userHash != myAccount.PasswordHash) 
+            else if (userHash != activatedAccount.PasswordHash)
             {
-                model.errMessage = "Incorrect password. Please enter a valid username and password.";
+                model.errMessage = "Please enter valid username and password.";
             }
             else
             {
                 // display an error message if username and password not found in DB.
-                model.errMessage = "Please enter a valid username and password."; 
-            }
+                model.errMessage = "Please enter valid username and password.";
+            }       
             return View(model);
         }
 
@@ -118,7 +126,7 @@ namespace Story1.Controllers
             if (ModelState.IsValid)
             {
                 // Validate whether account already exists.
-                Account existingAccount = AccountDB.FindAccount(model.username, model.email);
+                Account existingAccount = AccountDB.CheckAccountAvailability(model.username, model.email);
                 // If no match, then create a new account.
                 if (existingAccount == null) 
                 {
@@ -128,8 +136,17 @@ namespace Story1.Controllers
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
                     myAccount.PhoneNumber = model.phoneNbr;
-
+                    myAccount.Code = Guid.NewGuid().ToString();
                     AccountDB.Add(myAccount);
+                    string subject = "Please confirm your email.";
+                    string url = "http://localhost:4841/Home/Activated?code=" + myAccount.Code;
+                    string body = "Hi, " + myAccount.Name + @"
+
+<p><a href='" + url + @"'>" + url + @"<a/></p>
+
+hANNGry
+";       
+                    EmailNotifier.SendHtmlEmail(myAccount.Email, subject, body);
                     model.message = "Register successfully";
                 }
                 // Validate for an existing email.
@@ -155,6 +172,13 @@ namespace Story1.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult Activated(string code)
+        {
+            bool isAvtivated = AccountDB.ActivateAccount(code);
+            return View(isAvtivated);
+        }
+
         // Display subscriber's information on Account Settings webpage.
         [HttpGet]
         public ActionResult UserAccount()
@@ -166,7 +190,7 @@ namespace Story1.Controllers
             ViewBag.Title = "UserAccount";
             // Account account = Session["account"] as Account;
             string username = (Session["account"] as Account).Username;
-            Account account = AccountDB.FindAccount(username);
+            Account account = AccountDB.FindActivatedAccount(username);
             UserAccountViewModel model = new UserAccountViewModel();
             model.acctName = account.Name;
             model.acctEmail = account.Email;
@@ -204,64 +228,67 @@ namespace Story1.Controllers
         // Update account settings.
         [HttpPost]
         public ActionResult UserAccount(UserAccountViewModel model)
-        {          
-            if (ModelState.IsValid)
+        {
+            Account existingAccount;
+            Account account = Session["account"] as Account;
+            bool emailChanged = model.acctEmail != account.Email;
+            bool phoneChanged = model.acctPhoneNumber != account.PhoneNumber;
+            if (emailChanged || phoneChanged)
             {
-                Account account = Session["account"] as Account;
-                string username = (Session["account"] as Account).Username;
-                Account existingAccount = AccountDB.FindAccount(username);
-                // Validate for an existing email.
-                if (model.acctEmail == existingAccount.Email)
+                //existingAccount = AccountDB.SelectAccount(model.acctEmail, model.acctPhoneNumber);
+
+                //if(existingAccount != null)
+                //{
+                //    model.errMessage = "Email or Phone already exist. Please enter a new one.";
+                //    return View(model);
+                //}
+
+                existingAccount = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
+
+                if (existingAccount.EmailCount != 0)
                 {
                     model.errMessage = "Email already exists. Please enter a new one.";
                 }
-                // Validate for an existing phone number.
-                else if (model.acctPhoneNumber == existingAccount.PhoneNumber)
+                else if (existingAccount.PhoneNumberCount != 0)
                 {
-                    model.errMessage = "Phone number already exists. Please enter a new one.";
-                }
-                else if (account != null)
-                {
-                    Account updatedAccount = new Account
-                    {
-                        Name = model.acctName,
-                        Email = model.acctEmail,
-                        PhoneNumber = model.acctPhoneNumber,
-                        AccountId = account.AccountId
-                    };
-
-                    if (model.isEmailNotiType)
-                    {
-                        updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
-                    }
-                    if (model.isTextNotiType)
-                    {
-                        updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
-                    }
-                    if (model.isSYLocation)
-                    {
-                        updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
-                    }
-                    if (model.isRCLocation)
-                    {
-                        updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
-                    }
-                    if (model.isCASLocation)
-                    {
-                        updatedAccount.Location = updatedAccount.Location | Location.Cascade;
-                    }
-                    if (model.isSELocation)
-                    {
-                        updatedAccount.Location = updatedAccount.Location | Location.Southeast;
-                    }
-                    AccountDB.Update(updatedAccount);
-                    model.message = "Saved successfully";
+                    model.errMessage = "Phone Number already exists. Please enter a new one.";
                 }
             }
-            else
+            Account updatedAccount = new Account
             {
-                model.errMessage = ":(((((";
+                Name = model.acctName,
+                Email = model.acctEmail,
+                PhoneNumber = model.acctPhoneNumber,
+                AccountId = account.AccountId
+            };
+
+            if (model.isEmailNotiType)
+            {
+                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
             }
+            if (model.isTextNotiType)
+            {
+                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
+            }
+            if (model.isSYLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
+            }
+            if (model.isRCLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
+            }
+            if (model.isCASLocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Cascade;
+            }
+            if (model.isSELocation)
+            {
+                updatedAccount.Location = updatedAccount.Location | Location.Southeast;
+            }
+            AccountDB.Update(updatedAccount);
+            model.message = "Saved successfully";
+          
             return View(model);
         }
 
@@ -346,6 +373,40 @@ namespace Story1.Controllers
             Account account = Session["account"] as Account;
             bool isLoggedIn = account != null;
             return isLoggedIn;
+        }
+
+        [HttpGet]
+        public ActionResult ChangePasswordByEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePasswordByEmail(ChangePasswordByEmailViewModel model)
+        {
+            Account myAccount = AccountDB.FindActivatedAccount(model.username);
+            if (myAccount == null)
+            {
+
+            }
+            else
+            {
+
+            }
+            myAccount.Code = Guid.NewGuid().ToString();
+            AccountDB.Update(myAccount);
+
+            string subject = "Password Reset Link.";
+            string url = "http://localhost:4841/Home/Activated?code=" + myAccount.Code;
+            string body = "Hi, " + myAccount.Name + @"
+
+<p><a href='" + url + @"'>" + url + @"<a/></p>
+
+Thank you,
+hANNGry
+";
+            EmailNotifier.SendHtmlEmail(myAccount.Email, subject, body);
+            return View(model);
         }
     }
 }

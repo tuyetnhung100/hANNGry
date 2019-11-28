@@ -82,6 +82,19 @@ namespace Notifier
         }
 
         /// <summary>
+        /// Send email.
+        /// </summary>
+        /// <param name="email">The email address</param>
+        /// <param name="subject">The email subject</param>
+        /// <param name="body">The email body</param>
+        public static void SendHtmlEmail(string email, string subject, string body)
+        {
+            MailMessage mailMessage = GetMailMessage(email, subject, body);
+            mailMessage.IsBodyHtml = true;
+            SmtpClient.Send(mailMessage);
+        }
+
+        /// <summary>
         /// Send email asynchronously.
         /// </summary>
         /// <param name="email">The email address</param>

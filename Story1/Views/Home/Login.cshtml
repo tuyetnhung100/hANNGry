@@ -73,7 +73,7 @@
             color: dodgerblue;
         }
 
-        span.psw {
+        span.register {
             float: right;
             padding-top: 16px;
         }
@@ -97,6 +97,8 @@
             <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
             @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
+            <a href="/Home/ChangePasswordByEmail">Forgot your password?</a>
+
             <hr>
             <button type="submit" class="loginbtn">Login</button>
         </div>
@@ -104,7 +106,7 @@
         <div class="container" style="background-color:#f1f1f1">
             <button type="reset" class="cancelbtn">Cancel</button>
             @*<a href="http://pcc.edu" class="cancelbtn">Cancel</a>*@
-            <span class="psw">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
+            <span class="register">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
 
         </div>
     </form>

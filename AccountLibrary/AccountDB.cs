@@ -32,9 +32,10 @@ INSERT INTO Accounts
  PasswordSalt,
  PhoneNumber,
  CreatedDate,
- Activated,
  Location,
- NotificationType)
+ NotificationType,
+ Activated,
+ Code)
   VALUES (@Username,
           @Name,
           @Email,
@@ -43,9 +44,10 @@ INSERT INTO Accounts
           @PasswordSalt,
           @PhoneNumber,
           @Date,
-          @Activated,
           @Location,
-          @NotificationType);", connect);
+          @NotificationType, 
+           0,
+          @Code);", connect);
 
             command.Parameters.AddWithValue("@Username", myAccount.Username);
             command.Parameters.AddWithValue("@Name", myAccount.Name);
@@ -55,9 +57,9 @@ INSERT INTO Accounts
             command.Parameters.AddWithValue("@PasswordSalt", salt);
             command.Parameters.AddWithValue("@PhoneNumber", myAccount.PhoneNumber);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
-            command.Parameters.AddWithValue("@Activated", false);
             command.Parameters.AddWithValue("@Location", Location.None);
             command.Parameters.AddWithValue("@NotificationType", NotificationType.None);
+            command.Parameters.AddWithValue("@Code", myAccount.Code);
 
             command.ExecuteNonQuery();
             connect.Close();
@@ -65,7 +67,7 @@ INSERT INTO Accounts
         }
 
         // Look for a user's account info in the DB using username and email (for Register).
-        public static Account FindAccount(string username, string email)
+        public static Account CheckAccountAvailability(string username, string email)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -114,7 +116,7 @@ OR Email = @Email;", connect);
         }
 
         // Look for a user's account info in the DB using username (for Login).
-        public static Account FindAccount(string username)
+        public static Account FindActivatedAccount(string username)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
@@ -132,8 +134,69 @@ SELECT
   Location,
   PhoneNumber
 FROM Accounts
-WHERE Username = @Username;", connect);
+WHERE Activated = 1
+AND Username = @Username;", connect);
             command.Parameters.AddWithValue("@Username", username);
+            SqlDataReader reader = command.ExecuteReader();
+            Account myAccount = null;
+
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int usernameIndex = reader.GetOrdinal("Username");
+            int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
+            int passwordHashIndex = reader.GetOrdinal("PasswordHash");
+            int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
+            int nameIndex = reader.GetOrdinal("Name");
+            int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+            int locationIndex = reader.GetOrdinal("Location");
+            int PhoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+
+            while (reader.Read())
+            {
+                myAccount = new Account();
+                myAccount.AccountId = reader.GetInt32(accountIdIndex);
+                myAccount.Username = reader.GetString(usernameIndex);
+                myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
+                myAccount.PasswordHash = reader.GetString(passwordHashIndex);
+                myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
+                myAccount.Name = reader.GetString(nameIndex);
+                myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
+                myAccount.Location = (Location)reader.GetInt32(locationIndex);
+                myAccount.PhoneNumber = reader.GetString(PhoneNumberIndex);
+                myAccount.Activated = true;
+            }
+
+            reader.Close();
+            command.ExecuteNonQuery();
+            connect.Close();
+            return myAccount;
+        }
+
+        // Look for a user's account info in the DB using email or phoneNumber (for UserAccount).
+        public static Account CheckValidInfo(string email, string phoneNumber)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  AccountId,
+  Username,
+  Role,
+  Email,
+  PasswordHash,
+  PasswordSalt,
+  Name,
+  NotificationType,
+  Location,
+  PhoneNumber
+FROM Accounts
+WHERE Activated = 1
+AND (Email = @Email 
+OR PhoneNumber = @PhoneNumber);", connect);
+            command.Parameters.AddWithValue("@Email", email);
+            command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
             SqlDataReader reader = command.ExecuteReader();
             Account myAccount = null;
 
@@ -167,6 +230,31 @@ WHERE Username = @Username;", connect);
             command.ExecuteNonQuery();
             connect.Close();
             return myAccount;
+        }
+
+        // Activate accounts using Code
+        public static bool ActivateAccount(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return false;
+            }
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+UPDATE Accounts
+SET 
+ Activated = 1,
+ Code = null
+WHERE Code = @Code;
+SELECT @@ROWCOUNT", connect);
+
+            command.Parameters.AddWithValue("@Code", code);
+
+            int rowCount = (int)command.ExecuteScalar();
+            connect.Close();
+            return rowCount == 1;
         }
 
         /// <summary>
@@ -259,7 +347,7 @@ SET
  NotificationType = @NotificationType,
  Location = @Location,
  PhoneNumber = @PhoneNumber
-WHERE AccountId = @AccountId;", connect);
+WHERE Activated = 1 AND AccountId = @AccountId;", connect);
 
             command.Parameters.AddWithValue("@Name", updatedAccount.Name);
             command.Parameters.AddWithValue("@Email", updatedAccount.Email);
@@ -272,6 +360,31 @@ WHERE AccountId = @AccountId;", connect);
             connect.Close();
             return true;
         }
+
+        public static bool UpdateCode(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return false;
+            }
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+UPDATE Accounts
+SET 
+ Code = @Code
+WHERE Activated = 1 AND Username = @Username;
+SELECT @@ROWCOUNT", connect);
+
+            command.Parameters.AddWithValue("@Username", username);
+            command.Parameters.AddWithValue("@Code", Guid.NewGuid().ToString());
+            
+            int rowCount = (int)command.ExecuteScalar();
+            connect.Close();
+            return rowCount == 1;
+        }
+
 
         // Reset Password in DB.
         public static bool UpdatePassword(Account myAccount)
@@ -305,7 +418,7 @@ WHERE AccountId = @AccountId;", connect);
 
             SqlCommand command = new SqlCommand(@"
 DELETE FROM Accounts 
-WHERE AccountId = @AccountId;", connect);
+WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@AccountId", myAccount.AccountId);
             
@@ -313,5 +426,54 @@ WHERE AccountId = @AccountId;", connect);
             connect.Close();
             return true;
         }
+
+//        public static Account SelectCount(string email, string phoneNumber)
+//        {
+//            SqlConnection connect = DBConnect.GetConnection();
+//            connect.Open();
+
+//            SqlCommand command = new SqlCommand(@"
+//SELECT 
+//  (SELECT COUNT( * ) FROM Accounts WHERE Email = @Email) AS EmailCount,
+//  (SELECT COUNT( * ) FROM Accounts WHERE PhoneNumber = @PhoneNumber) AS PhoneNumberCount;", connect);
+//            command.Parameters.AddWithValue("@Email", email);
+//            command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
+//            SqlDataReader reader = command.ExecuteReader();
+//            Account myAccount = null;
+
+//            //int accountIdIndex = reader.GetOrdinal("AccountId");
+//            //int usernameIndex = reader.GetOrdinal("Username");
+//            //int roleIndex = reader.GetOrdinal("Role");
+//            //int emailIndex = reader.GetOrdinal("Email");
+//            //int passwordHashIndex = reader.GetOrdinal("PasswordHash");
+//            //int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
+//            //int nameIndex = reader.GetOrdinal("Name");
+//            //int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+//            //int locationIndex = reader.GetOrdinal("Location");
+//            //int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+//            int emailCountIndex = reader.GetOrdinal("EmailCount");
+//            int phoneNumberCountIndex = reader.GetOrdinal("PhoneNumberCount");
+
+//            while (reader.Read())
+//            {
+//                //myAccount.AccountId = reader.GetInt32(accountIdIndex);
+//                //myAccount.Username = reader.GetString(usernameIndex);
+//                //myAccount.Role = (Role)reader.GetInt32(roleIndex);
+//                //myAccount.Email = reader.GetString(emailIndex);
+//                //myAccount.PasswordHash = reader.GetString(passwordHashIndex);
+//                //myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
+//                //myAccount.Name = reader.GetString(nameIndex);
+//                //myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
+//                //myAccount.Location = (Location)reader.GetInt32(locationIndex);
+//                //myAccount.PhoneNumber = reader.GetString(phoneNumberIndex);
+//                int EmailCount = reader.GetInt32(emailCountIndex);
+//                myAccount.PhoneNumberCount = reader.GetInt32(phoneNumberCountIndex);
+//            }
+
+//            reader.Close();
+//            command.ExecuteNonQuery();
+//            connect.Close();
+//            return myAccount;
+//        }
     }
 }
