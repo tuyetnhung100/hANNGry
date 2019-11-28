@@ -394,7 +394,7 @@ hANNGry
 
             }
             myAccount.Code = Guid.NewGuid().ToString();
-            AccountDB.Update(myAccount);
+            AccountDB.UpdateCode(myAccount.Username);
 
             string subject = "Password Reset Link.";
             string url = "http://localhost:4841/Home/Activated?code=" + myAccount.Code;
