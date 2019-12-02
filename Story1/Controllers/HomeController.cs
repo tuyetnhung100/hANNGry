@@ -172,6 +172,7 @@ hANNGry
             return View(model);
         }
 
+        // Validate code and activate account.
         [HttpGet]
         public ActionResult Activated(string code)
         {
@@ -367,7 +368,7 @@ hANNGry
             return View(model);
         }
 
-        // Check for logged in account (account in session)
+        // Check for logged in account (account in session).
         private bool IsLoggedIn()
         {
             Account account = Session["account"] as Account;
@@ -375,12 +376,14 @@ hANNGry
             return isLoggedIn;
         }
 
+        // Display webpage for user that forgot password.
         [HttpGet]
         public ActionResult ChangePasswordByEmail()
         {
             return View();
         }
 
+        // Email a link to reset password.
         [HttpPost]
         public ActionResult ChangePasswordByEmail(ChangePasswordByEmailViewModel model)
         {
@@ -397,7 +400,7 @@ hANNGry
             AccountDB.UpdateCode(myAccount.Username);
 
             string subject = "Password Reset Link.";
-            string url = "http://localhost:4841/Home/Activated?code=" + myAccount.Code;
+            string url = "http://localhost:4841/Home/Resetpsw?code=" + myAccount.Code;
             string body = "Hi, " + myAccount.Name + @"
 
 <p><a href='" + url + @"'>" + url + @"<a/></p>
@@ -408,5 +411,20 @@ hANNGry
             EmailNotifier.SendHtmlEmail(myAccount.Email, subject, body);
             return View(model);
         }
+
+        // After clicking the link in email, user will be asked to enter new password.
+        [HttpGet]
+        public ActionResult ResetPsw(string code)
+        {
+            Account myAccount = AccountDB.FindAccountByCode(code);
+            return View();          
+        }
+
+        //[HttpPost]
+        //public ActionResult ResetPsw(string code)
+        //{
+        //    bool found = AccountDB.ChangePswViaEmail(code);
+        //    return View(model);
+        //}
     }
 }

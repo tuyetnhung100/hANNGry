@@ -184,6 +184,7 @@
     <Content Include="Views\Home\ChangePassword.cshtml" />
     <Content Include="Views\Home\Activated.cshtml" />
     <Content Include="Views\Home\ChangePasswordByEmail.cshtml" />
+    <Content Include="Views\Home\ResetPsw.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

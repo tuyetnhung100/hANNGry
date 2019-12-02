@@ -361,6 +361,7 @@ WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             return true;
         }
 
+        // Update account's code in DB (for ChangePasswordByEmail link)
         public static bool UpdateCode(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -385,7 +386,6 @@ SELECT @@ROWCOUNT", connect);
             return rowCount == 1;
         }
 
-
         // Reset Password in DB.
         public static bool UpdatePassword(Account myAccount)
         {
@@ -408,6 +408,63 @@ WHERE AccountId = @AccountId;", connect);
             command.ExecuteNonQuery();
             connect.Close();
             return true;
+        }
+
+        public static Account FindAccountByCode(string code)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+SELECT
+  AccountId,
+  Username,
+  Role,
+  Email,
+  PasswordHash,
+  PasswordSalt,
+  Name,
+  NotificationType,
+  Location,
+  PhoneNumber
+FROM Accounts
+WHERE Activated = 1
+AND Code = @Code;", connect);
+            command.Parameters.AddWithValue("@Code", code);
+            SqlDataReader reader = command.ExecuteReader();
+            Account myAccount = null;
+
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int usernameIndex = reader.GetOrdinal("Username");
+            int roleIndex = reader.GetOrdinal("Role");
+            int emailIndex = reader.GetOrdinal("Email");
+            int passwordHashIndex = reader.GetOrdinal("PasswordHash");
+            int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
+            int nameIndex = reader.GetOrdinal("Name");
+            int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+            int locationIndex = reader.GetOrdinal("Location");
+            int PhoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+
+            while (reader.Read())
+            {
+                myAccount = new Account();
+                myAccount.AccountId = reader.GetInt32(accountIdIndex);
+                myAccount.Username = reader.GetString(usernameIndex);
+                myAccount.Role = (Role)reader.GetInt32(roleIndex);
+                myAccount.Email = reader.GetString(emailIndex);
+                myAccount.PasswordHash = reader.GetString(passwordHashIndex);
+                myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
+                myAccount.Name = reader.GetString(nameIndex);
+                myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
+                myAccount.Location = (Location)reader.GetInt32(locationIndex);
+                myAccount.PhoneNumber = reader.GetString(PhoneNumberIndex);
+                myAccount.Activated = true;
+            }
+
+            reader.Close();
+            command.ExecuteNonQuery();
+            connect.Close();
+            return myAccount;
         }
 
         // Delete an account in DB.
