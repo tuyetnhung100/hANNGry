@@ -94,7 +94,7 @@ namespace Notifier
             SmtpClient.Send(mailMessage);
         }
 
-        /// <summary>
+        /// <summary>      
         /// Send email asynchronously.
         /// </summary>
         /// <param name="email">The email address</param>

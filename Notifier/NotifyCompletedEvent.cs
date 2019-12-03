@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * Programmer(s):      Gong-Hao
+ * Date:               11/14/2019
+ * What the code does: Handel Notify Completed Event
+ */
+
+using System;
 
 namespace Notifier
 {

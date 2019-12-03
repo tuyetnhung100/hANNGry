@@ -1,9 +1,10 @@
-﻿/*
+/*
  * Programmer(s):      Gong-Hao
  * Date:               11/14/2019
  * What the code does: Send notification via SMS
  */
 
+using System;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -13,6 +14,8 @@ namespace Notifier
 {
     public static class SMSNotifier
     {
+        private const string senderPhoneNumber = "+12028662369";
+
         public static event NotifyCompletedEventHandler NotifyCompleted;
 
         private static bool isInit = false;
@@ -40,10 +43,11 @@ namespace Notifier
                 InitializeTwilio();
                 isInit = true;
             }
+            string e164PhoneNumber = PhoneValidator.GetE164PhoneNumber(phoneNumber);
             MessageResource.Create(
                 body: body,
-                from: new PhoneNumber("+12028662369"),
-                to: new PhoneNumber(phoneNumber)
+                from: new PhoneNumber(senderPhoneNumber),
+                to: new PhoneNumber(e164PhoneNumber)
             );
         }
 
@@ -62,13 +66,32 @@ namespace Notifier
             }
             Task.Run(async () =>
             {
-                await MessageResource.CreateAsync(
-                    body: body,
-                    from: new PhoneNumber("+12028662369"),
-                    to: new PhoneNumber(phoneNumber)
-                );
-                NotifyCompletedEventArgs eventArgs = new NotifyCompletedEventArgs(userToken);
-                NotifyCompleted?.Invoke(eventArgs);
+                try
+                {
+                    string e164PhoneNumber = PhoneValidator.GetE164PhoneNumber(phoneNumber);
+                    await MessageResource.CreateAsync(
+                        body: body,
+                        from: new PhoneNumber(senderPhoneNumber),
+                        to: new PhoneNumber(phoneNumber)
+                    );
+                    if (NotifyCompleted != null)
+                    {
+                        NotifyCompletedEventArgs eventArgs = new NotifyCompletedEventArgs(userToken);
+                        NotifyCompleted.Invoke(eventArgs);
+                    }
+                }
+                catch (FormatException error)
+                {
+                    if (NotifyCompleted != null)
+                    {
+                        NotifyCompletedEventArgs eventArgs = new NotifyCompletedEventArgs(
+                            cancelled: false,
+                            error: error,
+                            userState: userToken
+                        );
+                        NotifyCompleted.Invoke(eventArgs);
+                    }
+                }
             });
         }
     }

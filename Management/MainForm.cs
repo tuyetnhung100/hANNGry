@@ -1,4 +1,10 @@
-﻿using AccountLibrary;
+﻿/*
+ * Programmer(s):      Gong-Hao
+ * Date:               11/07/2019
+ * What the code does: The MainForm of the program
+ */
+
+using AccountLibrary;
 using Story2;
 using Story3;
 using Story4;

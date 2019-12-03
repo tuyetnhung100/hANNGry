@@ -22,7 +22,6 @@ namespace AccountLibrary
         public bool Activated { get; set; }
         public Location Location { get; set; }
         public NotificationType NotificationType { get; set; }
-
         public int EmailCount { get; set; }
         public int PhoneNumberCount { get; set; }
         public string Code { get; set; }

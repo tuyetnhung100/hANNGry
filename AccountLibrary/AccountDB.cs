@@ -1,8 +1,8 @@
-﻿/*
- * Programmer(s):      Gong-Hao, Nina Hoang
- * Date:               10/23/2019
- * What the code does: Data access layer of Account.
- */
+/*
+* Programmer(s):      Gong-Hao, Nina Hoang
+* Date:               10/23/2019
+* What the code does: Data access layer of Account.
+*/
 
 using ConnectDB;
 using System;
@@ -255,16 +255,58 @@ SELECT @@ROWCOUNT", connect);
             int rowCount = (int)command.ExecuteScalar();
             connect.Close();
             return rowCount == 1;
+
+        }
+
+        /// <summary>
+        /// Get all combinations from location
+        /// </summary>
+        /// <param name="location">The location</param>
+        /// <returns></returns>
+        private static List<int> GetLocationList(Location location)
+        {
+            bool hasSylvania = location.HasFlag(Location.Sylvania);
+            bool hasRockCreek = location.HasFlag(Location.RockCreek);
+            bool hasCascade = location.HasFlag(Location.Cascade);
+            bool hasSoutheast = location.HasFlag(Location.Southeast);
+            List<int> locationList = new List<int>();
+            // there 16 combinations
+            for (int i = 0; i < 16; i++)
+            {
+                Location current = (Location)i;
+                if (hasSylvania && current.HasFlag(Location.Sylvania))
+                {
+                    locationList.Add(i);
+                }
+                if (hasRockCreek && current.HasFlag(Location.RockCreek))
+                {
+                    locationList.Add(i);
+                }
+                if (hasCascade && current.HasFlag(Location.Cascade))
+                {
+                    locationList.Add(i);
+                }
+                if (hasSoutheast && current.HasFlag(Location.Southeast))
+                {
+                    locationList.Add(i);
+                }
+            }
+            return locationList;
         }
 
         /// <summary>
         /// SELECT all Subscribers.
         /// </summary>
         /// <param name="command">The SqlCommand</param>
+        /// <param name="location">The location</param>
         /// <param name="subscribers">The all subscribers</param>
-        public static void GetSubscribers(SqlCommand command, ref List<Account> subscribers)
+        public static void GetSubscribers(SqlCommand command, Location location, ref List<Account> subscribers)
         {
             subscribers.Clear();
+
+            List<int> locationList = GetLocationList(location);
+            bool isAllLocations = (int)location == 15;
+            string locationCondition = isAllLocations ? "" : "AND Location IN (" + string.Join(",", locationList) + ")";
 
             // set select sql
             string sql = @"
@@ -277,7 +319,10 @@ SELECT
   Location
 FROM Accounts
 WHERE Activated = 1
-AND Role = @Role;";
+AND Role = @Role
+AND NotificationType <> 0
+" + locationCondition + @"
+;";
             command.CommandText = sql;
 
             // set Parameters.
@@ -286,23 +331,23 @@ AND Role = @Role;";
 
             // read data into a int list.
             SqlDataReader reader = command.ExecuteReader();
-            int accountId = reader.GetOrdinal("AccountId");
-            int name = reader.GetOrdinal("Name");
-            int email = reader.GetOrdinal("Email");
-            int phoneNumber = reader.GetOrdinal("PhoneNumber");
-            int notificationType = reader.GetOrdinal("NotificationType");
-            int location = reader.GetOrdinal("Location");
+            int accountIdIndex = reader.GetOrdinal("AccountId");
+            int nameIndex = reader.GetOrdinal("Name");
+            int emailIndex = reader.GetOrdinal("Email");
+            int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int notificationTypeIndex = reader.GetOrdinal("NotificationType");
+            int locationIndex = reader.GetOrdinal("Location");
 
             while (reader.Read())
             {
                 Account account = new Account
                 {
-                    AccountId = reader.GetInt32(accountId),
-                    Name = reader.GetString(name),
-                    Email = reader.GetString(email),
-                    PhoneNumber = reader.GetString(phoneNumber),
-                    NotificationType = (NotificationType)reader.GetInt32(notificationType),
-                    Location = (Location)reader.GetInt32(location)
+                    AccountId = reader.GetInt32(accountIdIndex),
+                    Name = reader.GetString(nameIndex),
+                    Email = reader.GetString(emailIndex),
+                    PhoneNumber = reader.GetString(phoneNumberIndex),
+                    NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex),
+                    Location = (Location)reader.GetInt32(locationIndex)
                 };
                 subscribers.Add(account);
             }
@@ -380,7 +425,7 @@ SELECT @@ROWCOUNT", connect);
 
             command.Parameters.AddWithValue("@Username", username);
             command.Parameters.AddWithValue("@Code", Guid.NewGuid().ToString());
-            
+
             int rowCount = (int)command.ExecuteScalar();
             connect.Close();
             return rowCount == 1;
@@ -478,59 +523,10 @@ DELETE FROM Accounts
 WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@AccountId", myAccount.AccountId);
-            
+
             command.ExecuteNonQuery();
             connect.Close();
             return true;
         }
-
-//        public static Account SelectCount(string email, string phoneNumber)
-//        {
-//            SqlConnection connect = DBConnect.GetConnection();
-//            connect.Open();
-
-//            SqlCommand command = new SqlCommand(@"
-//SELECT 
-//  (SELECT COUNT( * ) FROM Accounts WHERE Email = @Email) AS EmailCount,
-//  (SELECT COUNT( * ) FROM Accounts WHERE PhoneNumber = @PhoneNumber) AS PhoneNumberCount;", connect);
-//            command.Parameters.AddWithValue("@Email", email);
-//            command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-//            SqlDataReader reader = command.ExecuteReader();
-//            Account myAccount = null;
-
-//            //int accountIdIndex = reader.GetOrdinal("AccountId");
-//            //int usernameIndex = reader.GetOrdinal("Username");
-//            //int roleIndex = reader.GetOrdinal("Role");
-//            //int emailIndex = reader.GetOrdinal("Email");
-//            //int passwordHashIndex = reader.GetOrdinal("PasswordHash");
-//            //int passwordSaltIndex = reader.GetOrdinal("PasswordSalt");
-//            //int nameIndex = reader.GetOrdinal("Name");
-//            //int notificationTypeIndex = reader.GetOrdinal("NotificationType");
-//            //int locationIndex = reader.GetOrdinal("Location");
-//            //int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
-//            int emailCountIndex = reader.GetOrdinal("EmailCount");
-//            int phoneNumberCountIndex = reader.GetOrdinal("PhoneNumberCount");
-
-//            while (reader.Read())
-//            {
-//                //myAccount.AccountId = reader.GetInt32(accountIdIndex);
-//                //myAccount.Username = reader.GetString(usernameIndex);
-//                //myAccount.Role = (Role)reader.GetInt32(roleIndex);
-//                //myAccount.Email = reader.GetString(emailIndex);
-//                //myAccount.PasswordHash = reader.GetString(passwordHashIndex);
-//                //myAccount.PasswordSalt = reader.GetString(passwordSaltIndex);
-//                //myAccount.Name = reader.GetString(nameIndex);
-//                //myAccount.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
-//                //myAccount.Location = (Location)reader.GetInt32(locationIndex);
-//                //myAccount.PhoneNumber = reader.GetString(phoneNumberIndex);
-//                int EmailCount = reader.GetInt32(emailCountIndex);
-//                myAccount.PhoneNumberCount = reader.GetInt32(phoneNumberCountIndex);
-//            }
-
-//            reader.Close();
-//            command.ExecuteNonQuery();
-//            connect.Close();
-//            return myAccount;
-//        }
     }
 }
