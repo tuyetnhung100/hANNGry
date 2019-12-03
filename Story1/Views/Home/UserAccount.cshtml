@@ -92,6 +92,23 @@
             float: right;
             color: #3733FF;
         }
+        /* Set style for the logout button */
+        input.logout[type=button] {
+            width: 10%;
+            padding: 12px 18px;
+            background-color: #f44336;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        /* Set style for the unsubscribe button */
+        input.unsubscribe[type=button] {
+            width: 10%;
+            padding: 12px 18px;
+            background-color: violet;
+            float: right;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -149,13 +166,11 @@
             <button type="submit" class="savebtn">Save Changes</button>
         </div>
 
-        <div class="container" style="background-color:#f1f1f1">
-            @Html.ActionLink("Unsubscribe", "Unsubscribe")
+        <div class="container" style="background-color:papayawhip">
+            <input type="button" class="logout" onclick="location.href='/Home/Logout';" value="Logout" />
+            <input type="button" class="unsubscribe" onclick="location.href='/Home/Unsubscribe';" value="Unsubscribe" />
         </div>
     </form>
-
-    @Html.ActionLink("Logout", "Logout")
-
 
 
     @Html.ValidationSummary(true, "")
