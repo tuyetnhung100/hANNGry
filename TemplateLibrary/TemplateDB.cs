@@ -66,6 +66,24 @@ WHERE Subject = @Subject;", connect);
             return true;
         }
 
+        // Deletes values in Template table.
+        public static bool Delete(Template myTemplate)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+            DELETE FROM Templates
+            WHERE Subject = @Subject;", connect);
+
+            command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
+
+            command.ExecuteNonQuery();
+
+            connect.Close();
+            return true;
+        }
+
         /// <summary>
         /// Load all templates.
         /// </summary>
@@ -80,15 +98,16 @@ WHERE Subject = @Subject;", connect);
                 SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
-SELECT
-  Templates.TemplateId,
-  Templates.Subject,
-  Templates.Message,
-  Accounts.Name AS CreatedEmployeeName,
-  Templates.CreatedDate
-FROM Templates
-INNER JOIN Accounts
-  ON Accounts.AccountId = Templates.CreatedAccountId;";
+                SELECT
+                Templates.TemplateId,
+                Templates.Subject,
+                Templates.Message,
+                Accounts.Name AS CreatedEmployeeName,
+                Templates.CreatedDate
+                FROM Templates
+                INNER JOIN Accounts
+                ON Accounts.AccountId = Templates.CreatedAccountId;";
+
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 

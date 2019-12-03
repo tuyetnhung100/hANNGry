@@ -16,10 +16,6 @@ namespace Story4
 {
     public partial class LogViewer : Form
     {
-        
-
-        
-
         public static Account LoginedEmployee;
 
         public LogViewer()
@@ -32,7 +28,7 @@ namespace Story4
             // Clears data grid view and textbox
             notificationDataGridView.DataSource = null;
             notificationDataGridView.Rows.Clear();
-            
+
         }
 
         // Creates the data table add that data to datagridview
@@ -80,26 +76,20 @@ namespace Story4
         // Will put text in datagridview cell to rich text box
         private void notificationDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(notificationDataGridView.CurrentCell.Value != null)
+            if (notificationDataGridView.CurrentCell.Value != null)
             {
                 Form2 frm2 = new Form2(notificationDataGridView.CurrentCell.Value.ToString());
-
-
                 frm2.ShowDialog();
-                
             }
             else
             {
                 MessageBox.Show("Oops!");
             }
-
         }
         // Allows a search of the database by both message content
         private void findMessageButton_Click(object sender, EventArgs e)
         {
             String input = Interaction.InputBox("Please enter message you would like to search for.", "Enter Message", "");
-
-
 
             List<Notification> notifications = new List<Notification>();
             NotificationDB.Search(input, ref notifications);
@@ -145,7 +135,7 @@ namespace Story4
             else
             {
                 List<Notification> notifications = new List<Notification>();
-                NotificationDB.SearchTimeMessage(input,startTime, endTime, ref notifications);
+                NotificationDB.SearchTimeMessage(input, startTime, endTime, ref notifications);
                 DataTable datatable = new DataTable();
                 datatable.Columns.Add("Sender");
                 datatable.Columns.Add("Subject");

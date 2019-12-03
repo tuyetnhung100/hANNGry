@@ -95,7 +95,6 @@ namespace NotificationLibrary
                                                  connect);
 
             command.Parameters.AddWithValue("@message", input);
-            
 
             SqlDataReader reader = command.ExecuteReader();
 
