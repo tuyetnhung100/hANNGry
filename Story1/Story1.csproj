@@ -129,8 +129,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Services\AccountServices.cs" />
-    <Compile Include="Models\ViewModels\ChangePasswordByEmailViewModel.cs" />
     <Compile Include="Models\ViewModels\ForgotPasswordViewModel.cs" />
+    <Compile Include="Models\ViewModels\ChangePasswordViewModel.cs" />
     <Compile Include="Models\ViewModels\UnsubscribeViewModel.cs" />
     <Compile Include="Models\ViewModels\UserAccountViewModel.cs" />
     <Compile Include="Models\ViewModels\LoginViewModel.cs" />

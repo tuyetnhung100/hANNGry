@@ -393,12 +393,12 @@ hANNGry
             AccountDB.UpdateCode(account.Username, code);
 
             string subject = "Password Reset Link.";
-            string url = "http://localhost:4841/Home/Resetpsw?code=" + code;
+            string url = "http://localhost:4841/Home/ResetPassword?code=" + code;
             string body = "Hi, " + account.Name + @"
 
 <p><a href='" + url + @"'>" + url + @"<a/></p>
 
-Thank you,
+Thank you, <br>
 hANNGry
 ";
             EmailNotifier.SendHtmlEmail(account.Email, subject, body);
