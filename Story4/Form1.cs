@@ -97,6 +97,7 @@ namespace Story4
         // Allows a search of the database by both message content
         private void findMessageButton_Click(object sender, EventArgs e)
         {
+            
             String input = Interaction.InputBox("Please enter message you would like to search for.", "Enter Message", "");
 
 
