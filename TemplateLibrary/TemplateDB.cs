@@ -21,15 +21,15 @@ namespace TemplateLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-            INSERT INTO Templates
-            (Subject,
-            Message,
-            CreatedAccountId,
-            CreatedDate)
-            VALUES (@Subject,
-            @Message,
-            @CreatedAccountId,
-            @CreatedDate);", connect);
+INSERT INTO Templates
+(Subject,
+ Message,
+ CreatedAccountId,
+ CreatedDate)
+  VALUES (@Subject,
+          @Message,
+          @CreatedAccountId,
+          @CreatedDate);", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);
@@ -49,11 +49,11 @@ namespace TemplateLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-            UPDATE Templates
-            SET Message = @Message,
-            CreatedAccountId = @CreatedAccountId,
-            CreatedDate = @CreatedDate
-            WHERE Subject = @Subject;", connect);
+UPDATE Templates
+SET Message = @Message,
+    CreatedAccountId = @CreatedAccountId,
+    CreatedDate = @CreatedDate
+WHERE Subject = @Subject;", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
             command.Parameters.AddWithValue("@Message", myTemplate.Message);

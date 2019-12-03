@@ -2,7 +2,7 @@
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 10/20/2019
-    Purpose: To maintain the data of the Register form.
+    Purpose: To maintain the data of the Register webpage.
 */
 
 using System;
@@ -26,6 +26,13 @@ namespace Story1.Models.ViewModels
         [EmailAddress(ErrorMessage = "Please enter a valid email.")]
         [Display(Name = "Email")]
         public string email { get; set; }
+
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
+                   ErrorMessage = "Entered phone format is not valid.")]
+        [Display(Name = "Phone")]
+        public string phoneNbr { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]

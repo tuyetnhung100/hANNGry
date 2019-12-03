@@ -4,7 +4,7 @@
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 10/16/2019
-    Purpose: This code creates a gui for user account login.
+    Purpose: This code creates a web gui for user account login.
 *@
 
 <!DOCTYPE html>
@@ -36,10 +36,10 @@
             background: #f1f1f1;
         }
 
-        input[type=text]:focus, input[type=password]:focus {
-            background-color: #ddd;
-            outline: none;
-        }
+            input[type=text]:focus, input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+            }
 
         /* Overwrite default styles of hr */
         hr {
@@ -58,9 +58,9 @@
             width: 100%;
         }
 
-        .loginbtn:hover {
-            opacity: 0.8;
-        }
+            .loginbtn:hover {
+                opacity: 0.8;
+            }
 
         .cancelbtn {
             width: auto;
@@ -73,7 +73,7 @@
             color: dodgerblue;
         }
 
-        span.psw {
+        span.register {
             float: right;
             padding-top: 16px;
         }
@@ -97,6 +97,8 @@
             <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
             @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
+            <a href="/Home/ForgotPassword">Forgot your password?</a>
+
             <hr>
             <button type="submit" class="loginbtn">Login</button>
         </div>
@@ -104,7 +106,7 @@
         <div class="container" style="background-color:#f1f1f1">
             <button type="reset" class="cancelbtn">Cancel</button>
             @*<a href="http://pcc.edu" class="cancelbtn">Cancel</a>*@
-            <span class="psw">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
+            <span class="register">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
 
         </div>
     </form>
@@ -113,22 +115,9 @@
         // Prompts a message box for when user enters valid or invalid login info
         if (Model != null)
         {
-            if (!string.IsNullOrWhiteSpace(Model.message))
-            {
-                @*<script>alert("@Model.message");</script>*@
-                <script>
-                    Swal.fire({
-                        title: '@Model.message',
-                        text:  'Welcome @Model.name!',
-                        type:  'success',
-                        onClose: function () {
-                            location.href = '/Home/Login';
-                        }
-                    });
-                </script>
-            }
             if (!string.IsNullOrWhiteSpace(Model.errMessage))
             {
+                @*<script>alert("@Model.errMessage");</script>*@
                 <script>
                     Swal.fire({
                         title: 'Login failed',

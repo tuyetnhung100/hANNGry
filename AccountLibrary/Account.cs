@@ -17,6 +17,11 @@ namespace AccountLibrary
         public string PasswordSalt { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public string PhoneNumber { get; set; }
         public DateTime CreatedDate { get; set; }
+        public bool Activated { get; set; }
+        public Location Location { get; set; }
+        public NotificationType NotificationType { get; set; }
+        public string Code { get; set; }
     }
 }

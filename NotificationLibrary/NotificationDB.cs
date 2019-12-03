@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Programmer(s):      Gong-Hao
  * Date:               10/23/2019
  * What the code does: Data access layer of Notification.
@@ -15,28 +15,137 @@ namespace NotificationLibrary
 {
     public class NotificationDB
     {
+        // Search database by time and message
+        public static bool SearchTimeMessage(String input, DateTime start, DateTime end, ref List<Notification> notifications)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+                                                SELECT
+                                                  NotificationId,
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate,
+                                                  (SELECT
+                                                    COUNT(Subscribers_AccountId)
+                                                  FROM SubscriberNotification
+                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+                                                  AS 'NumberSent'
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE SentDate > @start
+                                                AND SentDate < @end
+                                                AND Message LIKE '%' + @message + '%'", connect);
+
+            command.Parameters.AddWithValue("@message", input);
+            command.Parameters.AddWithValue("@start", start);
+            command.Parameters.AddWithValue("@end", end);
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+            int numberSent = reader.GetOrdinal("NumberSent");
+
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.SenderName = reader.GetString(senderName);
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
+                myNotification.NumberSent = reader.GetInt32(numberSent);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+            connect.Close();
+            return true;
+        }
+
+        //Search database by message content
+        public static bool Search(String input, ref List<Notification> notifications)
+        {
+            SqlConnection connect = DBConnect.GetConnection();
+            connect.Open();
+
+            SqlCommand command = new SqlCommand(@"
+                                                SELECT
+                                                  NotificationId,
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate,
+                                                  (SELECT
+                                                    COUNT(Subscribers_AccountId)
+                                                  FROM SubscriberNotification
+                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+                                                  AS 'NumberSent'
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE Message LIKE '%' + @message + '%'",
+                                                 connect);
+
+            command.Parameters.AddWithValue("@message", input);
+            
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            Notification myNotification;
+
+            int senderName = reader.GetOrdinal("SenderName");
+            int subject = reader.GetOrdinal("Subject");
+            int message = reader.GetOrdinal("Message");
+            int sentDate = reader.GetOrdinal("SentDate");
+            int numberSent = reader.GetOrdinal("NumberSent");
+
+            while (reader.Read())
+            {
+                myNotification = new Notification();
+                myNotification.SenderName = reader.GetString(senderName);
+                myNotification.Subject = reader.GetString(subject);
+                myNotification.Message = reader.GetString(message);
+                myNotification.SentDate = reader.GetDateTime(sentDate);
+                myNotification.NumberSent = reader.GetInt32(numberSent);
+                notifications.Add(myNotification);
+            }
+
+            reader.Close();
+            connect.Close();
+            return true;
+        }
+
+        //Search database by time
         public static bool Load(DateTime start, DateTime end, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-SELECT
-  NotificationId,
-  Name AS 'SenderName',
-  Subject,
-  Message,
-  SentDate,
-  (SELECT
-    COUNT(Subscribers_AccountId)
-  FROM SubscriberNotification
-  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
-  AS 'NumberSent'
-FROM Notifications
-INNER JOIN Accounts
-  ON Notifications.SentAccountId = Accounts.AccountId
-WHERE SentDate > @start
-AND SentDate < @end;", connect);
+                                                SELECT
+                                                  NotificationId,
+                                                  Name AS 'SenderName',
+                                                  Subject,
+                                                  Message,
+                                                  SentDate,
+                                                  (SELECT
+                                                    COUNT(Subscribers_AccountId)
+                                                  FROM SubscriberNotification
+                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+                                                  AS 'NumberSent'
+                                                FROM Notifications
+                                                INNER JOIN Accounts
+                                                  ON Notifications.SentAccountId = Accounts.AccountId
+                                                WHERE SentDate > @start
+                                                AND SentDate < @end;", connect);
 
             command.Parameters.AddWithValue("@start", start);
             command.Parameters.AddWithValue("@end", end);
@@ -82,12 +191,14 @@ INSERT INTO Notifications
  Message,
  TemplateId,
  SentAccountId,
- SentDate)
+ SentDate,
+ Location)
   VALUES (@Subject,
           @Message,
           @TemplateId,
           @SentAccountId,
-          @SentDate);
+          @SentDate,
+          @Location);
 SELECT
   SCOPE_IDENTITY();";
             command.CommandText = sql;
@@ -96,16 +207,10 @@ SELECT
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@Subject", notification.Subject);
             command.Parameters.AddWithValue("@Message", notification.Message);
-            if (notification.TemplateId == null)
-            {
-                command.Parameters.AddWithValue("@TemplateId", DBNull.Value);
-            }
-            else
-            {
-                command.Parameters.AddWithValue("@TemplateId", notification.TemplateId);
-            }
+            command.Parameters.AddWithValue("@TemplateId", ParameterHelper.GetNullableValue(notification.TemplateId));
             command.Parameters.AddWithValue("@SentAccountId", notification.SentAccountId);
             command.Parameters.AddWithValue("@SentDate", DateTime.Now);
+            command.Parameters.AddWithValue("@Location", notification.Location);
 
             // retuen notificationId by SCOPE_IDENTITY
             int notificationId = Convert.ToInt32(command.ExecuteScalar());
@@ -161,7 +266,7 @@ INSERT INTO SubscriberNotification
         /// <param name="notification">The Notification data</param>
         /// <param name="subscribers">The Subscribers</param>
         /// <returns>Whether the command is succeeded</returns>
-        public static bool SendNotification(Notification notification, ref List<Account> subscribers)
+        public static SendNotificationResult SendNotification(Notification notification, ref List<Account> subscribers)
         {
             subscribers.Clear();
 
@@ -173,11 +278,19 @@ INSERT INTO SubscriberNotification
                 SqlCommand command = new SqlCommand();
                 command.Connection = connection;
 
+                // select all subscribers that role is Role.Subscriber
+                AccountDB.GetSubscribers(command, notification.Location, ref subscribers);
+                if (subscribers.Count == 0)
+                {
+                    connection.Close();
+                    connection.Dispose();
+                    command.Dispose();
+
+                    return SendNotificationResult.NoSubscribers;
+                }
                 // insert Notification and get the new notificationId
                 int notificationId = InsertNotification(command, notification);
                 notification.NotificationId = notificationId;
-                // select all subscribers that role is Role.Subscriber
-                AccountDB.GetSubscribers(command, ref subscribers);
                 // insert SubscriberNotification map table
                 InsertSubscriberNotification(command, notificationId, ref subscribers);
 
@@ -185,12 +298,12 @@ INSERT INTO SubscriberNotification
                 connection.Dispose();
                 command.Dispose();
 
-                return true;
+                return SendNotificationResult.Succeeded;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return false;
+                return SendNotificationResult.DatabaseError;
             }
         }
 
@@ -227,14 +340,7 @@ INSERT INTO SubscriberNotification
                 command.Parameters.AddWithValue("@Succeeded", succeeded);
                 command.Parameters.AddWithValue("@Cancelled", cancelled);
                 command.Parameters.AddWithValue("@Failed", failed);
-                if (failed)
-                {
-                    command.Parameters.AddWithValue("@ErrorMessage", errorMessage);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@ErrorMessage", DBNull.Value);
-                }
+                command.Parameters.AddWithValue("@ErrorMessage", ParameterHelper.GetNullableValue(errorMessage));
 
                 string sql = @"
 UPDATE SubscriberNotification

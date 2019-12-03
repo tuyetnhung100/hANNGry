@@ -1,4 +1,4 @@
-﻿using AccountLibrary;
+using AccountLibrary;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
