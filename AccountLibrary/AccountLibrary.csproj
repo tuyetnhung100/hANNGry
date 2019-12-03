@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="AccountDB.cs" />
+    <Compile Include="CheckValidInfoResult.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="NotificationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

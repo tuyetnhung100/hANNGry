@@ -5,10 +5,6 @@
     Purpose: To maintain the data of the ChangePassword webpage.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
 
 namespace Story1.Models.ViewModels
@@ -28,6 +24,8 @@ namespace Story1.Models.ViewModels
         [Compare("psw", ErrorMessage = "The password and repeat password do not match.")]
         [Display(Name = "Repeat Password")]
         public string pswRepeat { get; set; }
+
+        public string code { get; set; }
 
         public string name { get; set; }
         public string errMessage { get; set; }
