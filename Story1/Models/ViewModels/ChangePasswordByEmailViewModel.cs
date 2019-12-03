@@ -5,20 +5,16 @@
     Purpose: To maintain the data of the ChangePasswordByEmail webpage.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.ComponentModel.DataAnnotations;
 
 namespace Story1.Models.ViewModels
 {
-    public class ChangePasswordByEmailViewModel
+    public class ForgotPasswordViewModel
     {
         [Required]
         [Display(Name = "Username")]
         public string username { get; set; }
-       
+
         public string errMessage { get; set; }
         public string message { get; set; }
     }

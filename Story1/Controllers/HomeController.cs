@@ -102,7 +102,7 @@ namespace Story1.Controllers
             {
                 // display an error message if username and password not found in DB.
                 model.errMessage = "Please enter valid username and password.";
-            }       
+            }
             return View(model);
         }
 
@@ -128,7 +128,7 @@ namespace Story1.Controllers
                 // Validate whether account already exists.
                 Account existingAccount = AccountDB.CheckAccountAvailability(model.username, model.email);
                 // If no match, then create a new account.
-                if (existingAccount == null) 
+                if (existingAccount == null)
                 {
                     Account myAccount = new Account();
                     myAccount.Username = model.username;
@@ -137,7 +137,7 @@ namespace Story1.Controllers
                     myAccount.PasswordHash = model.psw;
                     myAccount.PhoneNumber = model.phoneNbr;
                     myAccount.Code = Guid.NewGuid().ToString();
-                    AccountDB.Add(myAccount);
+                    AccountDB.CreateAccount(myAccount);
                     string subject = "Please confirm your email.";
                     string url = "http://localhost:4841/Home/Activated?code=" + myAccount.Code;
                     string body = "Hi, " + myAccount.Name + @"
@@ -145,17 +145,17 @@ namespace Story1.Controllers
 <p><a href='" + url + @"'>" + url + @"<a/></p>
 
 hANNGry
-";       
+";
                     EmailNotifier.SendHtmlEmail(myAccount.Email, subject, body);
                     model.message = "Register successfully";
                 }
                 // Validate for an existing email.
-                else if (model.email == existingAccount.Email) 
+                else if (model.email == existingAccount.Email)
                 {
                     model.errMessage = "Email already exists. Please enter a new one.";
                 }
                 // Validate for an existing username.
-                else if (model.username == existingAccount.Username) 
+                else if (model.username == existingAccount.Username)
                 {
                     model.errMessage = "Username already exists. Please enter a new one.";
                 }
@@ -222,7 +222,7 @@ hANNGry
             {
                 model.isSELocation = true;
             }
-            
+
             return View(model);
         }
 
@@ -230,27 +230,18 @@ hANNGry
         [HttpPost]
         public ActionResult UserAccount(UserAccountViewModel model)
         {
-            Account existingAccount;
             Account account = Session["account"] as Account;
             bool emailChanged = model.acctEmail != account.Email;
             bool phoneChanged = model.acctPhoneNumber != account.PhoneNumber;
             if (emailChanged || phoneChanged)
             {
-                //existingAccount = AccountDB.SelectAccount(model.acctEmail, model.acctPhoneNumber);
+                CheckValidInfoResult result = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
 
-                //if(existingAccount != null)
-                //{
-                //    model.errMessage = "Email or Phone already exist. Please enter a new one.";
-                //    return View(model);
-                //}
-
-                existingAccount = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
-
-                if (existingAccount.EmailCount != 0)
+                if (result.EmailCount != 0)
                 {
                     model.errMessage = "Email already exists. Please enter a new one.";
                 }
-                else if (existingAccount.PhoneNumberCount != 0)
+                else if (result.PhoneNumberCount != 0)
                 {
                     model.errMessage = "Phone Number already exists. Please enter a new one.";
                 }
@@ -287,9 +278,9 @@ hANNGry
             {
                 updatedAccount.Location = updatedAccount.Location | Location.Southeast;
             }
-            AccountDB.Update(updatedAccount);
+            AccountDB.UpdateAccount(updatedAccount);
             model.message = "Saved successfully";
-          
+
             return View(model);
         }
 
@@ -357,7 +348,7 @@ hANNGry
             model.message = "";
             model.errMessage = "";
 
-            Account account = Session["account"] as Account;           
+            Account account = Session["account"] as Account;
             Account myAccount = new Account
             {
                 PasswordHash = model.psw,
@@ -378,53 +369,82 @@ hANNGry
 
         // Display webpage for user that forgot password.
         [HttpGet]
-        public ActionResult ChangePasswordByEmail()
+        public ActionResult ForgotPassword()
         {
+            if (IsLoggedIn())
+            {
+                return RedirectToAction("UserAccount");
+            }
             return View();
         }
 
         // Email a link to reset password.
         [HttpPost]
-        public ActionResult ChangePasswordByEmail(ChangePasswordByEmailViewModel model)
+        public ActionResult ForgotPassword(ForgotPasswordViewModel model)
         {
-            Account myAccount = AccountDB.FindActivatedAccount(model.username);
-            if (myAccount == null)
+            Account account = AccountDB.FindActivatedAccount(model.username);
+            if (account == null)
             {
-
+                model.errMessage = "Account not found";
+                return View(model);
             }
-            else
-            {
 
-            }
-            myAccount.Code = Guid.NewGuid().ToString();
-            AccountDB.UpdateCode(myAccount.Username);
+            string code = Guid.NewGuid().ToString();
+            AccountDB.UpdateCode(account.Username, code);
 
             string subject = "Password Reset Link.";
-            string url = "http://localhost:4841/Home/Resetpsw?code=" + myAccount.Code;
-            string body = "Hi, " + myAccount.Name + @"
+            string url = "http://localhost:4841/Home/Resetpsw?code=" + code;
+            string body = "Hi, " + account.Name + @"
 
 <p><a href='" + url + @"'>" + url + @"<a/></p>
 
 Thank you,
 hANNGry
 ";
-            EmailNotifier.SendHtmlEmail(myAccount.Email, subject, body);
+            EmailNotifier.SendHtmlEmail(account.Email, subject, body);
             return View(model);
         }
 
         // After clicking the link in email, user will be asked to enter new password.
         [HttpGet]
-        public ActionResult ResetPsw(string code)
+        public ActionResult ResetPassword(string code)
         {
-            Account myAccount = AccountDB.FindAccountByCode(code);
-            return View();          
+            if (IsLoggedIn())
+            {
+                return RedirectToAction("UserAccount");
+            }
+            Account existingAccount = AccountDB.FindAccountByCode(code);
+            ChangePasswordViewModel model = new ChangePasswordViewModel
+            {
+                name = existingAccount.Name,
+                code = code
+            };
+            if (existingAccount == null)
+            {
+                return RedirectToAction("Login");
+            }
+            return View(model);
         }
 
-        //[HttpPost]
-        //public ActionResult ResetPsw(string code)
-        //{
-        //    bool found = AccountDB.ChangePswViaEmail(code);
-        //    return View(model);
-        //}
+        [HttpPost]
+        public ActionResult ResetPassword(ChangePasswordViewModel model)
+        {
+            Account existingAccount = AccountDB.FindAccountByCode(model.code);
+            if (existingAccount == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (ModelState.IsValid)
+            {
+                AccountDB.ResetPassword(model.code, model.psw);
+                model.message = "Reset successfully";
+            }
+            else
+            {
+                model.errMessage = "Please enter valid information.";
+            }
+            return View(model);
+        }
     }
 }
