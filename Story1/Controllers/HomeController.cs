@@ -136,6 +136,32 @@ namespace Story1.Controllers
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
                     myAccount.PhoneNumber = model.phoneNbr;
+
+                    if (model.isEmailNotiType)
+                    {
+                        myAccount.NotificationType = myAccount.NotificationType | NotificationType.Email;
+                    }
+                    if (model.isTextNotiType)
+                    {
+                        myAccount.NotificationType = myAccount.NotificationType | NotificationType.SMS;
+                    }
+                    if (model.isSYLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Sylvania;
+                    }
+                    if (model.isRCLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.RockCreek;
+                    }
+                    if (model.isCASLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Cascade;
+                    }
+                    if (model.isSELocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Southeast;
+                    }
+
                     myAccount.Code = Guid.NewGuid().ToString();
                     AccountDB.CreateAccount(myAccount);
                     string subject = "Please confirm your email.";

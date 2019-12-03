@@ -83,17 +83,18 @@
         /* Set style for Checkbox inside Select Option */
         .multiselect {
             width: 100%;
+            padding: 15px;
+            background: #f1f1f1;
+            margin: 5px 0 22px 0;
         }
         .selectBox {
             position: relative;
         }
-        .selectBox select {
-            padding: 15px;
-            background: #f1f1f1;
+        .selectBox select { 
             width: 100%;
-            font-weight: bold;
-            border: none;
-            margin: 5px 0 22px 0;
+            /*font-weight: bold;*/
+            color: darkblue;
+            border: none;           
         }
         .overSelect {
             position: absolute;
@@ -108,14 +109,13 @@
             display: block;
         }
         #checkboxes label:hover {
-            background-color: #1e90ff;
+            background-color: pink;
         }
 
         /* hide location checkboxes */
         #checkboxes2 {
             display: none;
             border: 1px #dadada solid;
-            background-color: #f1f1f1;
         }
         #checkboxes2 label {
             display: block;
@@ -159,13 +159,13 @@
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes()">
                     <select>
-                        <option>Please select notification type(s)</option>
+                        <option>Please Select Notification Type(s)</option>
                     </select>
                     <div class="overSelect"></div>
                 </div>
                 <div id="checkboxes">
-                    <label for="email"><input type="checkbox" id="email" />Email</label>
-                    <label for="sms"><input type="checkbox" id="sms" />SMS</label>
+                    <label for="email">@Html.CheckBoxFor(model => model.isEmailNotiType)Email</label>
+                    <label for="sms">@Html.CheckBoxFor(model => model.isTextNotiType)SMS</label>
                 </div>
             </div>
             
@@ -173,15 +173,15 @@
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes2()">
                     <select>
-                        <option>Please select location(s)</option>
+                        <option>Please Select Location(s)</option>
                     </select>
                     <div class="overSelect"></div>
                 </div>
                 <div id="checkboxes2">
-                    <label for="SY"><input type="checkbox" id="SY" />Sylvania Campus</label>
-                    <label for="RC"><input type="checkbox" id="RC" />Rock Creek Campus</label>
-                    <label for="CAS"><input type="checkbox" id="CAS" />Cascade Campus</label>
-                    <label for="SE"><input type="checkbox" id="SE" />Southeast Campus</label>
+                    <label for="SY">@Html.CheckBoxFor(model => model.isSYLocation)Sylvania Campus</label>
+                    <label for="RC">@Html.CheckBoxFor(model => model.isRCLocation)Rock Creek Campus</label>
+                    <label for="CAS">@Html.CheckBoxFor(model => model.isCASLocation)Cascade Campus</label>
+                    <label for="SE">@Html.CheckBoxFor(model => model.isSELocation)Southeast Campus</label>
                 </div>
             </div>
 

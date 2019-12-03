@@ -53,6 +53,14 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Name")]
         public string name { get; set; }
 
+        public bool isEmailNotiType { get; set; }
+        public bool isTextNotiType { get; set; }
+
+        public bool isSYLocation { get; set; }
+        public bool isRCLocation { get; set; }
+        public bool isCASLocation { get; set; }
+        public bool isSELocation { get; set; }
+
         public string errMessage { get; set; }
         public string message { get; set; }
     }

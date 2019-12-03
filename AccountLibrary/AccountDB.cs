@@ -95,8 +95,8 @@ INSERT INTO Accounts
             command.Parameters.AddWithValue("@PasswordSalt", salt);
             command.Parameters.AddWithValue("@PhoneNumber", newAccount.PhoneNumber);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
-            command.Parameters.AddWithValue("@Location", Location.None);
-            command.Parameters.AddWithValue("@NotificationType", NotificationType.None);
+            command.Parameters.AddWithValue("@Location", newAccount.Location);
+            command.Parameters.AddWithValue("@NotificationType", newAccount.NotificationType);
             command.Parameters.AddWithValue("@Code", newAccount.Code);
 
             command.ExecuteNonQuery();
