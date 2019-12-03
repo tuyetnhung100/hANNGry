@@ -30,8 +30,8 @@ namespace Story3
             this.MinimumSize = new Size(this.Width, this.Height);
             this.MaximumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
-            this.AutoSize = true;
-            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            //this.AutoSize = true;
+            //this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             templateSelectorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             customTagComboBox.DropDownStyle = ComboBoxStyle.DropDownList;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogViewer));
             this.notificationDataGridView = new System.Windows.Forms.DataGridView();
             this.findButton = new System.Windows.Forms.Button();
             this.firstDateTimePicker = new System.Windows.Forms.DateTimePicker();
@@ -44,19 +45,19 @@
             this.notificationDataGridView.AllowUserToAddRows = false;
             this.notificationDataGridView.AllowUserToDeleteRows = false;
             this.notificationDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.notificationDataGridView.Location = new System.Drawing.Point(18, 357);
+            this.notificationDataGridView.Location = new System.Drawing.Point(18, 330);
             this.notificationDataGridView.Name = "notificationDataGridView";
             this.notificationDataGridView.ReadOnly = true;
-            this.notificationDataGridView.Size = new System.Drawing.Size(956, 321);
+            this.notificationDataGridView.Size = new System.Drawing.Size(956, 296);
             this.notificationDataGridView.TabIndex = 5;
             this.notificationDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.notificationDataGridView_CellClick);
             // 
             // findButton
             // 
             this.findButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findButton.Location = new System.Drawing.Point(99, 275);
+            this.findButton.Location = new System.Drawing.Point(18, 254);
             this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(160, 76);
+            this.findButton.Size = new System.Drawing.Size(160, 70);
             this.findButton.TabIndex = 3;
             this.findButton.Text = "&Find";
             this.findButton.UseVisualStyleBackColor = true;
@@ -65,7 +66,7 @@
             // firstDateTimePicker
             // 
             this.firstDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.firstDateTimePicker.Location = new System.Drawing.Point(265, 166);
+            this.firstDateTimePicker.Location = new System.Drawing.Point(265, 137);
             this.firstDateTimePicker.Name = "firstDateTimePicker";
             this.firstDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.firstDateTimePicker.TabIndex = 1;
@@ -73,7 +74,7 @@
             // secondDateTimePicker
             // 
             this.secondDateTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.secondDateTimePicker.Location = new System.Drawing.Point(265, 219);
+            this.secondDateTimePicker.Location = new System.Drawing.Point(265, 186);
             this.secondDateTimePicker.Name = "secondDateTimePicker";
             this.secondDateTimePicker.Size = new System.Drawing.Size(460, 38);
             this.secondDateTimePicker.TabIndex = 2;
@@ -82,7 +83,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(373, 107);
+            this.label1.Location = new System.Drawing.Point(373, 93);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(242, 31);
             this.label1.TabIndex = 0;
@@ -91,9 +92,9 @@
             // clearButton
             // 
             this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(729, 277);
+            this.clearButton.Location = new System.Drawing.Point(679, 254);
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(160, 74);
+            this.clearButton.Size = new System.Drawing.Size(160, 70);
             this.clearButton.TabIndex = 4;
             this.clearButton.Text = "&Clear";
             this.clearButton.UseVisualStyleBackColor = true;
@@ -102,9 +103,9 @@
             // findMessageButton
             // 
             this.findMessageButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findMessageButton.Location = new System.Drawing.Point(304, 277);
+            this.findMessageButton.Location = new System.Drawing.Point(184, 254);
             this.findMessageButton.Name = "findMessageButton";
-            this.findMessageButton.Size = new System.Drawing.Size(160, 74);
+            this.findMessageButton.Size = new System.Drawing.Size(196, 70);
             this.findMessageButton.TabIndex = 6;
             this.findMessageButton.Text = "Find Message";
             this.findMessageButton.UseVisualStyleBackColor = true;
@@ -113,9 +114,9 @@
             // findTimeMessageButton
             // 
             this.findTimeMessageButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.findTimeMessageButton.Location = new System.Drawing.Point(510, 277);
+            this.findTimeMessageButton.Location = new System.Drawing.Point(386, 254);
             this.findTimeMessageButton.Name = "findTimeMessageButton";
-            this.findTimeMessageButton.Size = new System.Drawing.Size(160, 74);
+            this.findTimeMessageButton.Size = new System.Drawing.Size(287, 70);
             this.findTimeMessageButton.TabIndex = 7;
             this.findTimeMessageButton.Text = "Find Time && Message";
             this.findTimeMessageButton.UseVisualStyleBackColor = true;
@@ -123,9 +124,9 @@
             // 
             // LogViewer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(986, 691);
+            this.ClientSize = new System.Drawing.Size(986, 638);
             this.Controls.Add(this.findTimeMessageButton);
             this.Controls.Add(this.findMessageButton);
             this.Controls.Add(this.clearButton);
@@ -134,6 +135,7 @@
             this.Controls.Add(this.firstDateTimePicker);
             this.Controls.Add(this.findButton);
             this.Controls.Add(this.notificationDataGridView);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LogViewer";
             this.Text = "Notification Review";
             ((System.ComponentModel.ISupportInitialize)(this.notificationDataGridView)).EndInit();
