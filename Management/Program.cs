@@ -15,7 +15,7 @@ namespace Management
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             // Application.Run(new MainForm(AccountDB.FindAccount("employee")));
-            Application.Run(new MainForm(AccountDB.FindAccount("manager")));
+            Application.Run(new MainForm(AccountDB.FindActivatedAccount("manager")));
         }
     }
 }

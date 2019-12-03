@@ -1,4 +1,4 @@
-﻿namespace Story2
+namespace Story2
 {
     partial class NotificationSender
     {

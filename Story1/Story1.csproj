@@ -129,6 +129,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Services\AccountServices.cs" />
+    <Compile Include="Models\ViewModels\ChangePasswordByEmailViewModel.cs" />
+    <Compile Include="Models\ViewModels\ChangePasswordViewModel.cs" />
+    <Compile Include="Models\ViewModels\UnsubscribeViewModel.cs" />
+    <Compile Include="Models\ViewModels\UserAccountViewModel.cs" />
     <Compile Include="Models\ViewModels\LoginViewModel.cs" />
     <Compile Include="Models\ViewModels\RegisterViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,6 +142,9 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\HTML\apples.jpg" />
+    <Content Include="Content\HTML\cucumber.jpg" />
+    <Content Include="Content\HTML\food.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -155,6 +162,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Content\HTML\doodle1.PNG" />
+    <Content Include="Content\HTML\doodle2.PNG" />
+    <Content Include="Content\HTML\clover.PNG" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -168,7 +178,13 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Register.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
-    <Content Include="Views\Home\Login1.cshtml" />
+    <Content Include="Views\Home\UserAccount.cshtml" />
+    <Content Include="Views\Home\Logout.cshtml" />
+    <Content Include="Views\Home\Unsubscribe.cshtml" />
+    <Content Include="Views\Home\ChangePassword.cshtml" />
+    <Content Include="Views\Home\Activated.cshtml" />
+    <Content Include="Views\Home\ChangePasswordByEmail.cshtml" />
+    <Content Include="Views\Home\ResetPsw.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -198,6 +214,10 @@
     <ProjectReference Include="..\Management\Management.csproj">
       <Project>{e1cd8504-9b00-4b5d-aebf-ef5149271cc1}</Project>
       <Name>Management</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Notifier\Notifier.csproj">
+      <Project>{01B1804A-AFE6-4EA3-8D66-64920032557B}</Project>
+      <Name>Notifier</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

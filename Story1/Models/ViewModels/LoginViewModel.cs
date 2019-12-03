@@ -2,7 +2,7 @@
     Programmer: Nina Hoang
     Class: CIS234A
     Date: 10/20/2019
-    Purpose: To maintain the data of the Login form.
+    Purpose: To maintain the data of the Login webpage.
 */
 
 using AccountLibrary;

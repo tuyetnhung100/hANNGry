@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Programmer(s):      Gong-Hao
  * Date:               10/30/2019
  * What the code does: 1. Using a template to from a notification message

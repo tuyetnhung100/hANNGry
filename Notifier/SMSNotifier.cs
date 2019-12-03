@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Programmer(s):      Gong-Hao
  * Date:               11/14/2019
  * What the code does: Send notification via SMS

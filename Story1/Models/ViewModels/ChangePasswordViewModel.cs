@@ -1,39 +1,20 @@
 ﻿/*
     Programmer: Nina Hoang
     Class: CIS234A
-    Date: 10/20/2019
-    Purpose: To maintain the data of the Register webpage.
+    Date: 11/17/2019
+    Purpose: To maintain the data of the ChangePassword webpage.
 */
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Story1.Models.ViewModels
 {
-    // Return value and assign a new value for properties
-    // Retrieve and store model state in the DB, set validations for user input
-    public class RegisterViewModel
+    public class ChangePasswordViewModel
     {
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 5)]
-        [Display(Name = "Username")]
-        public string username { get; set; }
-
-        [Required]
-        [EmailAddress(ErrorMessage = "Please enter a valid email.")]
-        [Display(Name = "Email")]
-        public string email { get; set; }
-
-        [Required]
-        [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
-                   ErrorMessage = "Entered phone format is not valid.")]
-        [Display(Name = "Phone")]
-        public string phoneNbr { get; set; }
-
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
         [DataType(DataType.Password)]
@@ -48,11 +29,7 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Repeat Password")]
         public string pswRepeat { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
-        [Display(Name = "Name")]
         public string name { get; set; }
-
         public string errMessage { get; set; }
         public string message { get; set; }
     }
