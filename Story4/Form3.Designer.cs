@@ -31,19 +31,20 @@
             this.messageSearchTextBox = new System.Windows.Forms.TextBox();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // messageSearchTextBox
             // 
-            this.messageSearchTextBox.Location = new System.Drawing.Point(53, 47);
+            this.messageSearchTextBox.Location = new System.Drawing.Point(17, 103);
             this.messageSearchTextBox.Name = "messageSearchTextBox";
-            this.messageSearchTextBox.Size = new System.Drawing.Size(189, 20);
+            this.messageSearchTextBox.Size = new System.Drawing.Size(218, 20);
             this.messageSearchTextBox.TabIndex = 0;
             // 
             // okButton
             // 
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(53, 133);
+            this.okButton.Location = new System.Drawing.Point(12, 155);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 36);
             this.okButton.TabIndex = 1;
@@ -53,7 +54,7 @@
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(167, 133);
+            this.cancelButton.Location = new System.Drawing.Point(160, 155);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 36);
             this.cancelButton.TabIndex = 2;
@@ -61,11 +62,22 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(12, 43);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(230, 25);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Enter text to search for";
+            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 274);
+            this.ClientSize = new System.Drawing.Size(248, 239);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.messageSearchTextBox);
@@ -73,7 +85,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form3";
-            this.Text = "Form3";
+            this.Text = "Search";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -84,5 +96,6 @@
         private System.Windows.Forms.TextBox messageSearchTextBox;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Label label1;
     }
 }

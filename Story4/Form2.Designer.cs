@@ -47,7 +47,7 @@
             this.ClientSize = new System.Drawing.Size(521, 357);
             this.Controls.Add(this.messageRichTextBox);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Selected Message";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
 
