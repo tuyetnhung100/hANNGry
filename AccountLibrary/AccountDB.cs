@@ -69,6 +69,7 @@ INSERT INTO Accounts
  PasswordHash,
  PasswordSalt,
  PhoneNumber,
+ Carrier,
  CreatedDate,
  Location,
  NotificationType,
@@ -81,6 +82,7 @@ INSERT INTO Accounts
           @PasswordHash,
           @PasswordSalt,
           @PhoneNumber,
+          @Carrier,
           @Date,
           @Location,
           @NotificationType, 
@@ -94,6 +96,7 @@ INSERT INTO Accounts
             command.Parameters.AddWithValue("@PasswordHash", hash);
             command.Parameters.AddWithValue("@PasswordSalt", salt);
             command.Parameters.AddWithValue("@PhoneNumber", newAccount.PhoneNumber);
+            command.Parameters.AddWithValue("@Carrier", newAccount.Carrier);
             command.Parameters.AddWithValue("@Date", DateTime.Now);
             command.Parameters.AddWithValue("@Location", newAccount.Location);
             command.Parameters.AddWithValue("@NotificationType", newAccount.NotificationType);

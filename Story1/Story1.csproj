@@ -145,6 +145,7 @@
     <Content Include="Content\HTML\apples.jpg" />
     <Content Include="Content\HTML\cucumber.jpg" />
     <Content Include="Content\HTML\food.jpg" />
+    <Content Include="Content\HTML\panther.jpg" />
     <Content Include="Content\HTML\pawprints.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

@@ -136,6 +136,7 @@ namespace Story1.Controllers
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
                     myAccount.PhoneNumber = model.phoneNbr;
+                    myAccount.Carrier = model.carrier;
 
                     if (model.isEmailNotiType)
                     {
