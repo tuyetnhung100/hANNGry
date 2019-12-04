@@ -14,11 +14,12 @@ namespace Story3
     public partial class TemplateCreator : Form
     {
         public static Account LoginedEmployee;
-
+        
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private const string DatabaseError = "Database Error";
 
+        
         public TemplateCreator()
         {
             InitializeComponent();
@@ -136,45 +137,52 @@ namespace Story3
         // Then, updates the template in the database.
         private void saveAsButton_Click(object sender, EventArgs e)
         {
-            string input = Interaction.InputBox("Please enter the subject of your template before saving: ", "Save Template", "");
-            int index = templateSelectorComboBox.FindStringExact(input);
+            using (Form3 form3 = new Form3())
+            {
+                if (form3.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    String input = form3.SelectedText;
+                    int index = templateSelectorComboBox.FindStringExact(input);
 
-            // If the template RTB is blank, it will not save the template.
-            if (templateRichTextBox.Text == "")
-            {
-                templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
-                return;
-            }
+                    // If the template RTB is blank, it will not save the template.
+                    if (templateRichTextBox.Text == "")
+                    {
+                        templateErrorProvider.SetError(templateRichTextBox, "Cannot save a blank template! Please try again.");
+                        return;
+                    }
 
-            // if index is anything but -1 (that means it's found a template with that name), then it selects that template and saves over the current text.
-            else if (index != -1)
-            {
-                templateRichTextBox.SelectAll();
-                templateRichTextBox.Cut();
-                templateSelectorComboBox.SelectedIndex = index;
-                templateRichTextBox.SelectAll();
-                templateRichTextBox.Paste();
-                Clipboard.Clear();
-                updateTemplate();
-                return;
-            }
+                    // if index is anything but -1 (that means it's found a template with that name), then it selects that template and saves over the current text.
+                    else if (index != -1)
+                    {
+                        templateRichTextBox.SelectAll();
+                        templateRichTextBox.Cut();
+                        templateSelectorComboBox.SelectedIndex = index;
+                        templateRichTextBox.SelectAll();
+                        templateRichTextBox.Paste();
+                        Clipboard.Clear();
+                        updateTemplate();
+                        return;
+                    }
 
-            // If the previous statements return false, then it saves the template as a new template.
-            else if (input != "")
-            {
-                Template myTemplate = new Template();
-                myTemplate.Subject = input;
-                myTemplate.Message = templateRichTextBox.Text;
-                myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
-                myTemplate.CreatedDate = DateTime.Now;
-                TemplateDB.Add(myTemplate);
-                reloadTemplateList();
+                    // If the previous statements return false, then it saves the template as a new template.
+                    else if (input != "" && input !=null)
+                    {
+                        Template myTemplate = new Template();
+                        myTemplate.Subject = input;
+                        myTemplate.Message = templateRichTextBox.Text;
+                        myTemplate.CreatedAccountId = LoginedEmployee.AccountId;
+                        myTemplate.CreatedDate = DateTime.Now;
+                        TemplateDB.Add(myTemplate);
+                        reloadTemplateList();
+                    }
+
+                    else
+                    {
+                        return;
+                    }
+                    templateErrorProvider.Clear();
+                }
             }
-            else
-            {
-                return;
-            }
-            templateErrorProvider.Clear();
         }
 
         // Loads a template from the DB when selected, and inserts the message column into the RTB.

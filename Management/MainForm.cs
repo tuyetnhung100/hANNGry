@@ -8,6 +8,7 @@ using AccountLibrary;
 using Story2;
 using Story3;
 using Story4;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -124,7 +125,7 @@ namespace Management
             };
             form.Controls.Add(nameLabel);
         }
-
+        
         private void MainForm_Load(object sender, System.EventArgs e)
         {
             defaultForm.Show();
