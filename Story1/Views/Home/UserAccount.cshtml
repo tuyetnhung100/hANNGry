@@ -133,32 +133,36 @@
                     @Html.ActionLink("Change Password", "ChangePassword")
                 </div>
                 <div class="column">
-                    <label for="notifications"><b>Please select alert type:</b></label><br><br>
+                    <label for="notifications"><b>Please select alert type:</b></label><br>
                     @Html.CheckBoxFor(model => model.isEmailNotiType) Email<br>
                     @Html.CheckBoxFor(model => model.isTextNotiType) SMS<br><br />
 
+                    <label for="carrier"><b>Please select phone carrier:</b></label>
+                    <br>
+                        @Html.DropDownListFor(model => model.carrier, Model.list)
+                    <br><br />
                     @*<input type="checkbox" name="notiType" value="email"> Email<br>
-                        <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
-                        <input type="checkbox" name="notiType" value="both"> Both<br><br>*@
+        <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>
+        <input type="checkbox" name="notiType" value="both"> Both<br><br>*@
 
-                    <label for="locations"><b>Please select desired locations:</b></label><br><br>
+                    <label for="locations"><b>Please select desired locations:</b></label><br>
                     @Html.CheckBoxFor(model => model.isSYLocation) Sylvania Campus<br>
                     @Html.CheckBoxFor(model => model.isRCLocation) Rock Creek Campus<br>
                     @Html.CheckBoxFor(model => model.isCASLocation) Cascade Campus<br>
                     @Html.CheckBoxFor(model => model.isSELocation) Southeast Campus<br>
                     @*<input type="checkbox" name="location" value="SY"> Sylvania Campus<br>
-                        <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
-                        <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
+        <input type="checkbox" name="location" value="RC"> Rock Creek Campus<br>
+        <input type="checkbox" name="location" value="CAS"> Cascade Campus<br>
 
 
-                                    @*public bool isEmailNotiType { get; set; }
-                        public bool isTextNotiType { get; set; }
-                        public bool isBothNotiType { get; set; }
+                    @*public bool isEmailNotiType { get; set; }
+        public bool isTextNotiType { get; set; }
+        public bool isBothNotiType { get; set; }
 
-                        public bool isSYLocation { get; set; }
-                        public bool isRCLocation { get; set; }
-                        public bool isCASLocation { get; set; }
-                        public bool isSELocation { get; set; }*@
+        public bool isSYLocation { get; set; }
+        public bool isRCLocation { get; set; }
+        public bool isCASLocation { get; set; }
+        public bool isSELocation { get; set; }*@
 
                 </div>
             </div>
