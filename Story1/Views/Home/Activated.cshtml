@@ -1,12 +1,76 @@
 ﻿@model Boolean
 
-<h2>Activated</h2>
+@*
+    Programmer: Nina Hoang
+    Class: CIS234A
+    Date: 11/28/2019
+    Purpose: To create a web gui for account activated.
+*@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: url('../../Content/HTML/clover.PNG');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            margin: auto;
+        }
+        .container {
+            padding: 16px;
+        }
 
-@if (Model)
-{
-    <h1>Activated</h1>
-}
-else
-{
-    <h1>Not Found</h1>
-}
+        .div1 {
+            width:  1024px;
+            height: 250px;
+            margin: 30px;
+        }
+        a.login {
+            padding-right: 1.8em;
+            padding-left: 1.8em;
+        }
+        /* unvisited link */
+        a:link {
+            text-decoration: none;
+        }
+        /* visited link */
+        a:visited {
+            text-decoration: none;
+            color: white;
+        }
+        /* mouse over link */
+        a:hover {
+            text-decoration: underline;
+        }
+        /* selected link */
+        a:active {
+            text-decoration: underline;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <form action="/Home/Activated" method="post">
+        <div class="container" style="background-color:#50394c">
+            <a href="/Home/Login" class="login">Log in</a> 
+            <a href="/Home/Register">Register</a>
+        </div>
+        <div class="div1">
+        <h2>ACCOUNT ACTIVATED</h2>
+
+        @if (Model)
+        {
+            <h3>Your account is now active!</h3>
+            <p>Your account was activated successfully. You can now log in with 
+        the username and password you provided when you signed up.</p>
+        }
+        else
+        {
+            <h3>Not Found</h3>
+        }
+        </div>
+    </form>
+</body>
+</html>
