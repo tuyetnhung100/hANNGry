@@ -36,10 +36,10 @@
             background: #f1f1f1;
         }
 
-            input[type=text]:focus, input[type=password]:focus {
-                background-color: #ddd;
-                outline: none;
-            }
+        input[type=text]:focus, input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
 
         /* Overwrite default styles of hr */
         hr {
@@ -79,7 +79,12 @@
             float: right;
             color: red;
         }
-
+        .carrierType {
+            width: 100%;
+            padding: 15px;
+            background: #f1f1f1;
+            margin: 5px 0 22px 0;
+        }
         /* Set style for Checkbox inside Select Option */
         .multiselect {
             width: 100%;
@@ -131,31 +136,35 @@
             <h1>PCC Panther Pantry Register</h1>
             <p>Please fill in this form to create an account.</p>
             <hr>
-            <label for="username"><b>@Html.LabelFor(model => model.username)</b></label>
+            <label for="username"><b>@Html.LabelFor(model => model.username) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.username, "")</span>
             @Html.EditorFor(model => model.username, new { htmlAttributes = new { placeholder = "Enter Username", autofocus = "" } })
 
-            <label for="email"><b>@Html.LabelFor(model => model.email)</b></label>
+            <label for="email"><b>@Html.LabelFor(model => model.email) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.email, "")</span>
             @Html.EditorFor(model => model.email, new { htmlAttributes = new { placeholder = "Enter Email", type = "email" } })
 
-            <label for="phone"><b>@Html.LabelFor(model => model.phoneNbr)</b></label>
+            <label for="phone"><b>@Html.LabelFor(model => model.phoneNbr) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.phoneNbr, "")</span>
             @Html.EditorFor(model => model.phoneNbr, new { htmlAttributes = new { placeholder = "Enter Phone Number", type = "tel" } })
 
-            <label for="psw"><b>@Html.LabelFor(model => model.psw)</b></label>
+            <label for="carrier"><b>Carrier (*)</b></label>
+            <div class="carrierType">         
+                @Html.DropDownListFor(model => model.carrier, Model.list)    
+            </div>
+            <label for="psw"><b>@Html.LabelFor(model => model.psw) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
             @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
 
-            <label for="pswRepeat"><b>@Html.LabelFor(model => model.pswRepeat)</b></label>
+            <label for="pswRepeat"><b>@Html.LabelFor(model => model.pswRepeat) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.pswRepeat, "")</span>
             @Html.EditorFor(model => model.pswRepeat, new { htmlAttributes = new { placeholder = "Repeat Password", type = "password" } })
 
-            <label for="name"><b>@Html.LabelFor(model => model.name)</b></label>
+            <label for="name"><b>@Html.LabelFor(model => model.name) (*)</b></label>
             <span class="errMsg">@Html.ValidationMessageFor(model => model.name, "")</span>
             @Html.EditorFor(model => model.name, new { htmlAttributes = new { placeholder = "Enter Name" } })
 
-            <label for="notificationType"><b>Notification Type</b></label>
+            <label for="notificationType"><b>Notification Type (*)</b></label>
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes()">
                     <select>
@@ -168,8 +177,8 @@
                     <label for="sms">@Html.CheckBoxFor(model => model.isTextNotiType)SMS</label>
                 </div>
             </div>
-            
-            <label for="location"><b>Location</b></label>
+
+            <label for="location"><b>Location (*)</b></label>
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes2()">
                     <select>

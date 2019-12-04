@@ -24,16 +24,20 @@
 </head>
 <body>
     <form action="/Home/Unsubscribe" method="post">
-        <h1>Delete an Account</h1>
+        <h1>Unsubscribe Account</h1>
         <p><a href="/Home/UserAccount">Return to Account Settings</a></p><br />
 
         <fieldset>
-            <legend>Account Information</legend>
+            <legend><b>Account Information</b></legend>
             <p>
-                <span>Account Username:</span>
-                <span>@Model.uname</span>
+                <span><b>Username:</b></span>
+                <span>@Model.uname</span> 
             </p>
-            <p><button type="submit" class="deletebtn">Delete Account</button></p>
+            <p>
+                <span><b>Email:</b></span>
+                <span>@Model.email</span>
+            </p>
+            <p><button type="submit" class="deletebtn">Unsubscribe</button></p>
         </fieldset>
     </form>
 

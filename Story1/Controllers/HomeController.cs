@@ -259,19 +259,22 @@ hANNGry
             Account account = Session["account"] as Account;
             bool emailChanged = model.acctEmail != account.Email;
             bool phoneChanged = model.acctPhoneNumber != account.PhoneNumber;
+            CheckValidInfoResult result = null;
             if (emailChanged || phoneChanged)
             {
-                CheckValidInfoResult result = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
-
-                if (result.EmailCount != 0)
-                {
-                    model.errMessage = "Email already exists. Please enter a new one.";
-                }
-                else if (result.PhoneNumberCount != 0)
-                {
-                    model.errMessage = "Phone Number already exists. Please enter a new one.";
-                }
+                result = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
             }
+            if (emailChanged && result.EmailCount > 0)
+            {
+                model.errMessage = "Email already exists. Please enter a new one.";
+                return View(model);
+            }
+            if (phoneChanged && result.PhoneNumberCount > 0)
+            {
+                model.errMessage = "Phone Number already exists. Please enter a new one.";
+                return View(model);
+            }
+
             Account updatedAccount = new Account
             {
                 Name = model.acctName,
@@ -306,7 +309,10 @@ hANNGry
             }
             AccountDB.UpdateAccount(updatedAccount);
             model.message = "Saved successfully";
-
+            account.Name = updatedAccount.Name;
+            account.Email = updatedAccount.Email;
+            account.PhoneNumber = updatedAccount.PhoneNumber;
+            Session["account"] = account;
             return View(model);
         }
 
@@ -331,6 +337,7 @@ hANNGry
             Account account = Session["account"] as Account;
             UnsubscribeViewModel model = new UnsubscribeViewModel();
             model.uname = account.Username;
+            model.email = account.Email;
             return View(model);
         }
 

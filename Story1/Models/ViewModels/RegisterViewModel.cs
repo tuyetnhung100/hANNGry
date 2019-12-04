@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Story1.Models.ViewModels
 {
@@ -17,6 +18,17 @@ namespace Story1.Models.ViewModels
     // Retrieve and store model state in the DB, set validations for user input
     public class RegisterViewModel
     {
+        public RegisterViewModel()
+        {
+            list = new SelectList(new string [] {
+                "AT&T",
+                "T-Mobile",
+                "Verizon"
+            });
+        }
+
+        public string carrier { get; set; }
+
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 5)]
         [Display(Name = "Username")]
@@ -34,6 +46,8 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Phone")]
         public string phoneNbr { get; set; }
 
+        public SelectList list { get; set; }
+
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
         [DataType(DataType.Password)]
@@ -44,7 +58,7 @@ namespace Story1.Models.ViewModels
 
         [Required]
         [DataType(DataType.Password)]
-        [Compare("psw", ErrorMessage = "The password and repeat password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("psw", ErrorMessage = "The password and repeat password do not match.")]
         [Display(Name = "Repeat Password")]
         public string pswRepeat { get; set; }
 
