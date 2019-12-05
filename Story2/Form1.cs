@@ -1,6 +1,6 @@
 /*
  * Programmer(s):      Gong-Hao
- * Date:               10/30/2019
+ * Date:               12/04/2019
  * What the code does: 1. Using a template to from a notification message
  *                     2. Sending the notification to subscribers
  */
@@ -10,6 +10,7 @@ using NotificationLibrary;
 using Notifier;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,8 +41,11 @@ namespace Story2
 
         private int sendingNotificationCount = 0;
         private int succeededCount = 0;
-        private int cancelledCount = 0;
         private int failedCount = 0;
+
+        private int sendingAccountId = 0;
+        private bool sendingSucceeded = false;
+        private string sendingErrorMessage = null;
 
         public NotificationSender()
         {
@@ -58,7 +62,6 @@ namespace Story2
             InitializeTags();
             InitializeTemplateComboBox();
             InitializeSendingLabels();
-            InitializeNotifier();
             subjectTextBox.Focus();
         }
 
@@ -102,58 +105,6 @@ namespace Story2
             sendingEmailsLabel.Text = string.Empty;
             succeededNotificationsLabel.Text = string.Empty;
             failedNotificationsLabel.Text = string.Empty;
-        }
-
-        /// <summary>
-        /// Initialize Notifier events
-        /// </summary>
-        private void InitializeNotifier()
-        {
-            EmailNotifier.NotifyCompleted += NotifyCompleted;
-            // SMSNotifier.NotifyCompleted += NotifyCompleted;
-        }
-
-        /// <summary>
-        /// The NotifyCompleted callback.
-        /// </summary>
-        /// <param name="e"></param>
-        private void NotifyCompleted(NotifyCompletedEventArgs e)
-        {
-            int accountId = (int)e.UserState;
-            if (e.Cancelled)
-            {
-                NotificationDB.UpdateSubscriberNotification(
-                    notification.NotificationId,
-                    accountId,
-                    succeeded: false,
-                    cancelled: true,
-                    errorMessage: null
-                );
-                cancelledCount++;
-            }
-            else if (e.Error != null)
-            {
-                NotificationDB.UpdateSubscriberNotification(
-                    notification.NotificationId,
-                    accountId,
-                    succeeded: false,
-                    cancelled: false,
-                    errorMessage: e.Error.ToString()
-                );
-                failedCount++;
-            }
-            else
-            {
-                NotificationDB.UpdateSubscriberNotification(
-                    notification.NotificationId,
-                    accountId,
-                    succeeded: true,
-                    cancelled: false,
-                    errorMessage: null
-                );
-                succeededCount++;
-            }
-            SendNextNotification();
         }
 
         /// <summary>
@@ -262,54 +213,28 @@ namespace Story2
             }
 
             // lock controls until finished
-            SetControlsEnabled(false);
+            SetControlsEnabledRecursion(this, false);
 
-            SendNextNotification();
+            sendingNotificationCount = 1;
+            succeededNotificationsLabel.Text = "Succeeded: 0";
+            failedNotificationsLabel.Text = "Failed: 0";
+            sendingEmailsLabel.Text = "Sending notifications... ( 1 / " + subscribers.Count + " )";
+            backgroundWorker.RunWorkerAsync();
         }
 
         /// <summary>
-        /// Send email or sms to the next subscriber.
-        /// </summary>
-        private void SendNextNotification()
-        {
-            sendingNotificationCount++;
-            succeededNotificationsLabel.Text = "Succeeded: " + succeededCount;
-            failedNotificationsLabel.Text = "Failed: " + failedCount;
-
-            bool hasNextsubscriber = sendingNotificationCount <= subscribers.Count;
-            if (hasNextsubscriber)
-            {
-                sendingEmailsLabel.Text = "Sending notifications... ( " + sendingNotificationCount + " / " + subscribers.Count + " )";
-                Account subscriber = subscribers[sendingNotificationCount - 1];
-                if (subscriber.NotificationType.HasFlag(NotificationType.Email))
-                {
-                    SendEmail(subscriber);
-                }
-                if (subscriber.NotificationType.HasFlag(NotificationType.SMS))
-                {
-                    SendSMS(subscriber);
-                }
-            }
-            else
-            {
-                FinishSendingEmails();
-            }
-        }
-
-        /// <summary>
-        /// Send email asynchronously.
+        /// Send email.
         /// </summary>
         private void SendEmail(Account subscriber)
         {
             string email = subscriber.Email;
             string subject = notification.Subject;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-            object userToken = subscriber.AccountId;
-            EmailNotifier.SendEmailAsync(email, subject, body, userToken);
+            EmailNotifier.SendEmail(email, subject, body);
         }
 
         /// <summary>
-        /// Send SMS asynchronously.
+        /// Send SMS.
         /// </summary>
         private void SendSMS(Account subscriber)
         {
@@ -317,36 +242,7 @@ namespace Story2
             string phoneNumber = subscriber.PhoneNumber;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
             string subject = notification.Subject;
-            object userToken = subscriber.AccountId;
-            EmailNotifier.SendSmsByEmailAsync(carrier, phoneNumber, subject, body, userToken);
-            // SMSNotifier.SendSMSAsync(subscriber.PhoneNumber, body, subscriber.AccountId);
-        }
-
-        /// <summary>
-        /// When sending emails finished, Reset variables and UI.
-        /// </summary>
-        private void FinishSendingEmails()
-        {
-            ShowInfoMessageBox("Sent Notification Completed", "Notification sent successfully!");
-
-            // unlock controls
-            SetControlsEnabled(true);
-
-            // clear labels
-            InitializeSendingLabels();
-
-            // reset variables
-            subscribers.Clear();
-            notification = null;
-            sendingNotificationCount = 0;
-            succeededCount = 0;
-            cancelledCount = 0;
-            failedCount = 0;
-
-            // clear data to prevent submitting again
-            ClearData();
-
-            subjectTextBox.Focus();
+            EmailNotifier.SendSmsByEmail(carrier, phoneNumber, subject, body);
         }
 
         /// <summary>
@@ -750,15 +646,6 @@ namespace Story2
         }
 
         /// <summary>
-        /// Enable or disable all controls
-        /// </summary>
-        /// <param name="enabled">Whether controls are enabled</param>
-        private void SetControlsEnabled(bool enabled)
-        {
-            SetControlsEnabledRecursion(this, enabled);
-        }
-
-        /// <summary>
         /// Use recursion to enable or disable all controls
         /// </summary>
         /// <param name="target">The target control</param>
@@ -779,6 +666,104 @@ namespace Story2
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Loop and send a notification
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            for (int i = 0; i < subscribers.Count; i++)
+            {
+                Account subscriber = subscribers[i];
+                sendingAccountId = subscriber.AccountId;
+                try
+                {
+                    if (subscriber.NotificationType.HasFlag(NotificationType.Email))
+                    {
+                        SendEmail(subscriber);
+                    }
+                    if (subscriber.NotificationType.HasFlag(NotificationType.SMS))
+                    {
+                        SendSMS(subscriber);
+                    }
+                    sendingSucceeded = true;
+                }
+                catch (Exception error)
+                {
+                    sendingSucceeded = false;
+                    sendingErrorMessage = error.Message;
+                }
+                backgroundWorker.ReportProgress(i);
+            }
+        }
+
+        /// <summary>
+        /// When sending a notification finished, Update UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (sendingSucceeded)
+            {
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    sendingAccountId,
+                    succeeded: true,
+                    cancelled: false,
+                    errorMessage: null
+                );
+                succeededCount++;
+            }
+            else
+            {
+                NotificationDB.UpdateSubscriberNotification(
+                    notification.NotificationId,
+                    sendingAccountId,
+                    succeeded: false,
+                    cancelled: false,
+                    errorMessage: sendingErrorMessage
+                );
+                failedCount++;
+            }
+            if (sendingNotificationCount < subscribers.Count)
+            {
+                sendingNotificationCount++;
+            }
+            succeededNotificationsLabel.Text = "Succeeded: " + succeededCount;
+            failedNotificationsLabel.Text = "Failed: " + failedCount;
+            sendingEmailsLabel.Text = "Sending notifications... ( " + sendingNotificationCount + " / " + subscribers.Count + " )";
+        }
+
+        /// <summary>
+        /// When sending all notifications finished, Reset variables and UI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ShowInfoMessageBox("Sent Notification Completed", "Notification sent successfully!");
+
+            // unlock controls
+            SetControlsEnabledRecursion(this, true);
+
+            // clear labels
+            InitializeSendingLabels();
+
+            // reset variables
+            subscribers.Clear();
+            notification = null;
+            sendingNotificationCount = 0;
+            succeededCount = 0;
+            failedCount = 0;
+
+            // clear data to prevent submitting again
+            ClearData();
+
+            subjectTextBox.Focus();
         }
     }
 }

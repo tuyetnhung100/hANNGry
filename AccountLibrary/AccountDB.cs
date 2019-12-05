@@ -210,7 +210,8 @@ SELECT
   Name,
   NotificationType,
   Location,
-  PhoneNumber
+  PhoneNumber,
+  Carrier
 FROM Accounts
 WHERE Activated = 1
 AND Username = @Username;", connect);
@@ -227,7 +228,8 @@ AND Username = @Username;", connect);
             int nameIndex = reader.GetOrdinal("Name");
             int notificationTypeIndex = reader.GetOrdinal("NotificationType");
             int locationIndex = reader.GetOrdinal("Location");
-            int PhoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int carrierIndex = reader.GetOrdinal("Carrier");
 
             while (reader.Read())
             {
@@ -241,7 +243,8 @@ AND Username = @Username;", connect);
                 account.Name = reader.GetString(nameIndex);
                 account.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
                 account.Location = (Location)reader.GetInt32(locationIndex);
-                account.PhoneNumber = reader.GetString(PhoneNumberIndex);
+                account.PhoneNumber = reader.GetString(phoneNumberIndex);
+                account.Carrier = reader.GetString(carrierIndex);
                 account.Activated = true;
             }
 
@@ -355,6 +358,7 @@ SELECT
   Name,
   Email,
   PhoneNumber,
+  Carrier,
   NotificationType,
   Location
 FROM Accounts
@@ -373,6 +377,7 @@ AND NotificationType <> 0
             int nameIndex = reader.GetOrdinal("Name");
             int emailIndex = reader.GetOrdinal("Email");
             int phoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int carrierIndex = reader.GetOrdinal("Carrier");
             int notificationTypeIndex = reader.GetOrdinal("NotificationType");
             int locationIndex = reader.GetOrdinal("Location");
 
@@ -384,6 +389,7 @@ AND NotificationType <> 0
                     Name = reader.GetString(nameIndex),
                     Email = reader.GetString(emailIndex),
                     PhoneNumber = reader.GetString(phoneNumberIndex),
+                    Carrier = reader.GetString(carrierIndex),
                     NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex),
                     Location = (Location)reader.GetInt32(locationIndex)
                 };
@@ -410,7 +416,8 @@ SET
  Email = @Email,
  NotificationType = @NotificationType,
  Location = @Location,
- PhoneNumber = @PhoneNumber
+ PhoneNumber = @PhoneNumber,
+ Carrier = @Carrier
 WHERE Activated = 1 AND AccountId = @AccountId;", connect);
 
             command.Parameters.AddWithValue("@Name", updatedAccount.Name);
@@ -418,6 +425,7 @@ WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             command.Parameters.AddWithValue("@NotificationType", updatedAccount.NotificationType);
             command.Parameters.AddWithValue("@Location", updatedAccount.Location);
             command.Parameters.AddWithValue("@PhoneNumber", updatedAccount.PhoneNumber);
+            command.Parameters.AddWithValue("@Carrier", updatedAccount.Carrier);
             command.Parameters.AddWithValue("@AccountId", updatedAccount.AccountId);
 
             int affectedRows = command.ExecuteNonQuery();

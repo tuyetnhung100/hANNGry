@@ -48,6 +48,7 @@ namespace Story2
             this.southeastCheckBox = new System.Windows.Forms.CheckBox();
             this.rockCreekCheckBox = new System.Windows.Forms.CheckBox();
             this.sylvaniaCheckBox = new System.Windows.Forms.CheckBox();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -267,6 +268,14 @@ namespace Story2
             this.sylvaniaCheckBox.Text = "S&ylvania";
             this.sylvaniaCheckBox.UseVisualStyleBackColor = true;
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.WorkerSupportsCancellation = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            // 
             // NotificationSender
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -320,6 +329,7 @@ namespace Story2
         private System.Windows.Forms.CheckBox southeastCheckBox;
         private System.Windows.Forms.CheckBox rockCreekCheckBox;
         private System.Windows.Forms.CheckBox sylvaniaCheckBox;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
 
