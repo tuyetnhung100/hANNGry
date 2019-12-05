@@ -110,7 +110,7 @@ namespace Story2
         private void InitializeNotifier()
         {
             EmailNotifier.NotifyCompleted += NotifyCompleted;
-            SMSNotifier.NotifyCompleted += NotifyCompleted;
+            // SMSNotifier.NotifyCompleted += NotifyCompleted;
         }
 
         /// <summary>
@@ -313,8 +313,13 @@ namespace Story2
         /// </summary>
         private void SendSMS(Account subscriber)
         {
+            string carrier = subscriber.Carrier;
+            string phoneNumber = subscriber.PhoneNumber;
             string body = ReplaceDatabaseField(subscriber, notification.Message, ref tags);
-            SMSNotifier.SendSMSAsync(subscriber.PhoneNumber, body, subscriber.AccountId);
+            string subject = notification.Subject;
+            object userToken = subscriber.AccountId;
+            EmailNotifier.SendSmsByEmailAsync(carrier, phoneNumber, subject, body, userToken);
+            // SMSNotifier.SendSMSAsync(subscriber.PhoneNumber, body, subscriber.AccountId);
         }
 
         /// <summary>
