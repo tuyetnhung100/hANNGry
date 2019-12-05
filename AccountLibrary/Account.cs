@@ -18,6 +18,7 @@ namespace AccountLibrary
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string Carrier { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool Activated { get; set; }
         public Location Location { get; set; }
