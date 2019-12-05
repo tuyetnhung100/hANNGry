@@ -4,6 +4,7 @@
  * What the code does: Send notification via email
  */
 
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -12,8 +13,6 @@ namespace Notifier
 {
     public static class EmailNotifier
     {
-        public static event NotifyCompletedEventHandler NotifyCompleted;
-
         private static SmtpClient SmtpClient = InitializeSmtpClient();
 
         /// <summary>
@@ -34,18 +33,6 @@ namespace Notifier
                 Host = "smtp.gmail.com",
                 EnableSsl = true,
                 Credentials = credentials
-            };
-            smtpClient.SendCompleted += (s, e) =>
-            {
-                if (NotifyCompleted != null)
-                {
-                    NotifyCompletedEventArgs eventArgs = new NotifyCompletedEventArgs(
-                        e.Cancelled,
-                        e.Error,
-                        e.UserState
-                    );
-                    NotifyCompleted.Invoke(eventArgs);
-                }
             };
             return smtpClient;
         }
@@ -95,16 +82,37 @@ namespace Notifier
         }
 
         /// <summary>      
-        /// Send email asynchronously.
+        /// Send SMS by email.
         /// </summary>
-        /// <param name="email">The email address</param>
+        /// <param name="carrier">The carrier of the phone number</param>
+        /// <param name="phoneNumber">The phone number</param>
         /// <param name="subject">The email subject</param>
         /// <param name="body">The email body</param>
-        /// <param name="userToken">The userToken</param>
-        public static void SendEmailAsync(string email, string subject, string body, object userToken)
+        public static void SendSmsByEmail(string carrier, string phoneNumber, string subject, string body)
         {
-            MailMessage mailMessage = GetMailMessage(email, subject, body);
-            SmtpClient.SendAsync(mailMessage, userToken);
+            string email = GetEmailByCarrier(carrier, phoneNumber);
+            SendEmail(email, subject, body);
+        }
+
+        /// <summary>
+        /// Get email address of email to text service
+        /// </summary>
+        /// <param name="carrier">The carrier of the phone number</param>
+        /// <param name="phoneNumber">The phone number</param>
+        /// <returns></returns>
+        private static string GetEmailByCarrier(string carrier, string phoneNumber)
+        {
+            switch (carrier)
+            {
+                case "AT&T":
+                    return phoneNumber + "@txt.att.net";
+                case "T-Mobile":
+                    return phoneNumber + "@tmomail.net";
+                case "Verizon":
+                    return phoneNumber + "@vtext.com";
+                default:
+                    throw new Exception("Carrier not defined");
+            }
         }
     }
 }

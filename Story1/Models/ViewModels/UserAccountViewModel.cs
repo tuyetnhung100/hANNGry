@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Story1.Models.ViewModels
 {
@@ -18,6 +19,15 @@ namespace Story1.Models.ViewModels
     // Retrieve and store model state in the DB, set validations for user input
     public class UserAccountViewModel
     {
+        public UserAccountViewModel()
+        {
+            list = new SelectList(new string[] {
+                "AT&T",
+                "T-Mobile",
+                "Verizon"
+            });
+        }
+
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
         [Display(Name = "Name")]
@@ -38,9 +48,11 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Phone Number")]
         public string acctPhoneNumber { get; set; }
 
+        public string carrier { get; set; }
+        public SelectList list { get; set; }
+
         public bool isEmailNotiType { get; set; }
         public bool isTextNotiType { get; set; }
-        public bool isBothNotiType { get; set; }
 
         public bool isSYLocation { get; set; }
         public bool isRCLocation { get; set; }

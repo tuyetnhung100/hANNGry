@@ -136,6 +136,33 @@ namespace Story1.Controllers
                     myAccount.Email = model.email;
                     myAccount.PasswordHash = model.psw;
                     myAccount.PhoneNumber = model.phoneNbr;
+                    myAccount.Carrier = model.carrier;
+
+                    if (model.isEmailNotiType)
+                    {
+                        myAccount.NotificationType = myAccount.NotificationType | NotificationType.Email;
+                    }
+                    if (model.isTextNotiType)
+                    {
+                        myAccount.NotificationType = myAccount.NotificationType | NotificationType.SMS;
+                    }
+                    if (model.isSYLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Sylvania;
+                    }
+                    if (model.isRCLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.RockCreek;
+                    }
+                    if (model.isCASLocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Cascade;
+                    }
+                    if (model.isSELocation)
+                    {
+                        myAccount.Location = myAccount.Location | Location.Southeast;
+                    }
+
                     myAccount.Code = Guid.NewGuid().ToString();
                     AccountDB.CreateAccount(myAccount);
                     string subject = "Please confirm your email.";
@@ -233,19 +260,22 @@ hANNGry
             Account account = Session["account"] as Account;
             bool emailChanged = model.acctEmail != account.Email;
             bool phoneChanged = model.acctPhoneNumber != account.PhoneNumber;
+            CheckValidInfoResult result = null;
             if (emailChanged || phoneChanged)
             {
-                CheckValidInfoResult result = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
-
-                if (result.EmailCount != 0)
-                {
-                    model.errMessage = "Email already exists. Please enter a new one.";
-                }
-                else if (result.PhoneNumberCount != 0)
-                {
-                    model.errMessage = "Phone Number already exists. Please enter a new one.";
-                }
+                result = AccountDB.CheckValidInfo(model.acctEmail, model.acctPhoneNumber);
             }
+            if (emailChanged && result.EmailCount > 0)
+            {
+                model.errMessage = "Email already exists. Please enter a new one.";
+                return View(model);
+            }
+            if (phoneChanged && result.PhoneNumberCount > 0)
+            {
+                model.errMessage = "Phone Number already exists. Please enter a new one.";
+                return View(model);
+            }
+
             Account updatedAccount = new Account
             {
                 Name = model.acctName,
@@ -280,7 +310,10 @@ hANNGry
             }
             AccountDB.UpdateAccount(updatedAccount);
             model.message = "Saved successfully";
-
+            account.Name = updatedAccount.Name;
+            account.Email = updatedAccount.Email;
+            account.PhoneNumber = updatedAccount.PhoneNumber;
+            Session["account"] = account;
             return View(model);
         }
 
@@ -305,6 +338,7 @@ hANNGry
             Account account = Session["account"] as Account;
             UnsubscribeViewModel model = new UnsubscribeViewModel();
             model.uname = account.Username;
+            model.email = account.Email;
             return View(model);
         }
 
@@ -393,12 +427,12 @@ hANNGry
             AccountDB.UpdateCode(account.Username, code);
 
             string subject = "Password Reset Link.";
-            string url = "http://localhost:4841/Home/Resetpsw?code=" + code;
+            string url = "http://localhost:4841/Home/ResetPassword?code=" + code;
             string body = "Hi, " + account.Name + @"
 
 <p><a href='" + url + @"'>" + url + @"<a/></p>
 
-Thank you,
+Thank you, <br>
 hANNGry
 ";
             EmailNotifier.SendHtmlEmail(account.Email, subject, body);

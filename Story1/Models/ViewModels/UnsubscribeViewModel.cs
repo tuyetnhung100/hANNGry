@@ -19,6 +19,9 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Username")]
         public string uname { get; set; }
 
+        [Display(Name = "Email")]
+        public string email { get; set; }
+
         public string message { get; set; }
     }
 }
