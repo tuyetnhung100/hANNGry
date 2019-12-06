@@ -16,7 +16,6 @@ namespace TemplateLibrary
         public int CreatedAccountId { get; set; }
         public DateTime CreatedDate { get; set; }
         public virtual string CreatedEmployeeName { get; set; }
-
         public override string ToString()
         {
             return Subject;
