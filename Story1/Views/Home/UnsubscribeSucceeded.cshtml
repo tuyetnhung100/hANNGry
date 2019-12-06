@@ -1,0 +1,62 @@
+﻿@model Story1.Models.ViewModels.UnsubscribeViewModel
+
+@*
+    Programmer: Nina Hoang
+    Class: CIS234A
+    Date: 11/17/2019
+    Purpose: This code creates a web gui for user account unsubscribe page.
+*@
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: url('../../Content/HTML/clover.PNG');
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            margin: auto;
+        }
+    </style>
+   
+</head>
+<body>
+    <form action="/Home/Unsubscribe" method="post">
+        <h1>Unsubscribe Account Succeeded</h1>
+        <p><a href="/Home/Login">Return to Login</a></p><br />
+
+        @*<fieldset>
+                <legend><b>Account Information</b></legend>
+                <p>
+                    <span><b>Username:</b></span>
+                    <span>@Model.uname</span>
+                </p>
+                <p>
+                    <span><b>Email:</b></span>
+                    <span>@Model.email</span>
+                </p>
+                <p><button type="button" class="deletebtn">Unsubscribe</button></p>
+            </fieldset>*@
+    </form>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+            $(function () {
+                Swal.fire({
+                    title: 'Unsubscribe Account Succeeded',
+                    type:  'success',
+                    onClose: function () {
+                        location.href = '/Home/Login';
+                    }
+                });
+            });
+        </script>
+    }
+</body>
+</html>
+
+

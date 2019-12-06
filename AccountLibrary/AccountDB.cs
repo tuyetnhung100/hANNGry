@@ -210,7 +210,8 @@ SELECT
   Name,
   NotificationType,
   Location,
-  PhoneNumber
+  PhoneNumber,
+  Carrier
 FROM Accounts
 WHERE Activated = 1
 AND Username = @Username;", connect);
@@ -228,6 +229,7 @@ AND Username = @Username;", connect);
             int notificationTypeIndex = reader.GetOrdinal("NotificationType");
             int locationIndex = reader.GetOrdinal("Location");
             int PhoneNumberIndex = reader.GetOrdinal("PhoneNumber");
+            int CarrierIndex = reader.GetOrdinal("Carrier");
 
             while (reader.Read())
             {
@@ -242,6 +244,7 @@ AND Username = @Username;", connect);
                 account.NotificationType = (NotificationType)reader.GetInt32(notificationTypeIndex);
                 account.Location = (Location)reader.GetInt32(locationIndex);
                 account.PhoneNumber = reader.GetString(PhoneNumberIndex);
+                account.Carrier = reader.GetString(CarrierIndex);
                 account.Activated = true;
             }
 
@@ -410,7 +413,8 @@ SET
  Email = @Email,
  NotificationType = @NotificationType,
  Location = @Location,
- PhoneNumber = @PhoneNumber
+ PhoneNumber = @PhoneNumber,
+ Carrier = @Carrier
 WHERE Activated = 1 AND AccountId = @AccountId;", connect);
 
             command.Parameters.AddWithValue("@Name", updatedAccount.Name);
@@ -418,6 +422,7 @@ WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             command.Parameters.AddWithValue("@NotificationType", updatedAccount.NotificationType);
             command.Parameters.AddWithValue("@Location", updatedAccount.Location);
             command.Parameters.AddWithValue("@PhoneNumber", updatedAccount.PhoneNumber);
+            command.Parameters.AddWithValue("@Carrier", updatedAccount.Carrier);
             command.Parameters.AddWithValue("@AccountId", updatedAccount.AccountId);
 
             int affectedRows = command.ExecuteNonQuery();

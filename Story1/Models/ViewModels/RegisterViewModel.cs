@@ -21,6 +21,7 @@ namespace Story1.Models.ViewModels
         public RegisterViewModel()
         {
             list = new SelectList(new string [] {
+                "",
                 "AT&T",
                 "T-Mobile",
                 "Verizon"
@@ -44,7 +45,10 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Phone")]
         public string phoneNbr { get; set; }
 
+        [Required]
+        [Display(Name = "Carrier")]
         public string carrier { get; set; }
+
         public SelectList list { get; set; }
 
         [Required]

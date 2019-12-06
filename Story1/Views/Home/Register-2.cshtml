@@ -27,7 +27,7 @@
         }
 
         /* Full-width input fields */
-        input[type=text], input[type=password], input[type=email], input[type=tel] {
+        input[type=text], input[type=password], input[type=email] {
             width: 100%;
             padding: 15px;
             margin: 5px 0 22px 0;
@@ -41,17 +41,42 @@
             outline: none;
         }
 
+        input[type=tel] {
+            width: 95%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            display: inline-block;
+            border: none;
+            background: #f1f1f1;
+        }
+        .carrierType {
+            width: 100%;
+            padding: 15px;
+            background: #f1f1f1;
+            margin: 5px 0 22px 0;
+        }
         /* Overwrite default styles of hr */
         hr {
             border: 1px solid #f1f1f1;
             margin-bottom: 25px;
         }
-
         /* Create two equal columns that floats next to each other */
         .column {
             float: left;
             width: 50%;
             padding: 10px;
+            height: auto; /* column height */
+        }
+        .phonecolumn {
+            float: left;
+            width: 70%;
+            padding: 0px;
+            height: auto; /* column height */
+        }
+        .carriercolumn {
+            float: left;
+            width: 30%;
+            padding: 0px;
             height: auto; /* column height */
         }
 
@@ -93,18 +118,6 @@
         span.errMsg {
             float: right;
             color: red;
-        }
-        .carrierType {
-            width: 100%;
-            padding: 15px;
-            background: #f1f1f1;
-            margin: 5px 0 22px 0;
-        }
-        .carrierType {
-            width: 100%;
-            padding: 15px;
-            background: #f1f1f1;
-            margin: 5px 0 22px 0;
         }
         /* Set style for Checkbox inside Select Option */
         .multiselect {
@@ -150,18 +163,6 @@
         #checkboxes2 label:hover {
             background-color: #1e90ff;
         }
-        /* Set style for image of panther */
-        img.panther {
-            height: 248px;
-            width: 100%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto
-        }
-
-        .checkboxes-error, .checkboxes2-error {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -179,17 +180,7 @@
                     <label for="email"><b>@Html.LabelFor(model => model.email) (*)</b></label>
                     <span class="errMsg">@Html.ValidationMessageFor(model => model.email, "")</span>
                     @Html.EditorFor(model => model.email, new { htmlAttributes = new { placeholder = "Enter Email", type = "email" } })
-
-                    <label for="phone"><b>@Html.LabelFor(model => model.phoneNbr) (*)</b></label>
-                    <span class="errMsg">@Html.ValidationMessageFor(model => model.phoneNbr, "")</span>
-                    @Html.EditorFor(model => model.phoneNbr, new { htmlAttributes = new { placeholder = "Enter Phone Number", type = "tel" } })
-
-                    <label for="carrier"><b>@Html.LabelFor(model => model.carrier) (*)</b></label>
-                    <span class="errMsg">@Html.ValidationMessageFor(model => model.carrier, "")</span>
-                    <div class="carrierType">
-                        @Html.DropDownListFor(model => model.carrier, Model.list)
-                    </div>
-
+                    
                     <label for="psw"><b>@Html.LabelFor(model => model.psw) (*)</b></label>
                     <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
                     @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
@@ -203,8 +194,22 @@
                     <span class="errMsg">@Html.ValidationMessageFor(model => model.name, "")</span>
                     @Html.EditorFor(model => model.name, new { htmlAttributes = new { placeholder = "Enter Name" } })
 
+                    <div class="row">
+                        <div class="phonecolumn">
+                            <label for="phone"><b>@Html.LabelFor(model => model.phoneNbr) (*)</b></label><br />
+                            <span class="errMsg">@Html.ValidationMessageFor(model => model.phoneNbr, "")</span>
+                            @Html.EditorFor(model => model.phoneNbr, new { htmlAttributes = new { placeholder = "Enter Phone Number", type = "tel" } })
+                        </div>
+                        <div class="carriercolumn">
+                            <label for="carrier"><b>@Html.LabelFor(model => model.carrier) (*)</b></label>
+                            <span class="errMsg">@Html.ValidationMessageFor(model => model.carrier, "")</span>
+                            <div class="carrierType">
+                                @Html.DropDownListFor(model => model.carrier, Model.list)
+                            </div>
+                        </div>
+                    </div>
+
                     <label for="notificationType"><b>Notification Type (*)</b></label>
-                    <span class="checkboxes-error errMsg">At least one type is required.</span>
                     <div class="multiselect">
                         <div class="selectBox" onclick="showCheckboxes()">
                             <select>
@@ -219,7 +224,6 @@
                     </div>
 
                     <label for="location"><b>Location (*)</b></label>
-                    <span class="checkboxes2-error errMsg">At least one location is required.</span>
                     <div class="multiselect">
                         <div class="selectBox" onclick="showCheckboxes2()">
                             <select>
@@ -234,8 +238,6 @@
                             <label for="SE">@Html.CheckBoxFor(model => model.isSELocation)Southeast Campus</label>
                         </div>
                     </div>
-
-                    <img src="~/Content/HTML/panther.jpg" class="panther" />
                 </div>
             </div>
             <hr>
@@ -244,9 +246,9 @@
             <button type="submit" class="registerbtn">Register</button>
         </div>
         <div class="container signin">
-            <p>Already have an account? <a href="Login">Sign in</a>.</p>
+        <p>Already have an account? <a href="Login">Sign in</a>.</p>
         </div>
-    </form>
+</form>
 
     <script>
         var expanded = false;
@@ -278,27 +280,6 @@
     @section Scripts {
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryval")
-
-        <script>
-            $(function () {
-                $(document.forms[0]).submit(function () {
-                    var pass = true;
-                    $(".checkboxes-error").hide();
-                    $(".checkboxes2-error").hide();
-                    var checkboxes_checked_checkboxes = $("#checkboxes input[type=checkbox]:checked");
-                    if (checkboxes_checked_checkboxes.length == 0) {
-                        $(".checkboxes-error").show();
-                        pass = false;
-                    }
-                    var checkboxes2_checked_checkboxes = $("#checkboxes2 input[type=checkbox]:checked");
-                    if (checkboxes2_checked_checkboxes.length == 0) {
-                        $(".checkboxes2-error").show();
-                        pass = false;
-                    }
-                    return pass;
-                });
-            });
-        </script>
     }
 
     @{
