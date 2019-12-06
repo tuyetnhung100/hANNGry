@@ -1,8 +1,8 @@
 /*
-* Programmer(s):      Gong-Hao, Nina Hoang
-* Date:               10/23/2019
-* What the code does: Data access layer of Account.
-*/
+ * Programmer(s):      Gong-Hao, Nina Hoang
+ * Date:               10/23/2019
+ * What the code does: Data access layer of Account.
+ */
 
 using ConnectDB;
 using System;

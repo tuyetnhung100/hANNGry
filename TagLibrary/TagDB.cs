@@ -1,8 +1,8 @@
 /*
-* Programmer(s):      Gong-Hao
-* Date:               10/23/2019
-* What the code does: Data access layer of Tag.
-*/
+ * Programmer(s):      Gong-Hao
+ * Date:               10/23/2019
+ * What the code does: Data access layer of Tag.
+ */
 
 using ConnectDB;
 using System;
