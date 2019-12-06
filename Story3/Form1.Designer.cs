@@ -53,7 +53,7 @@
             this.templateRichTextBox.Location = new System.Drawing.Point(19, 135);
             this.templateRichTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.templateRichTextBox.Name = "templateRichTextBox";
-            this.templateRichTextBox.Size = new System.Drawing.Size(566, 466);
+            this.templateRichTextBox.Size = new System.Drawing.Size(504, 245);
             this.templateRichTextBox.TabIndex = 5;
             this.templateRichTextBox.Text = "";
             // 
@@ -61,10 +61,10 @@
             // 
             this.clearAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.clearAllButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearAllButton.Location = new System.Drawing.Point(309, 606);
+            this.clearAllButton.Location = new System.Drawing.Point(280, 385);
             this.clearAllButton.Margin = new System.Windows.Forms.Padding(2);
             this.clearAllButton.Name = "clearAllButton";
-            this.clearAllButton.Size = new System.Drawing.Size(130, 77);
+            this.clearAllButton.Size = new System.Drawing.Size(106, 77);
             this.clearAllButton.TabIndex = 8;
             this.clearAllButton.Text = "&Clear All";
             this.clearAllButton.UseVisualStyleBackColor = true;
@@ -74,10 +74,10 @@
             // 
             this.saveAsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveAsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveAsButton.Location = new System.Drawing.Point(164, 606);
+            this.saveAsButton.Location = new System.Drawing.Point(148, 385);
             this.saveAsButton.Margin = new System.Windows.Forms.Padding(2);
             this.saveAsButton.Name = "saveAsButton";
-            this.saveAsButton.Size = new System.Drawing.Size(130, 77);
+            this.saveAsButton.Size = new System.Drawing.Size(106, 77);
             this.saveAsButton.TabIndex = 7;
             this.saveAsButton.Text = "S&ave As";
             this.saveAsButton.UseVisualStyleBackColor = true;
@@ -85,10 +85,9 @@
             // 
             // customTagButton
             // 
-            this.customTagButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.customTagButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.customTagButton.Location = new System.Drawing.Point(704, 185);
-            this.customTagButton.Margin = new System.Windows.Forms.Padding(2);
+            this.customTagButton.Location = new System.Drawing.Point(544, 187);
+            this.customTagButton.Margin = new System.Windows.Forms.Padding(0);
             this.customTagButton.Name = "customTagButton";
             this.customTagButton.Size = new System.Drawing.Size(228, 66);
             this.customTagButton.TabIndex = 6;
@@ -103,7 +102,7 @@
             this.templateSelectorComboBox.Location = new System.Drawing.Point(205, 89);
             this.templateSelectorComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.templateSelectorComboBox.Name = "templateSelectorComboBox";
-            this.templateSelectorComboBox.Size = new System.Drawing.Size(379, 39);
+            this.templateSelectorComboBox.Size = new System.Drawing.Size(318, 39);
             this.templateSelectorComboBox.Sorted = true;
             this.templateSelectorComboBox.TabIndex = 2;
             this.templateSelectorComboBox.SelectedIndexChanged += new System.EventHandler(this.templateSelectorComboBox_SelectedIndexChanged);
@@ -121,11 +120,10 @@
             // 
             // customTagComboBox
             // 
-            this.customTagComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.customTagComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.customTagComboBox.FormattingEnabled = true;
-            this.customTagComboBox.Location = new System.Drawing.Point(704, 135);
-            this.customTagComboBox.Margin = new System.Windows.Forms.Padding(2);
+            this.customTagComboBox.Location = new System.Drawing.Point(544, 135);
+            this.customTagComboBox.Margin = new System.Windows.Forms.Padding(0);
             this.customTagComboBox.Name = "customTagComboBox";
             this.customTagComboBox.Size = new System.Drawing.Size(228, 39);
             this.customTagComboBox.Sorted = true;
@@ -134,11 +132,10 @@
             // 
             // tagSelectorLabel
             // 
-            this.tagSelectorLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.tagSelectorLabel.AutoSize = true;
             this.tagSelectorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tagSelectorLabel.Location = new System.Drawing.Point(751, 96);
-            this.tagSelectorLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.tagSelectorLabel.Location = new System.Drawing.Point(591, 98);
+            this.tagSelectorLabel.Margin = new System.Windows.Forms.Padding(0);
             this.tagSelectorLabel.Name = "tagSelectorLabel";
             this.tagSelectorLabel.Size = new System.Drawing.Size(134, 25);
             this.tagSelectorLabel.TabIndex = 3;
@@ -152,10 +149,10 @@
             // 
             this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.deleteButton.Location = new System.Drawing.Point(454, 606);
+            this.deleteButton.Location = new System.Drawing.Point(417, 384);
             this.deleteButton.Margin = new System.Windows.Forms.Padding(2);
             this.deleteButton.Name = "deleteButton";
-            this.deleteButton.Size = new System.Drawing.Size(130, 77);
+            this.deleteButton.Size = new System.Drawing.Size(106, 77);
             this.deleteButton.TabIndex = 9;
             this.deleteButton.Text = "&Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
@@ -165,9 +162,9 @@
             // 
             this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveButton.Location = new System.Drawing.Point(19, 606);
+            this.saveButton.Location = new System.Drawing.Point(19, 384);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(130, 77);
+            this.saveButton.Size = new System.Drawing.Size(106, 77);
             this.saveButton.TabIndex = 10;
             this.saveButton.Text = "&Save";
             this.saveButton.UseVisualStyleBackColor = true;
@@ -177,7 +174,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(977, 694);
+            this.ClientSize = new System.Drawing.Size(788, 473);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.tagSelectorLabel);
@@ -192,6 +189,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "TemplateCreator";
             this.Text = "Template Creator";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.templateCreator_Load);
             ((System.ComponentModel.ISupportInitialize)(this.templateErrorProvider)).EndInit();
             this.ResumeLayout(false);

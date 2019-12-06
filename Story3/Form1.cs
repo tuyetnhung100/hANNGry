@@ -141,7 +141,7 @@ namespace Story3
             {
                 if (form3.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    String input = form3.SelectedText;
+                    string input = form3.SelectedText;
                     int index = templateSelectorComboBox.FindStringExact(input);
 
                     // If the template RTB is blank, it will not save the template.
@@ -165,7 +165,7 @@ namespace Story3
                     }
 
                     // If the previous statements return false, then it saves the template as a new template.
-                    else if (input != "" && input !=null)
+                    else if (input != "" || input != null)
                     {
                         Template myTemplate = new Template();
                         myTemplate.Subject = input;

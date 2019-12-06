@@ -56,10 +56,10 @@ namespace Story2
             // 
             this.sendButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.sendButton.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sendButton.Location = new System.Drawing.Point(136, 568);
+            this.sendButton.Location = new System.Drawing.Point(136, 501);
             this.sendButton.Margin = new System.Windows.Forms.Padding(1);
             this.sendButton.Name = "sendButton";
-            this.sendButton.Size = new System.Drawing.Size(180, 53);
+            this.sendButton.Size = new System.Drawing.Size(180, 57);
             this.sendButton.TabIndex = 9999;
             this.sendButton.Text = "&Send";
             this.sendButton.UseVisualStyleBackColor = true;
@@ -71,10 +71,10 @@ namespace Story2
             | System.Windows.Forms.AnchorStyles.Left)));
             this.messageRichTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.messageRichTextBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.messageRichTextBox.Location = new System.Drawing.Point(136, 181);
+            this.messageRichTextBox.Location = new System.Drawing.Point(136, 196);
             this.messageRichTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.messageRichTextBox.Name = "messageRichTextBox";
-            this.messageRichTextBox.Size = new System.Drawing.Size(370, 334);
+            this.messageRichTextBox.Size = new System.Drawing.Size(370, 251);
             this.messageRichTextBox.TabIndex = 5;
             this.messageRichTextBox.Text = "";
             // 
@@ -84,7 +84,7 @@ namespace Story2
             this.templateComboBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.templateComboBox.ForeColor = System.Drawing.SystemColors.WindowText;
             this.templateComboBox.FormattingEnabled = true;
-            this.templateComboBox.Location = new System.Drawing.Point(136, 79);
+            this.templateComboBox.Location = new System.Drawing.Point(136, 86);
             this.templateComboBox.Margin = new System.Windows.Forms.Padding(1);
             this.templateComboBox.Name = "templateComboBox";
             this.templateComboBox.Size = new System.Drawing.Size(370, 41);
@@ -96,7 +96,7 @@ namespace Story2
             // 
             this.templateLabel.AutoSize = true;
             this.templateLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.templateLabel.Location = new System.Drawing.Point(10, 82);
+            this.templateLabel.Location = new System.Drawing.Point(10, 89);
             this.templateLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.templateLabel.Name = "templateLabel";
             this.templateLabel.Size = new System.Drawing.Size(118, 35);
@@ -107,7 +107,7 @@ namespace Story2
             // 
             this.messageLabel.AutoSize = true;
             this.messageLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.messageLabel.Location = new System.Drawing.Point(10, 184);
+            this.messageLabel.Location = new System.Drawing.Point(10, 199);
             this.messageLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.messageLabel.Name = "messageLabel";
             this.messageLabel.Size = new System.Drawing.Size(115, 35);
@@ -118,7 +118,7 @@ namespace Story2
             // 
             this.subjectLabel.AutoSize = true;
             this.subjectLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.subjectLabel.Location = new System.Drawing.Point(10, 133);
+            this.subjectLabel.Location = new System.Drawing.Point(10, 144);
             this.subjectLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.subjectLabel.Name = "subjectLabel";
             this.subjectLabel.Size = new System.Drawing.Size(97, 35);
@@ -128,7 +128,7 @@ namespace Story2
             // subjectTextBox
             // 
             this.subjectTextBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.subjectTextBox.Location = new System.Drawing.Point(136, 130);
+            this.subjectTextBox.Location = new System.Drawing.Point(136, 141);
             this.subjectTextBox.Margin = new System.Windows.Forms.Padding(1);
             this.subjectTextBox.Name = "subjectTextBox";
             this.subjectTextBox.Size = new System.Drawing.Size(370, 41);
@@ -138,10 +138,10 @@ namespace Story2
             // 
             this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.clearButton.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clearButton.Location = new System.Drawing.Point(326, 568);
+            this.clearButton.Location = new System.Drawing.Point(326, 501);
             this.clearButton.Margin = new System.Windows.Forms.Padding(1);
             this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(180, 53);
+            this.clearButton.Size = new System.Drawing.Size(180, 57);
             this.clearButton.TabIndex = 10000;
             this.clearButton.Text = "&Clear";
             this.clearButton.UseVisualStyleBackColor = true;
@@ -152,10 +152,10 @@ namespace Story2
             this.tagsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.tagsPanel.BackColor = System.Drawing.SystemColors.Control;
-            this.tagsPanel.Location = new System.Drawing.Point(534, 181);
+            this.tagsPanel.Location = new System.Drawing.Point(534, 196);
             this.tagsPanel.Margin = new System.Windows.Forms.Padding(1);
             this.tagsPanel.Name = "tagsPanel";
-            this.tagsPanel.Size = new System.Drawing.Size(370, 334);
+            this.tagsPanel.Size = new System.Drawing.Size(370, 251);
             this.tagsPanel.TabIndex = 14;
             // 
             // errorProvider
@@ -167,10 +167,10 @@ namespace Story2
             // 
             this.sendingEmailsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sendingEmailsLabel.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.sendingEmailsLabel.Location = new System.Drawing.Point(528, 74);
+            this.sendingEmailsLabel.Location = new System.Drawing.Point(528, 80);
             this.sendingEmailsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.sendingEmailsLabel.Name = "sendingEmailsLabel";
-            this.sendingEmailsLabel.Size = new System.Drawing.Size(417, 35);
+            this.sendingEmailsLabel.Size = new System.Drawing.Size(417, 38);
             this.sendingEmailsLabel.TabIndex = 11;
             this.sendingEmailsLabel.Text = "sendingEmailsLabel";
             // 
@@ -178,10 +178,10 @@ namespace Story2
             // 
             this.succeededNotificationsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.succeededNotificationsLabel.ForeColor = System.Drawing.Color.ForestGreen;
-            this.succeededNotificationsLabel.Location = new System.Drawing.Point(528, 109);
+            this.succeededNotificationsLabel.Location = new System.Drawing.Point(528, 118);
             this.succeededNotificationsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.succeededNotificationsLabel.Name = "succeededNotificationsLabel";
-            this.succeededNotificationsLabel.Size = new System.Drawing.Size(417, 35);
+            this.succeededNotificationsLabel.Size = new System.Drawing.Size(417, 38);
             this.succeededNotificationsLabel.TabIndex = 12;
             this.succeededNotificationsLabel.Text = "succeededEmailsLabel";
             // 
@@ -189,10 +189,10 @@ namespace Story2
             // 
             this.failedNotificationsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.failedNotificationsLabel.ForeColor = System.Drawing.Color.OrangeRed;
-            this.failedNotificationsLabel.Location = new System.Drawing.Point(528, 144);
+            this.failedNotificationsLabel.Location = new System.Drawing.Point(528, 156);
             this.failedNotificationsLabel.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.failedNotificationsLabel.Name = "failedNotificationsLabel";
-            this.failedNotificationsLabel.Size = new System.Drawing.Size(417, 35);
+            this.failedNotificationsLabel.Size = new System.Drawing.Size(417, 38);
             this.failedNotificationsLabel.TabIndex = 13;
             this.failedNotificationsLabel.Text = "failedEmailsLabel";
             // 
@@ -201,7 +201,7 @@ namespace Story2
             this.locationsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.locationsLabel.AutoSize = true;
             this.locationsLabel.Font = new System.Drawing.Font("Arial Narrow", 22.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.locationsLabel.Location = new System.Drawing.Point(10, 524);
+            this.locationsLabel.Location = new System.Drawing.Point(10, 457);
             this.locationsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.locationsLabel.Name = "locationsLabel";
             this.locationsLabel.Size = new System.Drawing.Size(121, 35);
@@ -215,8 +215,8 @@ namespace Story2
             this.cascadeCheckBox.Checked = true;
             this.cascadeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cascadeCheckBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.cascadeCheckBox.Location = new System.Drawing.Point(613, 522);
-            this.cascadeCheckBox.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.cascadeCheckBox.Location = new System.Drawing.Point(613, 458);
+            this.cascadeCheckBox.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.cascadeCheckBox.Name = "cascadeCheckBox";
             this.cascadeCheckBox.Size = new System.Drawing.Size(132, 39);
             this.cascadeCheckBox.TabIndex = 10;
@@ -230,8 +230,8 @@ namespace Story2
             this.southeastCheckBox.Checked = true;
             this.southeastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.southeastCheckBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.southeastCheckBox.Location = new System.Drawing.Point(453, 522);
-            this.southeastCheckBox.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.southeastCheckBox.Location = new System.Drawing.Point(453, 458);
+            this.southeastCheckBox.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.southeastCheckBox.Name = "southeastCheckBox";
             this.southeastCheckBox.Size = new System.Drawing.Size(146, 39);
             this.southeastCheckBox.TabIndex = 9;
@@ -245,8 +245,8 @@ namespace Story2
             this.rockCreekCheckBox.Checked = true;
             this.rockCreekCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.rockCreekCheckBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.rockCreekCheckBox.Location = new System.Drawing.Point(276, 522);
-            this.rockCreekCheckBox.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.rockCreekCheckBox.Location = new System.Drawing.Point(276, 458);
+            this.rockCreekCheckBox.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.rockCreekCheckBox.Name = "rockCreekCheckBox";
             this.rockCreekCheckBox.Size = new System.Drawing.Size(163, 39);
             this.rockCreekCheckBox.TabIndex = 8;
@@ -260,8 +260,8 @@ namespace Story2
             this.sylvaniaCheckBox.Checked = true;
             this.sylvaniaCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sylvaniaCheckBox.Font = new System.Drawing.Font("Arial Narrow", 22.125F);
-            this.sylvaniaCheckBox.Location = new System.Drawing.Point(136, 522);
-            this.sylvaniaCheckBox.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.sylvaniaCheckBox.Location = new System.Drawing.Point(136, 458);
+            this.sylvaniaCheckBox.Margin = new System.Windows.Forms.Padding(7, 7, 7, 7);
             this.sylvaniaCheckBox.Name = "sylvaniaCheckBox";
             this.sylvaniaCheckBox.Size = new System.Drawing.Size(126, 39);
             this.sylvaniaCheckBox.TabIndex = 7;
@@ -278,9 +278,9 @@ namespace Story2
             // 
             // NotificationSender
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 631);
+            this.ClientSize = new System.Drawing.Size(1101, 598);
             this.Controls.Add(this.locationsLabel);
             this.Controls.Add(this.cascadeCheckBox);
             this.Controls.Add(this.southeastCheckBox);
@@ -299,9 +299,10 @@ namespace Story2
             this.Controls.Add(this.subjectLabel);
             this.Controls.Add(this.subjectTextBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1024, 670);
+            this.MinimumSize = new System.Drawing.Size(1024, 575);
             this.Name = "NotificationSender";
             this.Text = "Send Notifications";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Story2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
