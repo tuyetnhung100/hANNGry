@@ -47,7 +47,9 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Phone Number")]
         public string acctPhoneNumber { get; set; }
 
-        public string carrier { get; set; }
+        [Required]
+        [Display(Name = "Carrier")]
+        public string acctCarrier { get; set; }
         public SelectList list { get; set; }
 
         public bool isEmailNotiType { get; set; }

@@ -37,7 +37,7 @@
                 <span><b>Email:</b></span>
                 <span>@Model.email</span>
             </p>
-            <p><button type="submit" class="deletebtn">Unsubscribe</button></p>
+            <p><button type="button" class="deletebtn">Unsubscribe</button></p>
         </fieldset>
     </form>
 
@@ -47,38 +47,25 @@
     @section Scripts {
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryval")
-    }
-
-    @{
-        // Prompt a confirm message for success attempt to unsubscribe and redirect to login page
-        if (Model != null)
-        {
-            if (!string.IsNullOrWhiteSpace(Model.message))
-            {
-                <script>
-                    Swal.fire({
-                        title: 'Unsubscribe?',
-                        text: "Please confirm that you would like to unsubscribe your account from future alerts from us.",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Confirm Unsubscribe'
-                    }).then((result) => {
-                        if (result.value) {
-                            Swal.fire({
-                                title: '@Model.message',
-                                text:  'You have successfully unsubscribed from the program.',
-                                type:  'success',
-                                onClose: function () {
-                                    location.href = '/Home/Login';
-                                }
-                            })
-                        }
-                    })                   
-                </script>
-            }
-        }
+    <script>
+        $(function () {
+            $('.deletebtn').click(function () {
+                Swal.fire({
+                    title: 'Unsubscribe?',
+                    text: "Please confirm that you would like to unsubscribe your account from future alerts from us.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Confirm Unsubscribe'
+                }).then((result) => {
+                    if (result.value) {
+                        $(document.forms[0]).submit();
+                    }
+                });
+            });
+        });
+    </script>
     }
 </body>
 </html>

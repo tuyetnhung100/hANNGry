@@ -221,6 +221,7 @@ hANNGry
             model.acctName = account.Name;
             model.acctEmail = account.Email;
             model.acctPhoneNumber = account.PhoneNumber;
+            model.acctCarrier = account.Carrier;
 
             if (account.NotificationType.HasFlag(NotificationType.Email))
             {
@@ -285,6 +286,7 @@ hANNGry
                 Name = model.acctName,
                 Email = model.acctEmail,
                 PhoneNumber = model.acctPhoneNumber,
+                Carrier = model.acctCarrier,
                 AccountId = account.AccountId
             };
 
@@ -317,6 +319,7 @@ hANNGry
             account.Name = updatedAccount.Name;
             account.Email = updatedAccount.Email;
             account.PhoneNumber = updatedAccount.PhoneNumber;
+            account.Carrier = updatedAccount.Carrier;
             Session["account"] = account;
             return View(model);
         }
@@ -346,12 +349,17 @@ hANNGry
             return View(model);
         }
 
+        [HttpGet]
+        public ActionResult UnsubscribeSucceeded()
+        {
+            return View();
+        }
+
         // Delete unsubscribe account.
         [HttpPost]
         public ActionResult Unsubscribe(UnsubscribeViewModel model)
         {
             model.message = "";
-
             Account account = Session["account"] as Account;
             Account myAccount = new Account
             {
@@ -361,7 +369,7 @@ hANNGry
             AccountDB.Delete(myAccount);
             model.message = "Account deleted";
             Logout();
-            return View(model);
+            return RedirectToAction("UnsubscribeSucceeded");
         }
 
         // Display Change Password webpage.
@@ -452,6 +460,7 @@ Thank you, <br>
 hANNGry
 ";
             EmailNotifier.SendHtmlEmail(account.Email, subject, body);
+            model.message = "Link Sent";
             return View(model);
         }
 
