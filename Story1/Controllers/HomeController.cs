@@ -27,8 +27,6 @@ namespace Story1.Controllers
             {
                 return RedirectToAction("UserAccount");
             }
-            ViewBag.Title = "Login";
-
             LoginViewModel model = new LoginViewModel
             {
                 uname = "gonghao",
@@ -114,7 +112,6 @@ namespace Story1.Controllers
             {
                 return RedirectToAction("UserAccount");
             }
-            ViewBag.Title = "Register";
             RegisterViewModel model = new RegisterViewModel();
             return View(model);
         }
@@ -214,7 +211,6 @@ hANNGry
             {
                 return RedirectToAction("Login");
             }
-            ViewBag.Title = "UserAccount";
             string username = (Session["account"] as Account).Username;
             Account account = AccountDB.FindActivatedAccount(username);
             UserAccountViewModel model = new UserAccountViewModel();
@@ -328,7 +324,6 @@ hANNGry
         [HttpGet]
         public ActionResult Logout()
         {
-            ViewBag.Title = "Logout";
             Session["account"] = null;
             return View();
         }
@@ -341,7 +336,6 @@ hANNGry
             {
                 return RedirectToAction("Login");
             }
-            ViewBag.Title = "Unsubscribe";
             Account account = Session["account"] as Account;
             UnsubscribeViewModel model = new UnsubscribeViewModel();
             model.uname = account.Username;
@@ -380,7 +374,6 @@ hANNGry
             {
                 return RedirectToAction("Login");
             }
-            ViewBag.Title = "ChangePassword";
             Account account = Session["account"] as Account;
             ChangePasswordViewModel model = new ChangePasswordViewModel();
             model.name = account.Name;
