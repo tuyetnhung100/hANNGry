@@ -99,7 +99,6 @@
             width: 10%;
             padding: 12px 18px;
             background-color: #f44336;
-            border: none;
             cursor: pointer;
             color: white;
         }
@@ -118,7 +117,7 @@
                 <div class="column">
                     <label for="acctEmail"><b>@Html.LabelFor(model => model.acctEmail)</b></label>
                     <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctEmail, "")</b></span>
-                    @Html.EditorFor(model => model.acctEmail, new { htmlAttributes = new { placeholder = "User's Email" } })
+                    @Html.EditorFor(model => model.acctEmail, new { htmlAttributes = new { placeholder = "User's Email", autofocus = "" } })
 
                     <label for="acctPhoneNumber"><b>@Html.LabelFor(model => model.acctPhoneNumber)</b></label>
                     <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctPhoneNumber, "")</b></span>
@@ -126,7 +125,7 @@
 
                     <label for="acctName"><b>@Html.LabelFor(model => model.acctName)</b></label>
                     <span class="errMsg"><b>@Html.ValidationMessageFor(model => model.acctName, "")</b></span>
-                    @Html.EditorFor(model => model.acctName, new { htmlAttributes = new { placeholder = "User's name", autofocus = "" } })
+                    @Html.EditorFor(model => model.acctName, new { htmlAttributes = new { placeholder = "User's name" } })
 
                     @Html.ActionLink("Change Password", "ChangePassword")
                 </div>
@@ -172,7 +171,6 @@
             <span class="unsubscribe">Remove From List? <a href="/Home/Unsubscribe" class="unsubscribe">Unsubscribe here</a>.</span>          
         </div>
     </form>
-
 
     @Html.ValidationSummary(true, "")
 

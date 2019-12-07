@@ -62,16 +62,23 @@
                 opacity: 0.8;
             }
 
+        .cancelbtn {
+            width: auto;
+            padding: 10px 18px;
+            background-color: #f44336;
+            cursor: pointer;
+        }
+
         /* Add a blue text color to links */
         a {
             color: dodgerblue;
         }
 
-        .register {
-            background-color: #f1f1f1;
-            text-align: center;
+        span.register {
+            float: right;
+            padding-top: 16px;
         }
-
+        /* Set style for input error message */
         span.errMsg {
             float: right;
             color: red;
@@ -94,8 +101,9 @@
             <hr>
             <button type="submit" class="loginbtn">Login</button>
         </div>
-        <div class="container register">
-            Don't have an account? <a href="/Home/Register">Create one here</a>.
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="reset" class="cancelbtn">Cancel</button>
+            <span class="register">Don't have an account? <a href="/Home/Register">Create one here</a>.</span>
         </div>
     </form>
 

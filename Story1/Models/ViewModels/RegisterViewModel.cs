@@ -16,11 +16,12 @@ namespace Story1.Models.ViewModels
     {
         public RegisterViewModel()
         {
-            list = new SelectList(new string[] {
-                "AT&T",
-                "T-Mobile",
-                "Verizon"
-            });
+            list = new SelectList(new SelectListItem[] {
+                new SelectListItem { Text = "Select carrier", Value = string.Empty },
+                new SelectListItem { Text = "AT&T", Value = "AT&T" },
+                new SelectListItem { Text = "T-Mobile", Value = "T-Mobile" },
+                new SelectListItem { Text = "Verizon", Value = "Verizon" }
+            }, "Value", "Text");
         }
 
         [Required]
@@ -39,6 +40,8 @@ namespace Story1.Models.ViewModels
         [Display(Name = "Phone")]
         public string phoneNbr { get; set; }
 
+        [Required]
+        [Display(Name = "Carrier")]
         public string carrier { get; set; }
         public SelectList list { get; set; }
 

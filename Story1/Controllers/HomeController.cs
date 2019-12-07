@@ -29,8 +29,8 @@ namespace Story1.Controllers
             }
             LoginViewModel model = new LoginViewModel
             {
-                uname = "gonghao",
-                psw = "Test123!"
+                //uname = "gonghao",
+                //psw = "Test123!"
             };
             return View(model);
         }
@@ -343,6 +343,7 @@ hANNGry
             return View(model);
         }
 
+        // return a new web form after user deleted account.
         [HttpGet]
         public ActionResult UnsubscribeSucceeded()
         {
@@ -467,18 +468,19 @@ hANNGry
             }
 
             Account existingAccount = AccountDB.FindAccountByCode(code);
+            if (existingAccount == null)
+            {
+                return RedirectToAction("Login");
+            }
             ChangePasswordViewModel model = new ChangePasswordViewModel
             {
                 name = existingAccount.Name,
                 code = code
             };
-            if (existingAccount == null)
-            {
-                return RedirectToAction("Login");
-            }
             return View(model);
         }
 
+        // Reset password via email link.
         [HttpPost]
         public ActionResult ResetPassword(ChangePasswordViewModel model)
         {
