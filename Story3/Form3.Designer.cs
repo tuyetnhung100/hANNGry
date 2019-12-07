@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.messageSearchTextBox = new System.Windows.Forms.TextBox();
+            this.subjectTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -65,13 +65,14 @@
             this.okButton.TabIndex = 5;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
+            this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // messageSearchTextBox
+            // subjectTextBox
             // 
-            this.messageSearchTextBox.Location = new System.Drawing.Point(134, 116);
-            this.messageSearchTextBox.Name = "messageSearchTextBox";
-            this.messageSearchTextBox.Size = new System.Drawing.Size(218, 20);
-            this.messageSearchTextBox.TabIndex = 4;
+            this.subjectTextBox.Location = new System.Drawing.Point(134, 116);
+            this.subjectTextBox.Name = "subjectTextBox";
+            this.subjectTextBox.Size = new System.Drawing.Size(218, 20);
+            this.subjectTextBox.TabIndex = 4;
             // 
             // Form3
             // 
@@ -81,7 +82,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
-            this.Controls.Add(this.messageSearchTextBox);
+            this.Controls.Add(this.subjectTextBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -98,6 +99,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.TextBox messageSearchTextBox;
+        private System.Windows.Forms.TextBox subjectTextBox;
     }
 }

@@ -20,7 +20,7 @@ namespace Story3
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            SelectedText = messageSearchTextBox.Text;
+            SelectedText = subjectTextBox.Text;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
