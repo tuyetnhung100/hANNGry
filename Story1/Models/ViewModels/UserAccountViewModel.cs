@@ -43,12 +43,13 @@ namespace Story1.Models.ViewModels
 
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
-                   ErrorMessage = "Entered phone format is not valid.")]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Entered phone format is not valid.")]
         [Display(Name = "Phone Number")]
         public string acctPhoneNumber { get; set; }
 
-        public string carrier { get; set; }
+        [Required]
+        [Display(Name = "Carrier")]
+        public string acctCarrier { get; set; }
         public SelectList list { get; set; }
 
         public bool isEmailNotiType { get; set; }

@@ -5,11 +5,7 @@
     Purpose: To maintain the data of the Register webpage.
 */
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Story1.Models.ViewModels
@@ -20,7 +16,7 @@ namespace Story1.Models.ViewModels
     {
         public RegisterViewModel()
         {
-            list = new SelectList(new string [] {
+            list = new SelectList(new string[] {
                 "AT&T",
                 "T-Mobile",
                 "Verizon"
@@ -39,8 +35,7 @@ namespace Story1.Models.ViewModels
 
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
-                   ErrorMessage = "Entered phone format is not valid.")]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Entered phone format is not valid.")]
         [Display(Name = "Phone")]
         public string phoneNbr { get; set; }
 

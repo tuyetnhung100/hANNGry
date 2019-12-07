@@ -100,6 +100,12 @@
             background: #f1f1f1;
             margin: 5px 0 22px 0;
         }
+        .carrierType {
+            width: 100%;
+            padding: 15px;
+            background: #f1f1f1;
+            margin: 5px 0 22px 0;
+        }
         /* Set style for Checkbox inside Select Option */
         .multiselect {
             width: 100%;
@@ -114,6 +120,7 @@
             width: 100%;
             /*font-weight: bold;*/
             color: darkblue;
+            background: #f1f1f1;           
             border: none;           
         }
         .overSelect {
@@ -151,6 +158,10 @@
             margin-left: auto;
             margin-right: auto
         }
+
+        .checkboxes-error, .checkboxes2-error {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -173,10 +184,12 @@
                     <span class="errMsg">@Html.ValidationMessageFor(model => model.phoneNbr, "")</span>
                     @Html.EditorFor(model => model.phoneNbr, new { htmlAttributes = new { placeholder = "Enter Phone Number", type = "tel" } })
 
-                    <label for="carrier"><b>Carrier (*)</b></label>
+                    <label for="carrier"><b>@Html.LabelFor(model => model.carrier) (*)</b></label>
+                    <span class="errMsg">@Html.ValidationMessageFor(model => model.carrier, "")</span>
                     <div class="carrierType">
                         @Html.DropDownListFor(model => model.carrier, Model.list)
                     </div>
+
                     <label for="psw"><b>@Html.LabelFor(model => model.psw) (*)</b></label>
                     <span class="errMsg">@Html.ValidationMessageFor(model => model.psw, "")</span>
                     @Html.EditorFor(model => model.psw, new { htmlAttributes = new { placeholder = "Enter Password", type = "password" } })
@@ -191,10 +204,11 @@
                     @Html.EditorFor(model => model.name, new { htmlAttributes = new { placeholder = "Enter Name" } })
 
                     <label for="notificationType"><b>Notification Type (*)</b></label>
+                    <span class="checkboxes-error errMsg">At least one type is required.</span>
                     <div class="multiselect">
                         <div class="selectBox" onclick="showCheckboxes()">
                             <select>
-                                <option>Please Select Notification Type(s)</option>
+                                <option>Select Notification Type(s)</option>
                             </select>
                             <div class="overSelect"></div>
                         </div>
@@ -205,10 +219,11 @@
                     </div>
 
                     <label for="location"><b>Location (*)</b></label>
+                    <span class="checkboxes2-error errMsg">At least one location is required.</span>
                     <div class="multiselect">
                         <div class="selectBox" onclick="showCheckboxes2()">
                             <select>
-                                <option>Please Select Location(s)</option>
+                                <option>Select Location(s)</option>
                             </select>
                             <div class="overSelect"></div>
                         </div>
@@ -219,6 +234,7 @@
                             <label for="SE">@Html.CheckBoxFor(model => model.isSELocation)Southeast Campus</label>
                         </div>
                     </div>
+
                     <img src="~/Content/HTML/panther.jpg" class="panther" />
                 </div>
             </div>
@@ -228,9 +244,9 @@
             <button type="submit" class="registerbtn">Register</button>
         </div>
         <div class="container signin">
-        <p>Already have an account? <a href="Login">Sign in</a>.</p>
+            <p>Already have an account? <a href="Login">Sign in</a>.</p>
         </div>
-</form>
+    </form>
 
     <script>
         var expanded = false;
@@ -262,6 +278,27 @@
     @section Scripts {
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryval")
+
+        <script>
+            $(function () {
+                $(document.forms[0]).submit(function () {
+                    var pass = true;
+                    $(".checkboxes-error").hide();
+                    $(".checkboxes2-error").hide();
+                    var checkboxes_checked_checkboxes = $("#checkboxes input[type=checkbox]:checked");
+                    if (checkboxes_checked_checkboxes.length == 0) {
+                        $(".checkboxes-error").show();
+                        pass = false;
+                    }
+                    var checkboxes2_checked_checkboxes = $("#checkboxes2 input[type=checkbox]:checked");
+                    if (checkboxes2_checked_checkboxes.length == 0) {
+                        $(".checkboxes2-error").show();
+                        pass = false;
+                    }
+                    return pass;
+                });
+            });
+        </script>
     }
 
     @{

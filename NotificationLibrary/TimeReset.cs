@@ -23,6 +23,5 @@ namespace NotificationLibrary
                23, 59, 59, 999
             );
         }
-
     }
 }

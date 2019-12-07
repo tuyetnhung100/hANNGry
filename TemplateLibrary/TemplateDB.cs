@@ -73,8 +73,8 @@ WHERE Subject = @Subject;", connect);
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-            DELETE FROM Templates
-            WHERE Subject = @Subject;", connect);
+DELETE FROM Templates
+WHERE Subject = @Subject;", connect);
 
             command.Parameters.AddWithValue("@Subject", myTemplate.Subject);
 
@@ -98,15 +98,15 @@ WHERE Subject = @Subject;", connect);
                 SqlConnection connection = DBConnect.GetConnection();
                 connection.Open();
                 string sql = @"
-                SELECT
-                Templates.TemplateId,
-                Templates.Subject,
-                Templates.Message,
-                Accounts.Name AS CreatedEmployeeName,
-                Templates.CreatedDate
-                FROM Templates
-                INNER JOIN Accounts
-                ON Accounts.AccountId = Templates.CreatedAccountId;";
+SELECT
+  Templates.TemplateId,
+  Templates.Subject,
+  Templates.Message,
+  Accounts.Name AS CreatedEmployeeName,
+  Templates.CreatedDate
+FROM Templates
+INNER JOIN Accounts
+  ON Accounts.AccountId = Templates.CreatedAccountId;";
 
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();

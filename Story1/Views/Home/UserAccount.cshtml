@@ -99,8 +99,9 @@
             width: 10%;
             padding: 12px 18px;
             background-color: #f44336;
-            border-radius: 4px;
+            border: none;
             cursor: pointer;
+            color: white;
         }
         span.unsubscribe {
             float: right;
@@ -136,7 +137,7 @@
 
                     <label for="carrier"><b>Please select phone carrier:</b></label>
                     <br>
-                        @Html.DropDownListFor(model => model.carrier, Model.list)
+                        @Html.DropDownListFor(model => model.acctCarrier, Model.list)
                     <br><br />
                     @*<input type="checkbox" name="notiType" value="email"> Email<br>
         <input type="checkbox" name="notiType" value="txt"> Txt Msg<br>

@@ -22,23 +22,23 @@ namespace NotificationLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-                                                SELECT
-                                                  NotificationId,
-                                                  Name AS 'SenderName',
-                                                  Subject,
-                                                  Message,
-                                                  SentDate,
-                                                  (SELECT
-                                                    COUNT(Subscribers_AccountId)
-                                                  FROM SubscriberNotification
-                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
-                                                  AS 'NumberSent'
-                                                FROM Notifications
-                                                INNER JOIN Accounts
-                                                  ON Notifications.SentAccountId = Accounts.AccountId
-                                                WHERE SentDate > @start
-                                                AND SentDate < @end
-                                                AND Message LIKE '%' + @message + '%'", connect);
+SELECT
+  NotificationId,
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate,
+  (SELECT
+    COUNT(Subscribers_AccountId)
+  FROM SubscriberNotification
+  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+  AS 'NumberSent'
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE SentDate > @start
+AND SentDate < @end
+AND Message LIKE '%' + @message + '%';", connect);
 
             command.Parameters.AddWithValue("@message", input);
             command.Parameters.AddWithValue("@start", start);
@@ -77,21 +77,21 @@ namespace NotificationLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-                                                SELECT
-                                                  NotificationId,
-                                                  Name AS 'SenderName',
-                                                  Subject,
-                                                  Message,
-                                                  SentDate,
-                                                  (SELECT
-                                                    COUNT(Subscribers_AccountId)
-                                                  FROM SubscriberNotification
-                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
-                                                  AS 'NumberSent'
-                                                FROM Notifications
-                                                INNER JOIN Accounts
-                                                  ON Notifications.SentAccountId = Accounts.AccountId
-                                                WHERE Message LIKE '%' + @message + '%'",
+SELECT
+  NotificationId,
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate,
+  (SELECT
+    COUNT(Subscribers_AccountId)
+  FROM SubscriberNotification
+  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+  AS 'NumberSent'
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE Message LIKE '%' + @message + '%';",
                                                  connect);
 
             command.Parameters.AddWithValue("@message", input);
@@ -129,22 +129,22 @@ namespace NotificationLibrary
             connect.Open();
 
             SqlCommand command = new SqlCommand(@"
-                                                SELECT
-                                                  NotificationId,
-                                                  Name AS 'SenderName',
-                                                  Subject,
-                                                  Message,
-                                                  SentDate,
-                                                  (SELECT
-                                                    COUNT(Subscribers_AccountId)
-                                                  FROM SubscriberNotification
-                                                  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
-                                                  AS 'NumberSent'
-                                                FROM Notifications
-                                                INNER JOIN Accounts
-                                                  ON Notifications.SentAccountId = Accounts.AccountId
-                                                WHERE SentDate > @start
-                                                AND SentDate < @end;", connect);
+SELECT
+  NotificationId,
+  Name AS 'SenderName',
+  Subject,
+  Message,
+  SentDate,
+  (SELECT
+    COUNT(Subscribers_AccountId)
+  FROM SubscriberNotification
+  WHERE ReceivedNotifications_NotificationId = Notifications.NotificationId)
+  AS 'NumberSent'
+FROM Notifications
+INNER JOIN Accounts
+  ON Notifications.SentAccountId = Accounts.AccountId
+WHERE SentDate > @start
+AND SentDate < @end;", connect);
 
             command.Parameters.AddWithValue("@start", start);
             command.Parameters.AddWithValue("@end", end);
