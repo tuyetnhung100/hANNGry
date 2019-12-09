@@ -36,32 +36,32 @@ SELECT
 FROM Notifications
 INNER JOIN Accounts
   ON Notifications.SentAccountId = Accounts.AccountId
-WHERE SentDate > @start
-AND SentDate < @end
-AND Message LIKE '%' + @message + '%';", connect);
+WHERE SentDate > @Start
+AND SentDate < @End
+AND Message LIKE '%' + @Message + '%';", connect);
 
-            command.Parameters.AddWithValue("@message", input);
-            command.Parameters.AddWithValue("@start", start);
-            command.Parameters.AddWithValue("@end", end);
+            command.Parameters.AddWithValue("@Message", input);
+            command.Parameters.AddWithValue("@Start", start);
+            command.Parameters.AddWithValue("@End", end);
 
             SqlDataReader reader = command.ExecuteReader();
 
             Notification myNotification;
 
-            int senderName = reader.GetOrdinal("SenderName");
-            int subject = reader.GetOrdinal("Subject");
-            int message = reader.GetOrdinal("Message");
-            int sentDate = reader.GetOrdinal("SentDate");
-            int numberSent = reader.GetOrdinal("NumberSent");
+            int senderNameIndex = reader.GetOrdinal("SenderName");
+            int subjectIndex = reader.GetOrdinal("Subject");
+            int messageIndex = reader.GetOrdinal("Message");
+            int sentDateIndex = reader.GetOrdinal("SentDate");
+            int numberSentIndex = reader.GetOrdinal("NumberSent");
 
             while (reader.Read())
             {
                 myNotification = new Notification();
-                myNotification.SenderName = reader.GetString(senderName);
-                myNotification.Subject = reader.GetString(subject);
-                myNotification.Message = reader.GetString(message);
-                myNotification.SentDate = reader.GetDateTime(sentDate);
-                myNotification.NumberSent = reader.GetInt32(numberSent);
+                myNotification.SenderName = reader.GetString(senderNameIndex);
+                myNotification.Subject = reader.GetString(subjectIndex);
+                myNotification.Message = reader.GetString(messageIndex);
+                myNotification.SentDate = reader.GetDateTime(sentDateIndex);
+                myNotification.NumberSent = reader.GetInt32(numberSentIndex);
                 notifications.Add(myNotification);
             }
 
@@ -70,7 +70,7 @@ AND Message LIKE '%' + @message + '%';", connect);
             return true;
         }
 
-        //Search database by message content
+        // Search database by message content
         public static bool Search(String input, ref List<Notification> notifications)
         {
             SqlConnection connect = DBConnect.GetConnection();
@@ -91,29 +91,29 @@ SELECT
 FROM Notifications
 INNER JOIN Accounts
   ON Notifications.SentAccountId = Accounts.AccountId
-WHERE Message LIKE '%' + @message + '%';",
+WHERE Message LIKE '%' + @Message + '%';",
                                                  connect);
 
-            command.Parameters.AddWithValue("@message", input);
+            command.Parameters.AddWithValue("@Message", input);
 
             SqlDataReader reader = command.ExecuteReader();
 
             Notification myNotification;
 
-            int senderName = reader.GetOrdinal("SenderName");
-            int subject = reader.GetOrdinal("Subject");
-            int message = reader.GetOrdinal("Message");
-            int sentDate = reader.GetOrdinal("SentDate");
-            int numberSent = reader.GetOrdinal("NumberSent");
+            int senderNameIndex = reader.GetOrdinal("SenderName");
+            int subjectIndex = reader.GetOrdinal("Subject");
+            int messageIndex = reader.GetOrdinal("Message");
+            int sentDateIndex = reader.GetOrdinal("SentDate");
+            int numberSentIndex = reader.GetOrdinal("NumberSent");
 
             while (reader.Read())
             {
                 myNotification = new Notification();
-                myNotification.SenderName = reader.GetString(senderName);
-                myNotification.Subject = reader.GetString(subject);
-                myNotification.Message = reader.GetString(message);
-                myNotification.SentDate = reader.GetDateTime(sentDate);
-                myNotification.NumberSent = reader.GetInt32(numberSent);
+                myNotification.SenderName = reader.GetString(senderNameIndex);
+                myNotification.Subject = reader.GetString(subjectIndex);
+                myNotification.Message = reader.GetString(messageIndex);
+                myNotification.SentDate = reader.GetDateTime(sentDateIndex);
+                myNotification.NumberSent = reader.GetInt32(numberSentIndex);
                 notifications.Add(myNotification);
             }
 
@@ -143,30 +143,30 @@ SELECT
 FROM Notifications
 INNER JOIN Accounts
   ON Notifications.SentAccountId = Accounts.AccountId
-WHERE SentDate > @start
-AND SentDate < @end;", connect);
+WHERE SentDate > @Start
+AND SentDate < @End;", connect);
 
-            command.Parameters.AddWithValue("@start", start);
-            command.Parameters.AddWithValue("@end", end);
+            command.Parameters.AddWithValue("@Start", start);
+            command.Parameters.AddWithValue("@End", end);
 
             SqlDataReader reader = command.ExecuteReader();
 
             Notification myNotification;
 
-            int senderName = reader.GetOrdinal("SenderName");
-            int subject = reader.GetOrdinal("Subject");
-            int message = reader.GetOrdinal("Message");
-            int sentDate = reader.GetOrdinal("SentDate");
-            int numberSent = reader.GetOrdinal("NumberSent");
+            int senderNameIndex = reader.GetOrdinal("SenderName");
+            int subjectIndex = reader.GetOrdinal("Subject");
+            int messageIndex = reader.GetOrdinal("Message");
+            int sentDateIndex = reader.GetOrdinal("SentDate");
+            int numberSentIndex = reader.GetOrdinal("NumberSent");
 
             while (reader.Read())
             {
                 myNotification = new Notification();
-                myNotification.SenderName = reader.GetString(senderName);
-                myNotification.Subject = reader.GetString(subject);
-                myNotification.Message = reader.GetString(message);
-                myNotification.SentDate = reader.GetDateTime(sentDate);
-                myNotification.NumberSent = reader.GetInt32(numberSent);
+                myNotification.SenderName = reader.GetString(senderNameIndex);
+                myNotification.Subject = reader.GetString(subjectIndex);
+                myNotification.Message = reader.GetString(messageIndex);
+                myNotification.SentDate = reader.GetDateTime(sentDateIndex);
+                myNotification.NumberSent = reader.GetInt32(numberSentIndex);
                 notifications.Add(myNotification);
             }
 

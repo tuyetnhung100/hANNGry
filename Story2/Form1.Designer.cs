@@ -89,8 +89,8 @@ namespace Story2
             this.templateComboBox.Name = "templateComboBox";
             this.templateComboBox.Size = new System.Drawing.Size(370, 41);
             this.templateComboBox.TabIndex = 1;
-            this.templateComboBox.DropDownClosed += new System.EventHandler(this.templateComboBox_DropDownClosed);
-            this.templateComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.templateComboBox_KeyUp);
+            this.templateComboBox.DropDownClosed += new System.EventHandler(this.TemplateComboBox_DropDownClosed);
+            this.templateComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.TemplateComboBox_KeyUp);
             // 
             // templateLabel
             // 
@@ -145,7 +145,7 @@ namespace Story2
             this.clearButton.TabIndex = 10000;
             this.clearButton.Text = "&Clear";
             this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            this.clearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // tagsPanel
             // 
@@ -272,9 +272,9 @@ namespace Story2
             // 
             this.backgroundWorker.WorkerReportsProgress = true;
             this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
-            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
             // 
             // NotificationSender
             // 

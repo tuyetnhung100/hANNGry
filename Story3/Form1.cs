@@ -14,12 +14,11 @@ namespace Story3
     public partial class TemplateCreator : Form
     {
         public static Account LoginedEmployee;
-        
+
         private List<Tag> tags = new List<Tag>();
         private List<Template> templates = new List<Template>();
         private const string DatabaseError = "Database Error";
 
-        
         public TemplateCreator()
         {
             InitializeComponent();
@@ -201,9 +200,14 @@ namespace Story3
             // If the subject of the template is equal to the currently selected item, then it will delete the template from the DB if the user clicks yes.
             if (template.Subject == currentItem)
             {
-                DialogResult delete = MessageBox.Show("The selected template is about to be deleted!\n" +
+                DialogResult delete = MessageBox.Show(
+                    "The selected template is about to be deleted!\n" +
                     "Are you sure you want to delete the template?\nTHE TEMPLATE CANNOT BE RECOVERED.",
-                    "Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button2);
+                    "Warning!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Asterisk,
+                    MessageBoxDefaultButton.Button2
+                );
                 if (delete == DialogResult.Yes)
                 {
                     TemplateDB.Delete(template);

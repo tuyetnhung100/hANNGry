@@ -10,16 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
-using Microsoft.VisualBasic;
 
 namespace Story4
 {
     public partial class LogViewer : Form
     {
-        
-
-        
-
         public static Account LoginedEmployee;
 
         public LogViewer()
@@ -32,7 +27,6 @@ namespace Story4
             // Clears data grid view and textbox
             notificationDataGridView.DataSource = null;
             notificationDataGridView.Rows.Clear();
-            
         }
 
         // Creates the data table add that data to datagridview
@@ -80,26 +74,23 @@ namespace Story4
         // Will put text in datagridview cell to rich text box
         private void notificationDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(notificationDataGridView.CurrentCell.Value != null)
+            if (notificationDataGridView.CurrentCell.Value != null)
             {
                 Form2 frm2 = new Form2(notificationDataGridView.CurrentCell.Value.ToString());
-
-
                 frm2.ShowDialog();
-                
             }
             else
             {
                 MessageBox.Show("Oops!");
             }
-
         }
+
         // Allows a search of the database by both message content
         private void findMessageButton_Click(object sender, EventArgs e)
         {
             using (Form3 form3 = new Form3())
             {
-                if(form3.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (form3.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     String input = form3.SelectedText;
 
@@ -131,10 +122,9 @@ namespace Story4
                     notificationDataGridView.Columns[3].Width = 100;
                     notificationDataGridView.Columns[4].Width = 50;
                 }
-
             }
-         }
-          
+        }
+
         // Allows a search of the database by both message content and time
         private void findTimeMessageButton_Click(object sender, EventArgs e)
         {
@@ -181,8 +171,6 @@ namespace Story4
                         notificationDataGridView.Columns[3].Width = 100;
                         notificationDataGridView.Columns[4].Width = 50;
                     }
-
-
                 }
             }
         }

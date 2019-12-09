@@ -131,37 +131,39 @@ namespace Story1.Controllers
             // If no match, then create a new account.
             if (existingAccount == null)
             {
-                Account myAccount = new Account();
-                myAccount.Username = model.username;
-                myAccount.Name = model.name;
-                myAccount.Email = model.email;
-                myAccount.PasswordHash = model.psw;
-                myAccount.PhoneNumber = model.phoneNbr;
-                myAccount.Carrier = model.carrier;
+                Account myAccount = new Account
+                {
+                    Username = model.username,
+                    Name = model.name,
+                    Email = model.email,
+                    PasswordHash = model.psw,
+                    PhoneNumber = model.phoneNbr,
+                    Carrier = model.carrier
+                };
 
                 if (model.isEmailNotiType)
                 {
-                    myAccount.NotificationType = myAccount.NotificationType | NotificationType.Email;
+                    myAccount.NotificationType |= NotificationType.Email;
                 }
                 if (model.isTextNotiType)
                 {
-                    myAccount.NotificationType = myAccount.NotificationType | NotificationType.SMS;
+                    myAccount.NotificationType |= NotificationType.SMS;
                 }
                 if (model.isSYLocation)
                 {
-                    myAccount.Location = myAccount.Location | Location.Sylvania;
+                    myAccount.Location |= Location.Sylvania;
                 }
                 if (model.isRCLocation)
                 {
-                    myAccount.Location = myAccount.Location | Location.RockCreek;
+                    myAccount.Location |= Location.RockCreek;
                 }
                 if (model.isCASLocation)
                 {
-                    myAccount.Location = myAccount.Location | Location.Cascade;
+                    myAccount.Location |= Location.Cascade;
                 }
                 if (model.isSELocation)
                 {
-                    myAccount.Location = myAccount.Location | Location.Southeast;
+                    myAccount.Location |= Location.Southeast;
                 }
 
                 myAccount.Code = Guid.NewGuid().ToString();
@@ -213,11 +215,13 @@ hANNGry
             }
             string username = (Session["account"] as Account).Username;
             Account account = AccountDB.FindActivatedAccount(username);
-            UserAccountViewModel model = new UserAccountViewModel();
-            model.acctName = account.Name;
-            model.acctEmail = account.Email;
-            model.acctPhoneNumber = account.PhoneNumber;
-            model.acctCarrier = account.Carrier;
+            UserAccountViewModel model = new UserAccountViewModel
+            {
+                acctName = account.Name,
+                acctEmail = account.Email,
+                acctPhoneNumber = account.PhoneNumber,
+                acctCarrier = account.Carrier
+            };
 
             if (account.NotificationType.HasFlag(NotificationType.Email))
             {
@@ -288,27 +292,27 @@ hANNGry
 
             if (model.isEmailNotiType)
             {
-                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.Email;
+                updatedAccount.NotificationType |= NotificationType.Email;
             }
             if (model.isTextNotiType)
             {
-                updatedAccount.NotificationType = updatedAccount.NotificationType | NotificationType.SMS;
+                updatedAccount.NotificationType |= NotificationType.SMS;
             }
             if (model.isSYLocation)
             {
-                updatedAccount.Location = updatedAccount.Location | Location.Sylvania;
+                updatedAccount.Location |= Location.Sylvania;
             }
             if (model.isRCLocation)
             {
-                updatedAccount.Location = updatedAccount.Location | Location.RockCreek;
+                updatedAccount.Location |= Location.RockCreek;
             }
             if (model.isCASLocation)
             {
-                updatedAccount.Location = updatedAccount.Location | Location.Cascade;
+                updatedAccount.Location |= Location.Cascade;
             }
             if (model.isSELocation)
             {
-                updatedAccount.Location = updatedAccount.Location | Location.Southeast;
+                updatedAccount.Location |= Location.Southeast;
             }
             AccountDB.UpdateAccount(updatedAccount);
             model.message = "Saved successfully";
@@ -337,9 +341,11 @@ hANNGry
                 return RedirectToAction("Login");
             }
             Account account = Session["account"] as Account;
-            UnsubscribeViewModel model = new UnsubscribeViewModel();
-            model.uname = account.Username;
-            model.email = account.Email;
+            UnsubscribeViewModel model = new UnsubscribeViewModel
+            {
+                uname = account.Username,
+                email = account.Email
+            };
             return View(model);
         }
 
@@ -376,8 +382,10 @@ hANNGry
                 return RedirectToAction("Login");
             }
             Account account = Session["account"] as Account;
-            ChangePasswordViewModel model = new ChangePasswordViewModel();
-            model.name = account.Name;
+            ChangePasswordViewModel model = new ChangePasswordViewModel
+            {
+                name = account.Name
+            };
             return View(model);
         }
 

@@ -57,6 +57,7 @@ namespace AccountLibrary
         {
             string salt = CreateSalt();
             string hash = CreateHash(newAccount.PasswordHash, salt);
+
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
@@ -132,6 +133,7 @@ WHERE Username = @Username
 OR Email = @Email;", connect);
             command.Parameters.AddWithValue("@Username", username);
             command.Parameters.AddWithValue("@Email", email);
+
             SqlDataReader reader = command.ExecuteReader();
             Account account = null;
 
@@ -216,6 +218,7 @@ FROM Accounts
 WHERE Activated = 1
 AND Username = @Username;", connect);
             command.Parameters.AddWithValue("@Username", username);
+
             SqlDataReader reader = command.ExecuteReader();
             Account account = null;
 
@@ -445,6 +448,7 @@ WHERE Activated = 1 AND AccountId = @AccountId;", connect);
             {
                 return false;
             }
+
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
@@ -472,6 +476,7 @@ AND Username = @Username;", connect);
         {
             string salt = CreateSalt();
             string hash = CreateHash(newPassword, salt);
+
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
@@ -501,6 +506,7 @@ WHERE Code = @Code;", connect);
         {
             string salt = CreateSalt();
             string hash = CreateHash(account.PasswordHash, salt);
+
             SqlConnection connect = DBConnect.GetConnection();
             connect.Open();
 
@@ -535,6 +541,7 @@ SELECT Name
 FROM Accounts
 WHERE Activated = 1
 AND Code = @Code;", connect);
+
             command.Parameters.AddWithValue("@Code", ParameterHelper.GetNullableValue(code));
 
             SqlDataReader reader = command.ExecuteReader();
@@ -567,6 +574,7 @@ AND Code = @Code;", connect);
 DELETE FROM Accounts
 WHERE Activated = 1
   AND AccountId = @AccountId;", connect);
+
             command.Parameters.Clear();
             command.Parameters.AddWithValue("@AccountId", account.AccountId);
 

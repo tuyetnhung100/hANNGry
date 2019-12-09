@@ -56,17 +56,17 @@ FROM Tags;";
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
-                int tagId = reader.GetOrdinal("TagId");
-                int type = reader.GetOrdinal("Type");
-                int name = reader.GetOrdinal("Name");
+                int tagIdIndex = reader.GetOrdinal("TagId");
+                int typeIndex = reader.GetOrdinal("Type");
+                int nameIndex = reader.GetOrdinal("Name");
 
                 while (reader.Read())
                 {
                     Tag tag = new Tag
                     {
-                        TagId = reader.GetInt32(tagId),
-                        Type = (TagType)reader.GetInt32(type),
-                        Name = reader.GetString(name)
+                        TagId = reader.GetInt32(tagIdIndex),
+                        Type = (TagType)reader.GetInt32(typeIndex),
+                        Name = reader.GetString(nameIndex)
                     };
                     tags.Add(tag);
                 }

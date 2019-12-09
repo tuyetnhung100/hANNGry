@@ -11,7 +11,7 @@ namespace AccountLibrary
 {
     public class Account
     {
-        string phoneNumber;
+        private string phoneNumber;
         public int AccountId { get; set; }
         public string Username { get; set; }
         public Role Role { get; set; }

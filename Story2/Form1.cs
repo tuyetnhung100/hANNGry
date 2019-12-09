@@ -113,7 +113,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void templateComboBox_DropDownClosed(object sender, EventArgs e)
+        private void TemplateComboBox_DropDownClosed(object sender, EventArgs e)
         {
             if (templateComboBox.SelectedIndex == -1)
             {
@@ -149,7 +149,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void templateComboBox_KeyUp(object sender, KeyEventArgs e)
+        private void TemplateComboBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
             {
@@ -159,7 +159,7 @@ namespace Story2
             if (templateComboBox.Text == NoneOption)
             {
                 templateComboBox.SelectedIndex = 0;
-                templateComboBox_DropDownClosed(sender, e);
+                TemplateComboBox_DropDownClosed(sender, e);
             }
             else
             {
@@ -170,7 +170,7 @@ namespace Story2
                     if (template.Subject == templateComboBox.Text)
                     {
                         templateComboBox.SelectedIndex = i;
-                        templateComboBox_DropDownClosed(sender, e);
+                        TemplateComboBox_DropDownClosed(sender, e);
                     }
                 }
             }
@@ -317,19 +317,19 @@ namespace Story2
 
             if (sylvaniaCheckBox.Checked)
             {
-                notification.Location = notification.Location | AccountLibrary.Location.Sylvania;
+                notification.Location |= AccountLibrary.Location.Sylvania;
             }
             if (rockCreekCheckBox.Checked)
             {
-                notification.Location = notification.Location | AccountLibrary.Location.RockCreek;
+                notification.Location |= AccountLibrary.Location.RockCreek;
             }
             if (southeastCheckBox.Checked)
             {
-                notification.Location = notification.Location | AccountLibrary.Location.Southeast;
+                notification.Location |= AccountLibrary.Location.Southeast;
             }
             if (cascadeCheckBox.Checked)
             {
-                notification.Location = notification.Location | AccountLibrary.Location.Cascade;
+                notification.Location |= AccountLibrary.Location.Cascade;
             }
 
             bool isUsingTemplate = templateComboBox.SelectedIndex != 0;
@@ -415,7 +415,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void clearButton_Click(object sender, EventArgs e)
+        private void ClearButton_Click(object sender, EventArgs e)
         {
             // make a confirmation to prevent the accidentally button click
             DialogResult dialogResult = ShowConfirmMessageBox(
@@ -673,7 +673,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             for (int i = 0; i < subscribers.Count; i++)
             {
@@ -705,7 +705,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (sendingSucceeded)
             {
@@ -743,7 +743,7 @@ namespace Story2
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             ShowInfoMessageBox("Sent Notification Completed", "Notification sent successfully!");
 

@@ -111,21 +111,21 @@ INNER JOIN Accounts
                 SqlCommand command = new SqlCommand(sql, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
-                int templateId = reader.GetOrdinal("TemplateId");
-                int subject = reader.GetOrdinal("Subject");
-                int message = reader.GetOrdinal("Message");
-                int createdEmployeeName = reader.GetOrdinal("CreatedEmployeeName");
-                int createdDate = reader.GetOrdinal("CreatedDate");
+                int templateIdIndex = reader.GetOrdinal("TemplateId");
+                int subjectIndex = reader.GetOrdinal("Subject");
+                int messageIndex = reader.GetOrdinal("Message");
+                int createdEmployeeNameIndex = reader.GetOrdinal("CreatedEmployeeName");
+                int createdDateIndex = reader.GetOrdinal("CreatedDate");
 
                 while (reader.Read())
                 {
                     Template template = new Template
                     {
-                        TemplateId = reader.GetInt32(templateId),
-                        Subject = reader.GetString(subject),
-                        Message = reader.GetString(message),
-                        CreatedEmployeeName = reader.GetString(createdEmployeeName),
-                        CreatedDate = reader.GetDateTime(createdDate)
+                        TemplateId = reader.GetInt32(templateIdIndex),
+                        Subject = reader.GetString(subjectIndex),
+                        Message = reader.GetString(messageIndex),
+                        CreatedEmployeeName = reader.GetString(createdEmployeeNameIndex),
+                        CreatedDate = reader.GetDateTime(createdDateIndex)
                     };
                     templates.Add(template);
                 }
