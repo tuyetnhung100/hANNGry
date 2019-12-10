@@ -202,7 +202,7 @@ namespace Story3
 
                 // it will delete the template from the DB if the user clicks yes.
                 DialogResult delete = MessageBox.Show(
-                    "The template \"" + template.Subject + "\"is about to be deleted!\n" +
+                    "The template \"" + template.Subject + "\" is about to be deleted!\n" +
                     "Are you sure you want to delete the template?\nTHE TEMPLATE CANNOT BE RECOVERED.",
                     "Warning!",
                     MessageBoxButtons.YesNo,
